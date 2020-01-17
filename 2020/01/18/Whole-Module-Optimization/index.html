@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Whole-Module Optimization Swift 컴파일러의 최적화 모드 프로젝트에 따라 취할 수 있는 이득의 정도가 달라짐 2~5배 정도   -whole-module-optimization 또는 -wmo 컴파일러 플래그로 활성화 Xcode 8부터 기본적으로 설정됨   Swift Package Manager는 릴리즈 빌드에 대하여 WMO를 사용하여">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Whole-Module Optimization">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/Whole-Module-Optimization/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="Whole-Module Optimization Swift 컴파일러의 최적화 모드 프로젝트에 따라 취할 수 있는 이득의 정도가 달라짐 2~5배 정도   -whole-module-optimization 또는 -wmo 컴파일러 플래그로 활성화 Xcode 8부터 기본적으로 설정됨   Swift Package Manager는 릴리즈 빌드에 대하여 WMO를 사용하여">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:28:24.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:28:53.622Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="swiftc">
+<meta property="article:tag" content="optimization">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Whole-Module Optimization</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%95%A0%EC%9E%90%EC%9D%BC-%EC%8B%A4%EC%B2%9C%EB%B0%A9%EB%B2%95/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/Swift-%EC%84%B1%EB%8A%A5-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&text=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&is_video=false&description=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Whole-Module Optimization&body=Check out this article: http://presto95.github.io/2020/01/18/Whole-Module-Optimization/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&name=Whole-Module Optimization&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&t=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Whole-Module-Optimization"><span class="toc-number">1.</span> <span class="toc-text">Whole-Module Optimization</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#모듈-컴파일-방법"><span class="toc-number">1.1.</span> <span class="toc-text">모듈 &#x2F; 컴파일 방법</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#전체-모듈-최적화"><span class="toc-number">1.2.</span> <span class="toc-text">전체 모듈 최적화</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#컴파일-타임"><span class="toc-number">1.3.</span> <span class="toc-text">컴파일 타임</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.4.</span> <span class="toc-text">결론</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#참고"><span class="toc-number">1.5.</span> <span class="toc-text">참고</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Whole-Module Optimization
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:28:24.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Swift/">Swift</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/optimization/" rel="tag">optimization</a>, <a class="tag-link" href="/tags/swiftc/" rel="tag">swiftc</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Whole-Module-Optimization"><a href="#Whole-Module-Optimization" class="headerlink" title="Whole-Module Optimization"></a>Whole-Module Optimization</h1><ul>
+<li>Swift 컴파일러의 최적화 모드</li>
+<li>프로젝트에 따라 취할 수 있는 이득의 정도가 달라짐<ul>
+<li>2~5배 정도</li>
+</ul>
+</li>
+<li><code>-whole-module-optimization</code> 또는 <code>-wmo</code> 컴파일러 플래그로 활성화<ul>
+<li>Xcode 8부터 기본적으로 설정됨</li>
+</ul>
+</li>
+<li>Swift Package Manager는 릴리즈 빌드에 대하여 WMO를 사용하여 컴파일함</li>
+</ul>
+<h2 id="모듈-컴파일-방법"><a href="#모듈-컴파일-방법" class="headerlink" title="모듈 / 컴파일 방법"></a>모듈 / 컴파일 방법</h2><ul>
+<li>모듈<em>module</em> : Swift 파일의 집합<ul>
+<li>각 모듈은 프레임워크 또는 실행 파일(단일 배포 단위)로 컴파일됨</li>
+</ul>
+</li>
+<li>WMO가 아닌 단일 파일 컴파일<em>single-file compilation</em>에서 Swift 컴파일러는 모듈에 있는 각각의 파일을 개별적으로 컴파일함<ul>
+<li>컴파일러 드라이버나 Xcode 빌드 시스템에 의해 일어남</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">                &#x2F;--------\</span><br><span class="line">file_1.swift -&gt; | swiftc | -&gt; file_1.o --\</span><br><span class="line">                \--------&#x2F;                \</span><br><span class="line">                &#x2F;--------\                 \  &#x2F;----\</span><br><span class="line">file_2.swift -&gt; | swiftc | -&gt; file.2_o -----&gt; | ld | -&gt; binary</span><br><span class="line">                \--------&#x2F;                 &#x2F;  \----&#x2F;</span><br><span class="line">                &#x2F;--------\                &#x2F;</span><br><span class="line">file_n.swift -&gt; | swiftc | -&gt; file.n_o --&#x2F;</span><br><span class="line">                \--------&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>컴파일 순서</p>
+<ol>
+<li>소스 파일을 읽고 파싱하며, 타입 검사와 같은 몇 가지 작업을 더 수행함</li>
+<li>Swift 코드 최적화</li>
+<li>기계어 생성</li>
+<li>오브젝트 파일 작성</li>
+<li>모든 오브젝트 파일 링크</li>
+<li>공유 라이브러리 또는 실행 파일 생성</li>
+</ol>
+<hr>
+<ul>
+<li>단일 파일 컴파일에서, 컴파일러 최적화의 범위는 단일 파일임<ul>
+<li>함수 인라이닝<em>function inlining</em>, 제네릭 특수화<em>generic specialization</em>과 같은 함수 교차 최적화<em>cross-function optimization</em>가 같은 파일에서 호출되고 정의된 함수들로 제한됨</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>예제</p>
+<ul>
+<li>모듈은 utils.swift 파일만을 포함함<ul>
+<li><code>Container&lt;T&gt;</code> 제네릭 구조체 포함</li>
+<li><code>getElement</code> 메소드 포함</li>
+<li>위의 메소드는 모듈 곳곳에서 호출됨</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// main.swift</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(c1: Container&lt;Int&gt;, c2: Container&lt;Int&gt;)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> c1.getElement() + c2.getElement()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// utils.swift</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Container</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> element: <span class="type">T</span></span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">getElement</span><span class="params">()</span></span> -&gt; <span class="type">T</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> element</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>컴파일러는 main.swift를 최적화할 때 <code>getElement</code>가 구현된 방법에 대해 알지 못함<ul>
+<li>그것이 존재한다는 것만을 앎</li>
+<li>그러므로 <code>getElement</code>에 대한 호출을 생성함</li>
+</ul>
+</li>
+<li>컴파일러는 utils.swift를 최적화할 때 함수가 호출되는 구체 타입에 대해 알지 못함<ul>
+<li>함수의 제네릭 버전만을 생성할 수 있음<ul>
+<li>구체 타입에 대해 특수화된 것보다 훨씬 느림</li>
+</ul>
+</li>
+<li><code>getElement</code>의 단순한 구현(<code>return element</code>)은 요소를 복사하는 방법을 알기 위해 타입의 메타데이터를 찾아야 할 필요가 있음<ul>
+<li><code>Int</code>와 같은 단순한 타입일 수도 있고, 더 큰 크기의 타입일 수도 있고, 참조 카운팅 작업을 하는 타입을 포함한 것일 수도 있음</li>
+<li>컴파일러는 위와 같은 정보를 알지 못함</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="전체-모듈-최적화"><a href="#전체-모듈-최적화" class="headerlink" title="전체 모듈 최적화"></a>전체 모듈 최적화</h2><p>WMO를 통해 컴파일러는 모듈에 있는 모든 파일을 전체적으로 최적화함</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">file_1.swift --\   &#x2F;--------\</span><br><span class="line">file_2.swift ----&gt; | swiftc | -&gt; output files</span><br><span class="line">file_n.swift --&#x2F;   \--------&#x2F;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>컴파일러는 모듈에 있는 모든 함수의 구현을 앎</strong><ul>
+<li>함수 인라이닝, 함수 특수화와 같은 최적화를 수행할 수 있음</li>
+<li>함수 특수화 : 컴파일러가 특정 호출 컨텍스트에 대해 최적화된 새로운 버전의 함수를 생성<ul>
+<li>제네릭 함수를 구체 타입에 대해 특수화할 수 있음</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>예제에서 컴파일러는 <code>Int</code> 구체 타입에 대해 특수화된 제네릭 <code>Container</code>의 한 버전을 생성할 수 있음</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// `Int` 타입으로 구체화된 `Container` 제네릭 구조체</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Container</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> element: <span class="type">Int</span></span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">getElement</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> element</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>그 결과 컴파일러는 특수화된 <code>getElement</code> 함수를 <code>add</code> 함수로 인라이닝할 수 있음</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(c1: Container&lt;Int&gt;, c2: Container&lt;Int&gt;)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">  <span class="comment">// 이전 : c1.getElement() + c2.getElement()</span></span><br><span class="line">  <span class="keyword">return</span> c1.element + c2.element</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>단일 파일 최적화에서 <code>add</code> 함수는 두 개의 함수 호출을 포함하나, 전체 모듈 최적화에서 <code>add</code> 함수는 함수 호출을 하지 않음</li>
+</ul>
+<hr>
+<ul>
+<li>컴파일러가 함수를 인라이닝하지 않는다고 결정할지라도, 컴파일러가 함수의 구현을 알고 있다면 많은 도움이 됨<ul>
+<li>참조 카운팅 작업과 관련된 행위를 추론할 수 있음</li>
+<li>이를 바탕으로 함수 호출 주위에 있는 중복된 참조 카운팅 작업을 제거할 수 있음</li>
+</ul>
+</li>
+<li><strong>공개 수준이 아닌 함수들의 모든 사용에 대해 추론할 수 있음</strong><ul>
+<li>공개 수준이 아닌 함수들은 모듈 내에서만 사용 가능하므로, 컴파일러는 이러한 함수들의 모든 참조들을 알고 있다고 확신할 수 있음</li>
+<li>이를 바탕으로 ‘죽은’ 함수와 메소드를 제거할 수 있음<ul>
+<li>‘죽은’ 함수 : 절대 호출되지 않거나 사용되지 않는 함수 및 메소드</li>
+<li>프로그래머가 작성하였으나 전혀 사용되지 않는 코드의 경우에도 컴파일러가 제거할 수 있음</li>
+<li>종종 함수들은 다른 최적화의 부작용으로 죽게 되며, 이러한 경우 컴파일러가 제거할 수 있는 것이 좋은 유스케이스임<ul>
+<li><code>add</code> 함수가 <code>Container.getElement</code>가 호출되는 유일한 장소라고 가정했을 때<ul>
+<li><code>getElement</code>를 인라이닝한 후 해당 함수는 더이상 사용되지 않으므로 제거할 수 있음</li>
+<li><code>getElement</code>를 인라이닝하지 않기로 결정할지라도, <code>add</code> 함수는 <code>getElement</code>의 특수화된 버전만을 호출하므로 <code>getElement</code>의 기존 제네릭 버전을 제거할 수 있음</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="컴파일-타임"><a href="#컴파일-타임" class="headerlink" title="컴파일 타임"></a>컴파일 타임</h2><ul>
+<li>단일 파일 컴파일의 경우 컴파일러 드라이버는 개별 프로세스에서 각각의 파일에 대해 컴파일함<ul>
+<li>병렬적으로 수행될 수 있음</li>
+</ul>
+</li>
+<li>마지막 컴파일 이후 수정되지 않은 파일들은 다시 컴파일될 필요가 없음<ul>
+<li>증분 컴파일</li>
+<li>컴파일 타임을 많이 절약할 수 있음</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">                   &#x2F;------------ swiftc -------------\</span><br><span class="line">file_1.swift --\   |                     &#x2F;-- LLVM  --|-- file_1.o --\    &#x2F;----\</span><br><span class="line">file_2.swift ------|--&gt; SIL optimizer ------ LLVM  --|-- file_2.o -----&gt; | ld | -&gt; binary</span><br><span class="line">file_n.swift --&#x2F;   |                     \-- LLVM  --|-- file_n.o --&#x2F;    \----&#x2F;</span><br><span class="line">                   \---------------------------------&#x2F;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>내부적으로 컴파일러는 여러 개의 단계(파서, 타입 검사, SIL 최적화, LLVM 백엔드)에서 동작함<ul>
+<li>파싱과 타입 검사는 대부분의 경우 매우 빠르게 일어남. Swift의 이후 릴리즈에서 더욱 빨라질 것이 기대됨</li>
+<li>SIL 최적화기<em>SIL optimizer</em>는 Swift에 특정한 중요한 최적화(제네릭 특수화, 함수 인라이닝 등)를 수행함<ul>
+<li>전체 컴파일 타임의 3분의 1 정도 소요</li>
+</ul>
+</li>
+<li>LLVM 백엔드는 컴파일 타임의 대부분을 소비함<ul>
+<li>저수준 최적화 수행, 코드 생성</li>
+</ul>
+</li>
+<li>SIL 최적화기에서 전체 모듈 최적화 수행 후, 모듈은 다시 여러 개의 부분으로 나뉘어짐<ul>
+<li>LLVM 백엔드는 여러 개의 쓰레드에서 나뉘어진 부분을 처리함    </li>
+<li>이전 빌드 이후 변경되지 않은 부분이 있다면 해당 부분을 다시 처리하지 않음</li>
+<li>그러므로 컴파일러는 컴파일 작업의 큰 부분을 병렬적으로(멀티쓰레드), 증분으로 수행할 수 있음</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><ul>
+<li>전체 모듈 최적화는 Swift 코드를 모듈 내의 파일 간에 분배하는 방법에 대해 걱정할 필요 없이 최대의 퍼포먼스를 낼 수 있도록 하는 훌륭한 방법임</li>
+<li>최적화가 임계 코드 구역<em>critical code section</em>에서 일어난다면, 퍼포먼스는 단일 파일 최적화와 비교하여 다섯 배까지 더 나아질 수 있음</li>
+<li>컴파일 타임 또한 더 나아질 수 있음</li>
+</ul>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><p><a href="https://swift.org/blog/whole-module-optimizations/" target="_blank" rel="noopener">Whole-Module Optimization in Swift 3</a></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Whole-Module-Optimization"><span class="toc-number">1.</span> <span class="toc-text">Whole-Module Optimization</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#모듈-컴파일-방법"><span class="toc-number">1.1.</span> <span class="toc-text">모듈 &#x2F; 컴파일 방법</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#전체-모듈-최적화"><span class="toc-number">1.2.</span> <span class="toc-text">전체 모듈 최적화</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#컴파일-타임"><span class="toc-number">1.3.</span> <span class="toc-text">컴파일 타임</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.4.</span> <span class="toc-text">결론</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#참고"><span class="toc-number">1.5.</span> <span class="toc-text">참고</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&text=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&is_video=false&description=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Whole-Module Optimization&body=Check out this article: http://presto95.github.io/2020/01/18/Whole-Module-Optimization/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&title=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&name=Whole-Module Optimization&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/Whole-Module-Optimization/&t=Whole-Module Optimization" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

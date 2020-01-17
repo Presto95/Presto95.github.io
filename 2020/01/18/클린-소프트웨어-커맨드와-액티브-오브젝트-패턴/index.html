@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="커맨드와 액티브 오브젝트 패턴커맨드command 패턴은 가장 단순하면서도 세련된 패턴이다. protocol Command &amp;#123;  func do()&amp;#125;  대부분의 클래스는 프로퍼티와 메소드의 집합으로 이루어져 있는데, 커맨드 패턴은 오히려 함수를 캡슐화하여 프로퍼티에서 자유롭게 한다. 단순한 커맨드 패턴 적용class RelayOnCommand">
+<meta property="og:type" content="article">
+<meta property="og:title" content="클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="커맨드와 액티브 오브젝트 패턴커맨드command 패턴은 가장 단순하면서도 세련된 패턴이다. protocol Command &amp;#123;  func do()&amp;#125;  대부분의 클래스는 프로퍼티와 메소드의 집합으로 이루어져 있는데, 커맨드 패턴은 오히려 함수를 캡슐화하여 프로퍼티에서 자유롭게 한다. 단순한 커맨드 패턴 적용class RelayOnCommand">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:38:06.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:38:42.387Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="software engineering">
+<meta property="article:tag" content="clean software">
+<meta property="article:tag" content="design pattern">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&text=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&is_video=false&description=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴&body=Check out this article: http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&name=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&t=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#커맨드와-액티브-오브젝트-패턴"><span class="toc-number">1.</span> <span class="toc-text">커맨드와 액티브 오브젝트 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#단순한-커맨드-패턴-적용"><span class="toc-number">1.1.</span> <span class="toc-text">단순한 커맨드 패턴 적용</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#트랜잭션"><span class="toc-number">1.2.</span> <span class="toc-text">트랜잭션</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#물리적-시간적-분리"><span class="toc-number">1.2.1.</span> <span class="toc-text">물리적, 시간적 분리</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#시간적-분리"><span class="toc-number">1.2.2.</span> <span class="toc-text">시간적 분리</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#되돌리기"><span class="toc-number">1.3.</span> <span class="toc-text">되돌리기</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#액티브-오브젝트-패턴"><span class="toc-number">1.4.</span> <span class="toc-text">액티브 오브젝트 패턴</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.5.</span> <span class="toc-text">결론</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#추가"><span class="toc-number">1.5.0.1.</span> <span class="toc-text">추가</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:38:06.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Software-Engineering/">Software Engineering</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/clean-software/" rel="tag">clean software</a>, <a class="tag-link" href="/tags/design-pattern/" rel="tag">design pattern</a>, <a class="tag-link" href="/tags/software-engineering/" rel="tag">software engineering</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="커맨드와-액티브-오브젝트-패턴"><a href="#커맨드와-액티브-오브젝트-패턴" class="headerlink" title="커맨드와 액티브 오브젝트 패턴"></a>커맨드와 액티브 오브젝트 패턴</h1><p>커맨드<em>command</em> 패턴은 가장 단순하면서도 세련된 패턴이다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">do</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>대부분의 클래스는 프로퍼티와 메소드의 집합으로 이루어져 있는데, 커맨드 패턴은 오히려 함수를 캡슐화하여 프로퍼티에서 자유롭게 한다.</p>
+<h2 id="단순한-커맨드-패턴-적용"><a href="#단순한-커맨드-패턴-적용" class="headerlink" title="단순한 커맨드 패턴 적용"></a>단순한 커맨드 패턴 적용</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RelayOnCommand</span>: <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">do</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MotorOnCommand</span>: <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">do</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClutchOnCommand</span>: <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">do</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>위와 같은 구조를 잘 만들어 낸다면, <code>Command</code> 객체를 시스템에 넘겨주는 것으로 작업을 수행할 수 있다. <code>Command</code> 객체가 무엇을 표현하는지 알 필요가 없이 <code>do()</code> 메소드를 실행할 수 있다.</p>
+<p>위의 구체 Command 클래스를 사용하는 클라이언트는 자신이 하는 일을 모른다. 그저 <code>Command</code>의 <code>do()</code> 메소드를 호출할 뿐이다. 즉 클라이언트는 구체적인 것에 대해 알 필요가 없다.</p>
+<p>커맨드 패턴은 명령의 <strong>개념</strong>을 캡슐화하여 시스템의 논리적인 상호 연결을 분리해낼 수 있게 한다.</p>
+<h2 id="트랜잭션"><a href="#트랜잭션" class="headerlink" title="트랜잭션"></a>트랜잭션</h2><p>커맨드 패턴은 트랜잭션의 생성과 실행에 대해 유용하게 사용될 수 있다. 예를 들어 직원 데이터베이스를 관리하는 시스템의 사용자들은 이 데이터베이스를 사용하여 새 직원을 추가하고, 기존 직원을 삭제하고, 직원의 속성을 변경할 수 있을 것이다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Transaction</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">()</span></span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AddEmployeeTransaction</span>: <span class="title">Transaction</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> address: <span class="type">String</span></span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">validate</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Transaction</code> 인터페이스를 작성하여 커맨드 패턴을 실현한다.</p>
+<ul>
+<li><code>validate()</code> 커맨드는 모든 데이터를 살펴보고 유효한지 확인한다.</li>
+<li><code>execute()</code> 커맨드는 검증된 데이터를 사용하여 데이터베이스를 갱신한다.</li>
+</ul>
+<h3 id="물리적-시간적-분리"><a href="#물리적-시간적-분리" class="headerlink" title="물리적, 시간적 분리"></a>물리적, 시간적 분리</h3><p>위의 방식을 사용하여, 사용자에게서 데이터를 받는 코드와, 그 데이터를 검증하고 그것으로 작업을 하는 코드와, 업무 객체 그 자체를 분리할 수 있다.</p>
+<p>예를 들어 GUI를 통해 데이터를 받을 때, 이 데이터가 유효한지 확인하고 데이터베이스 갱신 작업을 실행하는 코드가 GUI에 위치한다면, GUI와 로직이 결합되어 다른 인터페이스가 해당 로직을 사용할 수 없게 만들 것이다.</p>
+<h3 id="시간적-분리"><a href="#시간적-분리" class="headerlink" title="시간적 분리"></a>시간적 분리</h3><p>커맨드를 입력하고, 그 시점에 커맨드가 유효한지 검증한 후, 나중에 작업을 수행할 수 있도록 할 수 있다.</p>
+<h2 id="되돌리기"><a href="#되돌리기" class="headerlink" title="되돌리기"></a>되돌리기</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">do</span><span class="params">()</span></span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">undo</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Command</code> 인터페이스의 파생 클래스가 <code>do()</code> 메소드가 수행하는 동작을 기억할 수 있다면, <code>undo()</code> 메소드가 그 동작을 되돌리도록 구현할 수 있을 것이다.</p>
+<p>명령을 취소하는 방법을 아는 코드는 항상 그 명령을 수행하는 방법을 아는 코드와 함께 있어야 한다.</p>
+<h2 id="액티브-오브젝트-패턴"><a href="#액티브-오브젝트-패턴" class="headerlink" title="액티브 오브젝트 패턴"></a>액티브 오브젝트 패턴</h2><p>액티브 오브젝트 패턴은 커맨드 패턴의 응용 중 하나이며, 다중 제어 스레드 구현을 위한 기법이다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ActiveObjectEngine</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> commands = [<span class="type">Command</span>]()</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(<span class="number">_</span> command: Command)</span></span> &#123;</span><br><span class="line">    commands.append(command)</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">while</span> !commands.isEmpty &#123;</span><br><span class="line">      <span class="keyword">let</span> command = commands.removeFirst()</span><br><span class="line">      <span class="keyword">try</span> command.execute()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span> <span class="keyword">throws</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ActiveObjectEngine</code>은 액티브 오브젝트 패턴을 구현하기 위한 클래스다. 내부에 커맨드 배열을 저장하고, 커맨드를 추가하거나 저장한 커맨드를 계속 소비하는 메소드를 포함한다.</p>
+<p><code>commands</code> 배열에 있는 요소 중 하나가 자신을 복제하여 그 복제본을 배열에 다시 넣는다면, <code>run()</code> 메소드는 절대 끝나지 않을 것이다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SleepCommand</span>: <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> wakeUpCommand: <span class="type">Command!</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> engine: <span class="type">ActiveObjectEngine!</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> sleepTime = <span class="number">0.0</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> startTime = <span class="number">0.0</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> isStarted = <span class="literal">false</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">init</span>(milliSeconds: <span class="type">Double</span>, engine: <span class="type">ActiveObjectEngine</span>, wakeupCommand: <span class="type">Command</span>) &#123;</span><br><span class="line">    sleepTime = milliseconds</span><br><span class="line">    <span class="keyword">self</span>.engine = engine</span><br><span class="line">    <span class="keyword">self</span>.wakeupCommand = wakeupCommand</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> currentTime = <span class="type">CFAbsoluteTimeGetCurrent</span>()</span><br><span class="line">    <span class="keyword">if</span> !isStarted &#123;</span><br><span class="line">      isStarted = <span class="literal">true</span></span><br><span class="line">      startTime = currentTime</span><br><span class="line">      engine.add(<span class="keyword">self</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> currentTime - startTime &lt; sleepTime &#123;</span><br><span class="line">      engine.add(<span class="keyword">self</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      engine.add(wakeupCommand)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Command</code> 인터페이스를 구현하는 <code>SleepCommand</code>는 다음과 같이 동작한다.</p>
+<ul>
+<li>실행이 되면, 자신이 이전에 실행된 적이 있는지 확인한다. 실행된 적이 없다면 시작 시간을 기록한다. </li>
+<li>지연 시간이 지나지 않았다면 자신을 다시 <code>ActiveObjectEngine</code>에 넣는다. </li>
+<li>지연 시간이 지났다면 <code>ActiveObjectEngine</code>에 <code>wakeupCommand</code> 명령을 넣는다.</li>
+</ul>
+<p>이러한 기법을 다양하게 변형하여 멀티스레드 시스템을 구축할 수 있다. 각 <code>Command</code> 인스턴스가 다음 <code>Command</code> 인스턴스의 실행이 가능해지기 전에 완료되기 때문에, RTC<em>run-to-completion</em> 태스크라는 이름으로 알려져 있다. 이는 <code>Command</code> 인스턴스가 블록을 하지 않는다는 의미를 내포한다.</p>
+<p>각 RTC 스레드에 대해 별도의 런타임 스택을 정의하거나 할당할 필요가 없어, 많은 스레드가 실행되고 메모리가 제한된 시스템에서 강력한 이점이 될 수 있다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>커맨드 패턴은 데이터베이스 트랜잭션, 장치 제어, 멀티스레드 시스템의 핵심, GUI에서의 실행 및 실행 취소 관리 등 매우 다양한 용도에서 사용될 수 있다.</p>
+<p>커맨드 패턴은 클래스보다 함수를 강조하여 객체 지향 패러다임을 망가뜨린다고 이야기되어 왔으나, 현장에서는 커맨드 패턴이 매우 유용하게 사용될 수 있다.</p>
+<hr>
+<h4 id="추가"><a href="#추가" class="headerlink" title="추가"></a>추가</h4><p>커맨드 패턴이란 요청을 객체의 형태로 캡슐화하여 사용자가 보낸 요청을 나중에 이용할 수 있도록 메소드 이름, 매개변수 등 요청에 필요한 정보를 저장 또는 로깅, 취소할 수 있게 하는 패턴이다.</p>
+<p>커맨드 패턴에는 명령<em>command</em>, 수신자<em>receiver</em>, 발동자<em>invoker</em>, 클라이언트<em>client</em>의 네 개의 용어가 항상 따른다.</p>
+<ul>
+<li>명령 객체는 수신자 객체를 가지고 있고, 수신자의 메소드를 호출한다.</li>
+<li>수신자 객체는 명령 객체의 호출에 따라 자신에게 정의된 메소드를 수행한다.</li>
+<li>발동자 객체는 명령 객체를 발동하게 한다. 명령 발동에 대한 기록을 남길 수 있다. 하나의 발동자 객체에 여러 개의 명령 객체가 전달될 수 있다.</li>
+<li>클라이언트 객체는 발동자 객체와 하나 이상의 명령 객체를 보유한다. 어느 시점에서 어떤 명령을 수행할지 결정한다.</li>
+<li>명령을 수행하기 위해 클라이언트 객체는 발동자 객체로 명령 객체를 전달한다.</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Invoker</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Switch</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> flipUpCommand: <span class="type">Command</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> flipDownCommand: <span class="type">Command</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(flipUpCommand: <span class="type">Command</span>, flipDownCommand: <span class="type">Command</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.flipUpCommand = flipUpCommand  </span><br><span class="line">    <span class="keyword">self</span>.flipDownCommand = flipDownCommand</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">flipUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">    flipUpCommand.execute()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">flipDown</span><span class="params">()</span></span> &#123;</span><br><span class="line">    flipDownCommand.execute()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Receiver</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Light</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">turnOn</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"The light is on"</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">turnOff</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"The light is off"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Command</span></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Concrete Command : turn on</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TurnOnLightCommand</span>: <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> light: <span class="type">Light</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(light: <span class="type">Light</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.light = light</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span> &#123;</span><br><span class="line">    light.turnOn()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Concrete Command : turn off</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TurnOffLightCommand</span>: <span class="title">Command</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">let</span> light: <span class="type">Light</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(light: <span class="type">Light</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.light = light</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span> &#123; </span><br><span class="line">    light.turnOff()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Client</span></span><br><span class="line"><span class="keyword">let</span> light = <span class="type">Light</span>()</span><br><span class="line"><span class="keyword">let</span> switchUpCommand = <span class="type">TurnOnLightCommand</span>(light: light)</span><br><span class="line"><span class="keyword">let</span> switchDownCommand = <span class="type">TurnOffLightCommand</span>(light: light)</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">switch</span> = <span class="type">Switch</span>(flipUpCommand: switchUpCommand, flipDownCommand: switchDownCommand)</span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span>.flipUp()</span><br><span class="line"><span class="keyword">switch</span>.flipDown()</span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#커맨드와-액티브-오브젝트-패턴"><span class="toc-number">1.</span> <span class="toc-text">커맨드와 액티브 오브젝트 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#단순한-커맨드-패턴-적용"><span class="toc-number">1.1.</span> <span class="toc-text">단순한 커맨드 패턴 적용</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#트랜잭션"><span class="toc-number">1.2.</span> <span class="toc-text">트랜잭션</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#물리적-시간적-분리"><span class="toc-number">1.2.1.</span> <span class="toc-text">물리적, 시간적 분리</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#시간적-분리"><span class="toc-number">1.2.2.</span> <span class="toc-text">시간적 분리</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#되돌리기"><span class="toc-number">1.3.</span> <span class="toc-text">되돌리기</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#액티브-오브젝트-패턴"><span class="toc-number">1.4.</span> <span class="toc-text">액티브 오브젝트 패턴</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.5.</span> <span class="toc-text">결론</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#추가"><span class="toc-number">1.5.0.1.</span> <span class="toc-text">추가</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&text=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&is_video=false&description=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴&body=Check out this article: http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&title=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&name=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/&t=클린 소프트웨어 - 커맨드와 액티브 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

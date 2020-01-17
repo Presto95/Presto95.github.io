@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="템플릿 메소드와 스트래터지 패턴: 상속과 위임90년대 초반에 개발자들은 상속inheritance의 개념에 매료되어 있었다. 상속을 사용하여 차이에 의한 프로그래밍program by difference을 할 수 있었기 때문이다. 어떠한 일을 하는 특정 클래스가 이미 있다면, 이것을 상속받고 일부분을 수정하는 것으로 코드를 재사용할 수 있었기 때문이다. 각">
+<meta property="og:type" content="article">
+<meta property="og:title" content="클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="템플릿 메소드와 스트래터지 패턴: 상속과 위임90년대 초반에 개발자들은 상속inheritance의 개념에 매료되어 있었다. 상속을 사용하여 차이에 의한 프로그래밍program by difference을 할 수 있었기 때문이다. 어떠한 일을 하는 특정 클래스가 이미 있다면, 이것을 상속받고 일부분을 수정하는 것으로 코드를 재사용할 수 있었기 때문이다. 각">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:38:59.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:39:18.966Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="software engineering">
+<meta property="article:tag" content="clean software">
+<meta property="article:tag" content="design pattern">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%8D%BC%EC%82%AC%EB%93%9C%EC%99%80-%EB%AF%B8%EB%94%94%EC%97%90%EC%9D%B4%ED%84%B0-%ED%8C%A8%ED%84%B4/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%EC%BB%A4%EB%A7%A8%EB%93%9C%EC%99%80-%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8-%ED%8C%A8%ED%84%B4/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&text=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&is_video=false&description=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임&body=Check out this article: http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&name=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&t=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#템플릿-메소드와-스트래터지-패턴-상속과-위임"><span class="toc-number">1.</span> <span class="toc-text">템플릿 메소드와 스트래터지 패턴: 상속과 위임</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#템플릿-메소드-패턴"><span class="toc-number">1.1.</span> <span class="toc-text">템플릿 메소드 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#패턴-오용"><span class="toc-number">1.1.1.</span> <span class="toc-text">패턴 오용</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#버블-정렬"><span class="toc-number">1.1.2.</span> <span class="toc-text">버블 정렬</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스트래티지-패턴"><span class="toc-number">1.2.</span> <span class="toc-text">스트래티지 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#다시-정렬하기"><span class="toc-number">1.2.1.</span> <span class="toc-text">다시 정렬하기</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.3.</span> <span class="toc-text">결론</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#추가"><span class="toc-number">1.3.0.1.</span> <span class="toc-text">추가</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:38:59.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Software-Engineering/">Software Engineering</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/clean-software/" rel="tag">clean software</a>, <a class="tag-link" href="/tags/design-pattern/" rel="tag">design pattern</a>, <a class="tag-link" href="/tags/software-engineering/" rel="tag">software engineering</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="템플릿-메소드와-스트래터지-패턴-상속과-위임"><a href="#템플릿-메소드와-스트래터지-패턴-상속과-위임" class="headerlink" title="템플릿 메소드와 스트래터지 패턴: 상속과 위임"></a>템플릿 메소드와 스트래터지 패턴: 상속과 위임</h1><p>90년대 초반에 개발자들은 상속<em>inheritance</em>의 개념에 매료되어 있었다. 상속을 사용하여 <strong>차이에 의한 프로그래밍<em>program by difference</em></strong>을 할 수 있었기 때문이다. 어떠한 일을 하는 특정 클래스가 이미 있다면, 이것을 상속받고 일부분을 수정하는 것으로 코드를 재사용할 수 있었기 때문이다. 각 단계가 그 상위 단계의 코드를 재사용하는 소프트웨어 구조의 전체 분류 체계를 만들 수 있었기 때문에, 상속을 통해 프로그래밍 분야에 완전히 새로운 세계가 열렸다.</p>
+<p>하지만 상속이 너무 과도하게 사용되면 매우 비싼 대가를 치르게 되는 것이 드러났다. <strong>클래스 상속보다는 차라리 복합<em>composition</em>이 더 낫다</strong>라고 강조되기까지 했다. 그래서 상속을 사용한 부분을 잘라내고, 경우에 따라 복합이나 위임<em>delegation</em>으로 대체했다.</p>
+<p>템플릿 메소드<em>template method</em> 패턴과 스트래티지<em>strategy</em> 패턴은 구체적인 내용으로부터 일반적인 알고리즘을 분리하는 문제를 해결하기 위해 사용되지만, 템플릿 메소드 패턴은 상속을, 스트래티지 패턴은 위임을 사용한다.</p>
+<p>구체적인 내용으로부터 일반적인 내용을 분리하는 문제는 소프트웨어 설계에서 자주 발견된다. DIP를 따르게 하기 위해서는 일반적인 알고리즘이 구체적인 구현에 의존하지 않으며, 일반적인 알고리즘과 구체적인 구현이 추상화에 의존하도록 해야 한다.</p>
+<h2 id="템플릿-메소드-패턴"><a href="#템플릿-메소드-패턴" class="headerlink" title="템플릿 메소드 패턴"></a>템플릿 메소드 패턴</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">setup()</span><br><span class="line"><span class="keyword">while</span> !isDone &#123;</span><br><span class="line">  doSomething()</span><br><span class="line">&#125;</span><br><span class="line">cleanup()</span><br></pre></td></tr></table></figure>
+
+<p>어떠한 프로그램은 위와 같은 구조로 동작할 것이다.</p>
+<ol>
+<li>애플리케이션을 초기화한 후 메인 루프에 들어가 프로그램이 요구하는 작업을 수행한다.</li>
+<li>작업 수행이 완료되면, 메인 루프를 빠져나가 정리 작업을 수행한다.</li>
+</ol>
+<p>위의 일련의 작업을 하나의 클래스에 몰아 넣을 수 있을 것이다. 이 클래스는 재사용 가능하게 된다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> isDone = <span class="literal">false</span></span><br><span class="line"><span class="keyword">while</span> !isDone &#123;</span><br><span class="line">  <span class="keyword">let</span> fahrenheit = <span class="built_in">readLine</span>()!</span><br><span class="line">  <span class="keyword">if</span> fahrenheit.isEmpty &#123;</span><br><span class="line">    isDone = <span class="literal">true</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> fahrenheitValue = <span class="type">Double</span>(fahrenheit)!</span><br><span class="line">    <span class="keyword">let</span> celciusValue = <span class="number">5.0</span> / <span class="number">9.0</span> * (fahrenheitValue - <span class="number">32</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"F=\(fahrenheitValue),C=\(celciusValue)"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">"exit"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>템플릿 메소드 패턴을 적용하면 위의 구조를 프로그램에서 분리할 수 있다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> isDone = <span class="literal">false</span></span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">cleanup</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">    setup()</span><br><span class="line">    <span class="keyword">while</span> !isDone &#123;</span><br><span class="line">      doSomething()</span><br><span class="line">    &#125;</span><br><span class="line">    cleaup()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FToCTemplateMethod</span>: <span class="title">Application</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> fahrenheit = <span class="built_in">readLine</span>()!</span><br><span class="line">    <span class="keyword">if</span> fahrenheit.isEmpty &#123;</span><br><span class="line">      isDone = <span class="literal">true</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> fahrenheitValue = <span class="type">Double</span>(fahrenheit)!</span><br><span class="line">      <span class="keyword">let</span> celciusValue = <span class="number">5.0</span> / <span class="number">9.0</span> * (fahrenheitValue - <span class="number">32</span>)</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">"F=\(fahrenheitValue),c=\(celciusValue)"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">cleanup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"exit"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Application</span>().run()</span><br></pre></td></tr></table></figure>
+
+<p><code>Application</code> 클래스는 일반적인 메인 루프 애플리케이션을 나타낸다. <code>run()</code> 메소드가 템플릿 메소드의 역할을 하여, 메인 알고리즘을 포함한다. 구체적인 작업은 <code>setup()</code>, <code>doSomething()</code>, <code>cleanup()</code>에 달려 있으며, 하위 클래스에서 구현한다.</p>
+<blockquote>
+<p>알고리즘의 구조를 변경하지 않고, 알고리즘의 특정 단계들을 다시 정의할 수 있게 해준다.</p>
+</blockquote>
+<h3 id="패턴-오용"><a href="#패턴-오용" class="headerlink" title="패턴 오용"></a>패턴 오용</h3><p>위와 같이 패턴을 적용하는 것은 패턴 오용의 좋은 예가 된다. 패턴을 적용하는 데 드는 비용이 결과적으로 생기는 이익보다 더 적기 때문이다.</p>
+<h3 id="버블-정렬"><a href="#버블-정렬" class="headerlink" title="버블 정렬"></a>버블 정렬</h3><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BubbleSorter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">sort</span><span class="params">(array: <span class="keyword">inout</span> [Int])</span></span> &#123;</span><br><span class="line">    <span class="comment">// 버블 정렬 알고리즘 구현</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>BubbleSorter</code> 클래스는 버블 정렬 알고리즘을 사용하여 <code>Int</code> 타입 배열을 정렬하는 방법을 알고 있다. 템플릿 메소드 패턴을 사용하여 버블 정렬 알고리즘을 따로 떼낼 수 있다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BubbleSorter</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">sort</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 버블 정렬 알고리즘 구현</span></span><br><span class="line">    <span class="comment">// swap(at:) / isOutOfOrder(at:) 메소드를 호출</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 해당 인덱스의 요소와 다음 인덱스의 요소를 서로 바꿈.</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(at index: Int)</span></span> &#123;&#125;</span><br><span class="line">  <span class="comment">// 해당 인덱스의 요소와 다음 인덱스의 요소가 오름차순 정렬되어 있는지 확인함.</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">isOutOfOrder</span><span class="params">(at index: Int)</span></span> -&gt; <span class="type">Bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위와 같은 구조를 가진다면, 어떤 종류의 객체든 정렬할 수 있는 파생 클래스를 만들 수 있을 것이다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IntBubbleSorter</span>: <span class="title">BubbleSorter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> array = [<span class="type">Int</span>]()</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(at index: Int)</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">isOutOfOrder</span><span class="params">(at index: Int)</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DoubleBubbleSorter</span>: <span class="title">BubbleSorter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> array = [<span class="type">Double</span>]()</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(at: index: Int)</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">isOutOfOrder</span><span class="params">(at index: Int)</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>일반적인 알고리즘은 기반 클래스에 있고, 다른 구체적인 내용은 하위 클래스에서 구현된다.</p>
+<p>하지만 이 기법은 비용을 수반한다. 상속은 아주 강한 관계를 맺게 하여, 파생 클래스가 필연적으로 기반 클래스에 묶이게 되기 때문이다.</p>
+<p>예를 들어 구체 클래스의 <code>isOutOfOrder(at:)</code>과 <code>swap(at:)</code> 메소드는 다른 정렬 알고리즘에도 사용될 수 있겠으나, 이들을 재사용할 방법이 없다. <code>IntBubbleSorter</code>와 <code>DoubleBubbleSorter</code>는 <code>BubbleSorter</code>를 상속받아 서로 단단하게 묶이게 되었다.</p>
+<p>스트래티지 패턴은 다른 선택지를 제공한다.</p>
+<h2 id="스트래티지-패턴"><a href="#스트래티지-패턴" class="headerlink" title="스트래티지 패턴"></a>스트래티지 패턴</h2><p>스트래티지 패턴은 일반적인 알고리즘과 구체적인 구현 사이의 의존성 반전 문제를 완전히 다른 방식으로 풀어낸다.</p>
+<ul>
+<li>A 클래스<ul>
+<li>일반적인 알고리즘을 포함한다.</li>
+<li>B 인터페이스를 구현한 C 클래스의 인스턴스를 넘겨받는다.</li>
+</ul>
+</li>
+<li>B 인터페이스<ul>
+<li>일반적인 알고리즘이 호출해야 하는 메소드를 정의한다.</li>
+</ul>
+</li>
+<li>C 클래스<ul>
+<li>B 인터페이스를 구현한다.</li>
+</ul>
+</li>
+</ul>
+<p>위와 같은 구조로, A 클래스는 B 인터페이스에 위임한다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ApplicationRunner</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> application: <span class="type">Application!</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">init</span>(application: <span class="type">Application</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.application = application</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">    application.setup()</span><br><span class="line">    <span class="keyword">while</span> !application.isDone &#123;</span><br><span class="line">      application.doSomething()</span><br><span class="line">    &#125;</span><br><span class="line">    application.cleanup()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> isDone &#123; <span class="keyword">get</span> <span class="keyword">set</span> &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">doSomething</span><span class="params">()</span></span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">cleanup</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FToCStrategy</span>: <span class="title">Application</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> isDone = <span class="literal">false</span></span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">cleanup</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위의 구조는 템플릿 메소드 패턴과 비교하여 이익과 비용 면에서 더 낫다.</p>
+<p><code>ApplicationRunner</code> 내부의 위임 포인터(<code>application</code>)은 상속과 비교하여 실행 시간과 데이터 공간 측면에서 좀 더 많은 비용을 초래한다. 하지만 일반적인 알고리즘과 그것이 제어하는 구체적인 부분 사이의 결합도를 감소시켜준다.</p>
+<h3 id="다시-정렬하기"><a href="#다시-정렬하기" class="headerlink" title="다시 정렬하기"></a>다시 정렬하기</h3><p>스트래티지 패턴을 사용하여 위의 버블 정렬 구현을 다시 작성할 수 있다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BubbleSorter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> sortHandle: <span class="type">SortHandle!</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">init</span>(handle: <span class="type">SortHandle</span>) &#123;</span><br><span class="line">    sortHandle = handle</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">sort</span><span class="params">(array: <span class="keyword">inout</span> [<span class="keyword">Any</span>])</span></span> &#123;</span><br><span class="line">    <span class="comment">// 버블 정렬 알고리즘 구현</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SortHandle</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(at: Int)</span></span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">isOutOfOrder</span><span class="params">(at: Int)</span></span> -&gt; <span class="type">Bool</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">setArray</span><span class="params">(<span class="number">_</span>: [<span class="keyword">Any</span>])</span></span></span><br><span class="line">  <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IntSortHandle</span>: <span class="title">SortHandle</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> array = [<span class="type">Int</span>]()</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(at index: Int)</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">isOutOfOrder</span><span class="params">(at index: Int)</span></span> -&gt; <span class="type">Bool</span> &#123; ... &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">setArray</span><span class="params">(<span class="number">_</span> array: [<span class="keyword">Any</span>])</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="keyword">var</span> <span class="built_in">count</span>: <span class="type">Int</span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>BubbleSorter</code>는 일반적인 알고리즘을 구현하고, 이것이 호출해야 하는 메소드를 <code>SortHandle</code>에 위임한다.</p>
+<p><code>IntSortHandle</code> 클래스는 <code>BubbleSorter</code>에 대해 알지 못한다. 버블 정렬 구현에 의존하지 않는다. 그러므로 <code>IntSortHandle</code>은 <code>BubbleSorter</code>가 아닌 다른 정렬 방법 구현에서도 사용될 수 있다. 하지만 템플릿 메소드 패턴에서, 이 둘은 직접적인 연관 관계를 가지고 있었다. </p>
+<ul>
+<li>템플릿 메소드 패턴은, 특정한 일반적인 알고리즘이 많은 구체적인 구현을 조작할 수 있게 해준다.</li>
+<li>스트래티지 패턴은, 각각의 구체적인 구현이 다른 많은 일반적인 알고리즘에 의해 조작될 수 있게 해준다.<ul>
+<li>DIP를 준수하기 때문이다.</li>
+</ul>
+</li>
+</ul>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>템플릿 메소드 패턴과 스트래티지 패턴은 상위 단계의 알고리즘을 하위 단계의 구체적인 부분으로부터 분리해주는 역할을 하여, 상위 단계의 알고리즘이 구체적인 부분과 독립적으로 재사용될 수 있게 해준다.</p>
+<p>스트래티지 패턴은 DIP를 준수하여, 구체적인 부분이 상위 단계의 알고리즘으로부터 독립적으로 재사용될 수 있게 해준다.</p>
+<hr>
+<h4 id="추가"><a href="#추가" class="headerlink" title="추가"></a>추가</h4><p>템플릿 메소드 패턴은 동작 상의 알고리즘의 프로그램 뼈대를 정의한다. 알고리즘의 구조를 변경하지 않고 알고리즘의 특정 단계를 다시 정의할 수 있게 한다.</p>
+<p>일반적인 알고리즘을 정의한 상위 클래스와, 알고리즘의 각 단계를 정의한 하위 클래스가 상속 관계로 단단하게 묶여 있어, 알고리즘의 각 단계에 대한 구현을 재사용할 수 없다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AbstractClass</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">templateMethod</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    primitive1()</span><br><span class="line">    ...</span><br><span class="line">    primitive2()</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">primitive1</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">primitive2</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subclass1</span>: <span class="title">AbstractClass</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">primitive1</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">primitive2</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>스트래티지 패턴은 런타임에서 알고리즘을 선택할 수 있게 한다. 특정 계열의 알고리즘을 정의하고, 각 알고리즘을 캡슐화하며, 해당 계열 안에서 상호 교체가 가능하게 한다.</p>
+<p>스트래티지는 알고리즘을 사용하는 클라이언트와는 독립적으로 다양하게 만들어질 수 있다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Context</span> </span>&#123;</span><br><span class="line">  <span class="keyword">weak</span> <span class="keyword">var</span> strategy: <span class="type">Strategy!</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">init</span>(strategy: <span class="type">Strategy</span>) &#123;</span><br><span class="line">    <span class="keyword">self</span>.strategy = strategy</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">    strategy.execute()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Strategy1</span>: <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Strategy2</span>: <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">()</span></span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#템플릿-메소드와-스트래터지-패턴-상속과-위임"><span class="toc-number">1.</span> <span class="toc-text">템플릿 메소드와 스트래터지 패턴: 상속과 위임</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#템플릿-메소드-패턴"><span class="toc-number">1.1.</span> <span class="toc-text">템플릿 메소드 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#패턴-오용"><span class="toc-number">1.1.1.</span> <span class="toc-text">패턴 오용</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#버블-정렬"><span class="toc-number">1.1.2.</span> <span class="toc-text">버블 정렬</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스트래티지-패턴"><span class="toc-number">1.2.</span> <span class="toc-text">스트래티지 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#다시-정렬하기"><span class="toc-number">1.2.1.</span> <span class="toc-text">다시 정렬하기</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.3.</span> <span class="toc-text">결론</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#추가"><span class="toc-number">1.3.0.1.</span> <span class="toc-text">추가</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&text=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&is_video=false&description=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임&body=Check out this article: http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&title=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&name=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/%ED%81%B4%EB%A6%B0-%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4-%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%86%8C%EB%93%9C%EC%99%80-%EC%8A%A4%ED%8A%B8%EB%9E%98%ED%84%B0%EC%A7%80-%ED%8C%A8%ED%84%B4-%EC%83%81%EC%86%8D%EA%B3%BC-%EC%9C%84%EC%9E%84/&t=클린 소프트웨어 - 템플릿 메소드와 스트래터지 패턴: 상속과 위임" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

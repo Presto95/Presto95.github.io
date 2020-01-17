@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Customizing the Transition Animations원문 미리 요약 Transition Animation 커스터마이징은 많은 객체를 사용한다. Transitioning Delegate는 트랜지션 애니메이션과 커스텀 프레젠테이션의 시작점이다. UIViewControllerTransitioningDelegate 프로토콜을 채택하는 객체를 말한다.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations">
+<meta property="og:url" content="http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="Customizing the Transition Animations원문 미리 요약 Transition Animation 커스터마이징은 많은 객체를 사용한다. Transitioning Delegate는 트랜지션 애니메이션과 커스텀 프레젠테이션의 시작점이다. UIViewControllerTransitioningDelegate 프로토콜을 채택하는 객체를 말한다.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T12:24:14.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:26:39.513Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="transition">
+<meta property="article:tag" content="view controller">
+<meta property="article:tag" content="animation">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C-%EA%B0%95%EC%9D%98%EB%85%B8%ED%8A%B8-%EC%A0%95%EB%A6%AC-%EA%B0%9C%EC%9A%94/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/17/%EB%B2%88%EC%97%AD-Collection-View-Programming-Guide-for-iOS/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&text=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&is_video=false&description=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations&body=Check out this article: http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&name=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&t=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Customizing-the-Transition-Animations"><span class="toc-number">1.</span> <span class="toc-text">Customizing the Transition Animations</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Transition-Animation-Sequence"><span class="toc-number">1.2.</span> <span class="toc-text">The Transition Animation Sequence</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Transitioning-Delegate"><span class="toc-number">1.2.1.</span> <span class="toc-text">The Transitioning Delegate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Custom-Animation-Sequence"><span class="toc-number">1.2.2.</span> <span class="toc-text">The Custom Animation Sequence</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Transitioning-Context-Object"><span class="toc-number">1.2.3.</span> <span class="toc-text">The Transitioning Context Object</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Transition-Coordinator"><span class="toc-number">1.2.4.</span> <span class="toc-text">The Transition Coordinator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Presenting-a-View-Controller-Using-Custom-Animations"><span class="toc-number">1.3.</span> <span class="toc-text">Presenting a View Controller Using Custom Animations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implementing-the-Transitioning-Delegate"><span class="toc-number">1.4.</span> <span class="toc-text">Implementing the Transitioning Delegate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implementing-Your-Animator-Objects"><span class="toc-number">1.5.</span> <span class="toc-text">Implementing Your Animator Objects</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Getting-the-Animation-Parameters"><span class="toc-number">1.5.1.</span> <span class="toc-text">Getting the Animation Parameters</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        [번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T12:24:14.000Z" itemprop="datePublished">2020-01-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/animation/" rel="tag">animation</a>, <a class="tag-link" href="/tags/ios/" rel="tag">ios</a>, <a class="tag-link" href="/tags/transition/" rel="tag">transition</a>, <a class="tag-link" href="/tags/view-controller/" rel="tag">view controller</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Customizing-the-Transition-Animations"><a href="#Customizing-the-Transition-Animations" class="headerlink" title="Customizing the Transition Animations"></a>Customizing the Transition Animations</h1><p><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/CustomizingtheTransitionAnimations.html#//apple_ref/doc/uid/TP40007457-CH16-SW1" target="_blank" rel="noopener">원문</a></p>
+<h2 id="미리-요약"><a href="#미리-요약" class="headerlink" title="미리 요약"></a>미리 요약</h2><ul>
+<li>Transition Animation 커스터마이징은 많은 객체를 사용한다.</li>
+<li>Transitioning Delegate는 트랜지션 애니메이션과 커스텀 프레젠테이션의 시작점이다.<ul>
+<li><code>UIViewControllerTransitioningDelegate</code> 프로토콜을 채택하는 객체를 말한다.<ul>
+<li>애니메이터, 인터랙티브 애니메이터, 프레젠테이션 컨트롤러를 제공한다.</li>
+<li>반드시 애니메이터나 인터랙티브 애니메이터를 제공할 필요는 없으며, 제공하지 않는다면 내장된 것을 사용한다.</li>
+<li><code>modalPresentationStyle</code>이 <code>.custom</code>일 때만 프레젠테이션 컨트롤러를 사용한다.</li>
+</ul>
+</li>
+<li>애니메이션이 끝날 때 컨텍스트 트랜지셔닝 객체의 <code>completeTransition(_:)</code> 메소드를 호출해 주어야 한다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>트랜지션 애니메이션은 인터페이스에 변화에 대한 시각적 피드백을 제공한다. UIKit은 뷰 컨트롤러를 프레젠트하는 동안 사용하는 표준 트랜지션 스타일 집합을 제공하며, 커스텀 트랜지션을 적용하여 표준 트랜지션을 보충할 수 있다.</p>
+<h2 id="The-Transition-Animation-Sequence"><a href="#The-Transition-Animation-Sequence" class="headerlink" title="The Transition Animation Sequence"></a>The Transition Animation Sequence</h2><p>트랜지션 애니메이션은 한 뷰 컨트롤러의 컨텐츠와 다른 뷰 컨트롤러의 컨텐츠를 바꾼다. 트랜지션의 타입은 두 개, 프레젠테이션<em>presentation</em>과 디스미설<em>dismissal</em>이다. 프레젠테이션 트랜지션은 새로운 뷰 컨트롤러를 뷰 컨트롤러 계층에 추가하는 반면, 디스미설 트랜지션은 계층에서 한 개 이상의 뷰 컨트롤러를 제거한다.</p>
+<p>트랜지션 애니메이션을 구현하기 위해 많은 객체를 사용한다. UIKit은 트랜지션에 사용되는 모든 객체에 대한 디폴트 버전을 제공하며, 그 모두나 일부분을 커스터마이징할 수 있다. 올바른 객체 집합을 선택한다면, 적은 양의 코드를 작성하고 애니메이션을 만들 수 있어야 한다. 인터랙션을 포함하는 애니메이션조차도 UIKit이 제공하는 존재하는 코드의 이점을 취한다면 쉽게 구현할 수 있다.</p>
+<h3 id="The-Transitioning-Delegate"><a href="#The-Transitioning-Delegate" class="headerlink" title="The Transitioning Delegate"></a>The Transitioning Delegate</h3><p>트랜지셔닝 델리게이트는 트랜지션 애니메이션과 커스텀 프레젠테이션의 시작점이다. 트랜지셔닝 델리게이트는 <code>UIViewControllerTransitioningDelegate</code> 프로토콜을 준수하는 객체다. 이것의 임무는 UIKit에게 다음의 객체들을 제공하는 것이다.</p>
+<ul>
+<li><p><strong>애니메이셔 객체.</strong> 애니메이터 객체는 뷰 컨트롤러의 뷰를 드러내고 숨기기 위해 사용되는 애니메이션을 만드는 책임이 있다. .트랜지셔닝 델리게이트는 프레젠트하는 뷰 컨트롤러와 디스미스하는 뷰 컨트롤러를 위해 개별 애니메이터 객체를 제공할 수 있다. 애니메이터 객체는 <code>UIViewControllerAnimatedTransitioning</code> 프로토콜을 준수한다.</p>
+</li>
+<li><p><strong>인터랙티브 애니메이터 객체.</strong> 인터랙티브 애니메이터 객체는 터치 이벤트나 제스처 레코그나이저를 사용하여 커스텀 애니메이션의 타이밍을 조절한다. 인터랙티브 애니메이터 객체는 <code>UIViewControllerInteractiveTransitioning</code> 프로토콜을 준수한다.</p>
+<p>인터랙티브 애니메이터를 만들기 위한 가장 쉬운 방법은 <code>UIPercentDrivenInteractiveTransition</code> 클래스를 서브클래싱하고 이벤트를 처리하는 코드를 추가하는 것이다. 클래스는 존재하는 애니메이터 객체를 사용하기 위해 만들어진 애니메이션의 타이밍을 제어한다. 인터랙티브 애니메이터를 직접 만든다면, 당신이 애니메이션의 각 프레임을 반드시 렌더링해야 한다.</p>
+</li>
+<li><p><strong>프레젠테이션 컨트롤러.</strong> 프레젠테이션 컨트롤러는 뷰 컨트롤러가 화면에 올라오는 동안 프레젠테이션 스타일을 관리한다. 시스템은 내장된 프레젠테이션 스타일에 대한 프레젠테이션 컨트롤러를 제공하며, 커스텀 프레젠테이션 스타일에 대한 커스텀 프레젠테이션 컨트롤러를 제공할 수 있다. Creating Custom Presentations에서 커스텀 프레젠테이션 컨트롤러를 만드는 더 많은 정보를 확인하라..</p>
+</li>
+</ul>
+<p>트랜지셔닝 델리게이트를 뷰 컨트롤러의 <code>transitioningDelegate</code> 프로퍼티에 할당하여 UIKit에게 커스텀 트랜지션이나 프레젠테이션을 수행하기를 원한다고 알린다. 델리게이트는 어떤 객체를 제공할지에 대해 선택적일 수 있다. 애니메이터 객체를 제공하지 않는다면 UIKit은 뷰 컨트롤러의 <code>modalTransitionStyle</code> 프로퍼에 있는 표준 트랜지션 애니메이션을 사용한다.</p>
+<p>프레젠테이션 컨트롤러는 뷰 컨트롤러의 <code>modalPresentationStyle</code> 프로퍼티가 <code>UIModalPresentationStyle.custom</code>으로 설정되었을 때만 사용된다.</p>
+<p>Implementing the Transitioning Delegate에서 트랜지셔닝 델리게이트를 구현하는 방법에 대해 확인하라. UIViewControllerTransitioningDelegate 프로토콜 레퍼런스에서 트랜지셔닝 델리게이트 객체의 메소드에 대한 정보를 확인하라.</p>
+<h3 id="The-Custom-Animation-Sequence"><a href="#The-Custom-Animation-Sequence" class="headerlink" title="The Custom Animation Sequence"></a>The Custom Animation Sequence</h3><p>프레젠트되는 뷰 컨트롤러의 <code>transitioningDelegate</code> 프로퍼티가 유효한 객체를 가지고 있을 때, UIKit은 제공된 커스텀 애니메이터 객체를 사용하는 뷰 컨트롤러를 프레젠트한다. 프레젠테이션을 준비할 때 UIKit은 트랜지셔닝 델리게이트의 <code>animationCcontroller(_:forPresented:presenting:source:)</code> 메소드를 호출하여 커스텀 애니메이터 객체를 획득한다. 객체가 사용 가능하면 UIKit은 다음의 단계를 수행한다.</p>
+<ol>
+<li><p>UIKit은 트랜지셔닝 델리게이트의 <code>interactionControllerForPresentation(using:)</code> 메소드를 호출하여 인터랙티브 애니메이터 객체가 사용 가능한지 확인한다. 이 메소드가 <code>nil</code>을 반환한다면 UIKit은 유저 인터랙션이 없는 애니메이션을 수행한다.</p>
+</li>
+<li><p>UIKit은 애니메이터 객체의 <code>transitionDuration</code> 프로퍼티를 호출하여 애니메이션 기간을 얻는다.</p>
+</li>
+<li><p>UIKit은 애니메이션을 시작하기 위해 적절한 메소드를 호출한다.</p>
+<ul>
+<li>인터랙티브하지 않은 애니메이션에 대하여, UIKit은 애니메이터 객체의 <code>animateTransition(using:)</code> 메소드를 호출한다.</li>
+<li>인터랙티브 애니메이션에 대하여, UIKit은 인터랙티브 애니메이터 객체의 <code>startInteractiveTransition(_:)</code> 메소드를 호출한다.</li>
+</ul>
+</li>
+<li><p>UIKit은 애니메이터 객체가 컨텍스트 트랜지셔닝 객체의 <code>completeTransition(_:)</code> 메소드를 호출하기를 기다린다.</p>
+<p>커스텀 애니메이터는 애니메이션이 끝난 후 이 메소드를 호출하며, 일반적으로 애니메이션의 컴플리션 블록에서 호출한다. 이 메소드를 호출하여 트랜지션을 끝내며, UIKit에게 <code>present(_:animated:completion:)</code> 메소드의 컴플리션 핸들러와 애니메이터 객체의 <code>animationEnded(_:)</code> 메소드를 호출할 수 있게 되었다고 알릴 수 있게 된다.</p>
+</li>
+</ol>
+<p>뷰 컨트롤러를 디스미스할 때 UIKit은 트랜지셔닝 델리게이트의 <code>animationController(forDismissed:)</code>  메소드를 호출하고 다음의 단계를 수행한다.</p>
+<ol>
+<li><p>UIKit은 트랜지셔닝 델리게이트의 <code>interactionControllerForDismissal(using:)</code> 메소드를 호출하여 인터랙티브 애니메이터 객체가 사용 가능한지 확인한다. 이 메소드가 <code>nil</code>을 반환한다면 UIKit은 유저 인터랙션이 없는 애니메이션을 수행한다.</p>
+</li>
+<li><p>UIKit은 애니메이터 객체의 <code>transitionDuration</code> 프로퍼티를 호출하여 애니메이션 기간을 얻는다.</p>
+</li>
+<li><p>UIKit은 애니메이션을 시작하기 위해 적절한 메소드를 호출한다.</p>
+<ul>
+<li>인터랙티브하지 않은 애니메이션에 대하여, UIKit은 애니메이션 객체의 <code>animateTransition(using:)</code> 메소드를 호출한다.</li>
+<li>인터랙티브 애니메이션에 대하여, UIKit은 애니메이션 객체의 <code>startInteractiveTransition(_:)</code> 메소드를 호출한다.</li>
+</ul>
+</li>
+<li><p>UIKit은 애니메이터 객체가 컨텍스트 트랜지셔닝 객체의 <code>completeTransition(_:)</code> 메소드를 호출하기를 기다린다.</p>
+<p>커스텀 애니메이터는 애니메이션이 끝난 후 이 메소드를 호출하며, 일반적으로 애니메이션의 컴플리션 블록에서 호출한다. 이 메소드를 호출하여 트랜지션을 끝내며, UIKit에게 <code>present(_:animated:completion:)</code> 메소드의 컴플리션 핸들러와 애니메이터 객체의 <code>animationEnded(_:)</code> 메소드를 호출할 수 있게 되었다고 알릴 수 있게 된다.</p>
+</li>
+</ol>
+<p><strong>중요</strong> : 애니메이션의 끝에 <code>completeTransition(_:)</code> 메소드를 호출하는 것은 필수적이다. UIKit은 트랜지션 프로세스를 종료하지 않으므로, 그 메소드를 호출할 때까지 앱에 제어권을 반환한다.</p>
+<h3 id="The-Transitioning-Context-Object"><a href="#The-Transitioning-Context-Object" class="headerlink" title="The Transitioning Context Object"></a>The Transitioning Context Object</h3><p>트랜지션 애니메이션이 시작하기 전, UIKit은 트랜지셔닝 컨텍스트 객체를 만들고 애니메이션이 어떻게 수행되어야 하는지에 대한 정보로 이를 채운다. 트랜지셔닝 컨텍스트 객체는 코드에서 중요한 부분이 된다. 이는 <code>UIViewControllerContextTransitioning</code> 프로토콜을 구현하며 트랜지션에 포함되는 뷰 컨트롤러들과 뷰들에 대한 참조를 저장한다. 또한 애니메이션이 인터랙티브한지에 대한 것과 더불어, 어떻게 트랜지션을 수행해야 하는지에 대한 정보도 저장한다. 애니메이터 객체는 실제 애니메이션을 설정하고 수행하기 위해 이 모든 정보를 필요로 한다.</p>
+<p><strong>중요</strong> : 커스텀 애니메이션을 설정할 때, 직접 관리하는 캐싱된 정보 대신에 항상 트랜지셔닝 컨텍스트 객체에 있는 객체와 데이터를 사용하라. 트랜지션은 다양한 조건에서 발생할 수 있으며, 몇몇은 애니메이션 파라미터를 변경할 수 있다. 트랜지셔닝 컨텍스트 객체는 애니메이션을 수행하기 위해 필요로 하는 올바른 정보를 가지고 있음을 보장하는 반면, 직접 캐싱한 정보는 애니메이터 메소드가 호출되는 때 무렵에는 오래되어 있을 수 있다.</p>
+<p>애니메이터 객체는 <code>animateTransition(using:)</code> 메소드에 있는 객체를 받는다. 애니메이션은 제공된 컨테이너 뷰에서 발생해야 한다. 예를 들어 뷰 컨트롤러가 프레젠트될 때 뷰를 컨테이너 뷰의 서브뷰로 추가하라. 컨테이너 뷰는 윈도우나 일반적인 뷰일 수 있으나, 항상 애니메이션을 실행하기 위해 구성되어야 한다.</p>
+<p>UIViewControllerContextTransitioning 프로토콜 레퍼런스에서 트랜지셔닝 컨텍스트 객체에 대한 더 많은 정보를 확인하라.</p>
+<h3 id="The-Transition-Coordinator"><a href="#The-Transition-Coordinator" class="headerlink" title="The Transition Coordinator"></a>The Transition Coordinator</h3><p>내장 트랜지션과 커스텀 트랜지션 모두에 대하여, UIKit은 수행할 필요가 있을 수 있는 여분의 애니메이션을 촉진시키기 위해 트랜지션 코디네이터 객체를 만든다. 뷰 컨트롤러의 프레젠테이션과 디스미설을 벗어나, 트랜지션은 인터페이스 회전이 발생하거나 뷰 컨트롤러의 프레임이 바뀌었을 때 발생할 수 있다. 이러한 모든 트랜지션들은 뷰 계층의 변화를 나타낸다. 트랜지션 코디네이터는 이러한 변화를 추적하고 같은 시간에 컨텐츠를 애니메이팅하는 방법이다. 트랜지션 코디네이터에 접근하기 위해 영향을 받는 뷰 컨트롤러의 <code>transitionCoordinator</code> 프로퍼티에서 객체를 얻는다. 트랜지션 코디네이터는 트랜지션 기간 동안에만 존재한다.</p>
+<p>트랜지션에 대한 정보를 얻기 위해, 트랜지션 애니메이션이 일어나는 것과 함께 수행되기 원하는 애니메이션 블록을 등록하기 위해 트랜지션 코디네이터를 사용하라. 트랜지션 코디네이터는 <code>UIViewControllerTransitionCoordinatorContext</code> 프로토콜을 준수하는 객체이며, 이는 타이밍 정보, 애니메이션의 현재 상태에 대한 정보, 트랜지션에 포함된 뷰와 뷰 컨트롤러들을 제공한다. 애니메이션 블록이 수행될 때, 또한 같은 정보를 갖는 컨텍스트 객체를 받는다.</p>
+<p>UIViewControllerTransitionCoordinator 프로토콜 레퍼런스에서 트랜지션 코디네이터 객체에 대한 더 많은 정보를 확인하라. UIViewControllerTransitionCoordinatorContext 프로토콜 레퍼런스에서 애니메이션을 구성하기 위해 사용할 수 있는 컨텍스트 관련 정보를 확인하라.</p>
+<h2 id="Presenting-a-View-Controller-Using-Custom-Animations"><a href="#Presenting-a-View-Controller-Using-Custom-Animations" class="headerlink" title="Presenting a View Controller Using Custom Animations"></a>Presenting a View Controller Using Custom Animations</h2><p>커스텀 애니메이션을 사용하여 뷰 컨트롤러를 프레젠트할 때, 존재하는 뷰 컨트롤러의 액션 메소드를 따라서 수행하라.</p>
+<ol>
+<li>프레젠트하기 원하는 뷰 컨트롤러를 만든다.</li>
+<li>커스텀 트랜지셔닝 델리게이트 객체를 만들고 뷰 컨트롤러의 <code>transitioningDelegate</code> 프로퍼티에 할당한다. 트랜지셔닝 델리게이트의 메소드들은 요청받을 때 커스텀 애니메이터 객체를 만들고 반환할 수 있어야 한다.</li>
+<li>뷰 컨트롤러를 프레젠트하기 위해 <code>present(_:animated:completion:)</code> 메소드를 호출한다.</li>
+</ol>
+<p><code>present(_:animated:completion:)</code> 메소드를 호출할 때, UIKit은 프레젠테이션 프로세스를 개시한다. 프레젠테이션은 다음 런 루프 반복 동안 시작하며, 커스텀 애니메이터가 <code>completeTransition(_:)</code> 메소드를 호출할 때까지 지속한다. 인터랙티브 트랜지션은 트랜지션이 진행 중인 동안에 터치 이벤트를 처리할 수 있게 해준다. 하지만 인터랙티브하지 않은 트랜지션은 애니메이터 객체가 지정한 기간 동안 실행된다. </p>
+<h2 id="Implementing-the-Transitioning-Delegate"><a href="#Implementing-the-Transitioning-Delegate" class="headerlink" title="Implementing the Transitioning Delegate"></a>Implementing the Transitioning Delegate</h2><p>트랜지셔닝 델리게이트의 목적은 커스텀 객체를 만들고 반환하는 것이다. 실제 작업의 대부분은 애니메이터 객체 자체에서 처리된다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">animationController</span><span class="params">(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController)</span></span> -&gt; <span class="type">UIViewControllerAnimatedTransitioning?</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> animator = <span class="type">MyAnimator</span>()</span><br><span class="line">  <span class="keyword">return</span> animator</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>트랜지셔닝 델리게이트의 다른 메소드들은 이전 예제처럼 단순하게 구현될 수 있다. 앱의 현재 상태에 기반하여 다른 애니메이터 객체를 반환하기 위한 커스텀 로직을 작성할 수도 있다. UIViewControllerTransitioningDelegate 프로토콜 레퍼런스에서 트랜지셔닝 델리게이트의 메소드들에 관한 더 많은 정보를 확인하라.</p>
+<h2 id="Implementing-Your-Animator-Objects"><a href="#Implementing-Your-Animator-Objects" class="headerlink" title="Implementing Your Animator Objects"></a>Implementing Your Animator Objects</h2><p>애니메이터 객체는 <code>UIViewControllerAnimatedTransitioning</code> 프로토콜을 채택하는 객체다. 애니메이터 객체는 일정 시간 동안 실행되는 애니메이션을 만든다. 애니메이터 객체의 키는 <code>animateTransition(using:)</code> 메소드다. 실제 애니메이션을 만들기 위해 이 메소드를 사용한다. 애니메이션 프로세스는 대략 다음의 구획들로 나누어진다.</p>
+<ol>
+<li>애니메이션 파라미터를 얻는다.</li>
+<li>Core Animation이나 <code>UIView</code> 애니메이션 메소드를 사용하여 애니메이션을 만든다.</li>
+<li>트랜지션을 정리하고 완료한다.</li>
+</ol>
+<h3 id="Getting-the-Animation-Parameters"><a href="#Getting-the-Animation-Parameters" class="headerlink" title="Getting the Animation Parameters"></a>Getting the Animation Parameters</h3>
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Customizing-the-Transition-Animations"><span class="toc-number">1.</span> <span class="toc-text">Customizing the Transition Animations</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Transition-Animation-Sequence"><span class="toc-number">1.2.</span> <span class="toc-text">The Transition Animation Sequence</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Transitioning-Delegate"><span class="toc-number">1.2.1.</span> <span class="toc-text">The Transitioning Delegate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Custom-Animation-Sequence"><span class="toc-number">1.2.2.</span> <span class="toc-text">The Custom Animation Sequence</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Transitioning-Context-Object"><span class="toc-number">1.2.3.</span> <span class="toc-text">The Transitioning Context Object</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Transition-Coordinator"><span class="toc-number">1.2.4.</span> <span class="toc-text">The Transition Coordinator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Presenting-a-View-Controller-Using-Custom-Animations"><span class="toc-number">1.3.</span> <span class="toc-text">Presenting a View Controller Using Custom Animations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implementing-the-Transitioning-Delegate"><span class="toc-number">1.4.</span> <span class="toc-text">Implementing the Transitioning Delegate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implementing-Your-Animator-Objects"><span class="toc-number">1.5.</span> <span class="toc-text">Implementing Your Animator Objects</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Getting-the-Animation-Parameters"><span class="toc-number">1.5.1.</span> <span class="toc-text">Getting the Animation Parameters</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&text=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&is_video=false&description=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations&body=Check out this article: http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&title=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&name=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/17/%EB%B2%88%EC%97%AD-View-Controller-Programming-Guide-for-iOS-Presentations-and-Transitions-Customizing-the-Transition-Animations/&t=[번역] View Controller Programming Guide for iOS - Presentations and Transitions - Customizing the Transition Animations" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>
