@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="The Role of View Controllers원문 미리 요약 뷰 컨트롤러는 앱 내부 구조의 기반이다. 모든 앱은 적어도 하나의 뷰 컨트롤러를 가지고 있으며, 대부분은 여러 개를 가지고 있다. 각각의 뷰 컨트롤러는 앱의 유저 인터페이스의 일부분뿐만 아니라 인터페이스와 기반 데이터와의 인터랙션도 관리한다. 뷰 컨트롤러는 또한 유저 인터페이스의 다른 부분">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers">
+<meta property="og:url" content="http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="The Role of View Controllers원문 미리 요약 뷰 컨트롤러는 앱 내부 구조의 기반이다. 모든 앱은 적어도 하나의 뷰 컨트롤러를 가지고 있으며, 대부분은 여러 개를 가지고 있다. 각각의 뷰 컨트롤러는 앱의 유저 인터페이스의 일부분뿐만 아니라 인터페이스와 기반 데이터와의 인터랙션도 관리한다. 뷰 컨트롤러는 또한 유저 인터페이스의 다른 부분">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-19T14:45:52.000Z">
+<meta property="article:modified_time" content="2020-01-19T14:45:52.454Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="view controller">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-and-transitions-creating-custom-presentations/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&text=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&is_video=false&description=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers&body=Check out this article: http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&name=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&t=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#The-Role-of-View-Controllers"><span class="toc-number">1.</span> <span class="toc-text">The Role of View Controllers</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Management"><span class="toc-number">1.2.</span> <span class="toc-text">View Management</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-Marshaling"><span class="toc-number">1.3.</span> <span class="toc-text">Data Marshaling</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#User-Interactions"><span class="toc-number">1.4.</span> <span class="toc-text">User Interactions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resource-Management"><span class="toc-number">1.5.</span> <span class="toc-text">Resource Management</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Adaptivity"><span class="toc-number">1.6.</span> <span class="toc-text">Adaptivity</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        [번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-19T14:45:52.000Z" itemprop="datePublished">2020-01-19</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ios/" rel="tag">ios</a>, <a class="tag-link" href="/tags/view-controller/" rel="tag">view controller</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="The-Role-of-View-Controllers"><a href="#The-Role-of-View-Controllers" class="headerlink" title="The Role of View Controllers"></a>The Role of View Controllers</h1><p><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/index.html#//apple_ref/doc/uid/TP40007457-CH2-SW1" target="_blank" rel="noopener">원문</a></p>
+<h2 id="미리-요약"><a href="#미리-요약" class="headerlink" title="미리 요약"></a>미리 요약</h2><hr>
+<p>뷰 컨트롤러는 앱 내부 구조의 기반이다. 모든 앱은 적어도 하나의 뷰 컨트롤러를 가지고 있으며, 대부분은 여러 개를 가지고 있다. 각각의 뷰 컨트롤러는 앱의 유저 인터페이스의 일부분뿐만 아니라 인터페이스와 기반 데이터와의 인터랙션도 관리한다. 뷰 컨트롤러는 또한 유저 인터페이스의 다른 부분 간의 트랜지션을 촉진시킨다.</p>
+<p>이들이 앱에서 그러한 중요한 역할을 맡기 때문에 뷰 컨트롤러는 하려는 거의 모든 것의 중심이 된다. <code>UIViewController</code> 클래스는 뷰를 관리하고, 이벤트를 처리하고, 뷰 컨트롤러를 다른 것으로 트랜지션하고, 앱의 다른 부분과 코디네이팅하는 메소드와 프로퍼티를 정의한다. <code>UIViewController</code> 또는 그 서브클래스를 서브클래싱하고 커스텀 코드를 작성하여 앱의 동작을 구현할 필요가 있다.</p>
+<p>뷰 컨트롤러에는 두 가지 타입이 있다.</p>
+<ul>
+<li><em>컨텐트 뷰 컨트롤러</em>는 앱 컨텐츠의 별개의 조각을 관리하며, 만드는 뷰 컨트롤러의 주요 타입이다.</li>
+<li><em>컨테이너 뷰 컨트롤러</em>는 <em>자식 뷰 컨트롤러</em>라고 불리는 다른 뷰 컨트롤러에서 정보를 수집하여, 내비게이션을 촉진시키거나 뷰 컨트롤러의 컨텐트를 다르게 나타내는 방법으로 프레젠트한다.</li>
+</ul>
+<p>대부분의 앱은 두 가지 종류의 뷰 컨트롤러를 혼합한다.</p>
+<h2 id="View-Management"><a href="#View-Management" class="headerlink" title="View Management"></a>View Management</h2><p>뷰 컨트롤러의 가장 중요한 역할은 뷰의 계층을 관리하는 것이다. 모든 뷰 컨트롤러는 모든 뷰 컨트롤러의 컨텐트를 포함하는 하나의 루트 뷰를 가지고 있다. 이 루트 뷰에서 컨텐츠를 표시하기 위해 필요한 뷰를 추가한다. 뷰 컨트롤러는 항상 루트 뷰에 대한 참조를 가지고 있으며 각 뷰는 그 서브뷰들에 대한 강한 참조를 가지고 있다.</p>
+<p><strong>알아두기</strong> : 뷰 컨트롤러의 뷰 계층에 있는 다른 뷰들에 접근하기 위해 아울렛을 사용하는 것은 일반적인 관행이다. 뷰 컨트롤러는 모든 뷰들의 컨텐트를 관리하기 때문에 아울렛은 필요한 뷰들에 대한 참조를 저장할 수 있게 해준다. 아울렛 자체는 뷰가 스토리보드에서 로드될 때 자동으로 실제 객체와 연결된다.</p>
+<p>컨텐트 뷰 컨트롤러는 그 자체가 모든 뷰들을 관리한다. 컨테이너 뷰 컨트롤러는 그 뷰들에 더하여 하나 이상의 자식 뷰 컨트롤러의 루트 뷰를 관리한다. 컨테이너는 자식의 컨텐트를 관리하지 않는다. 오직 루트 뷰만 관리하며, 컨테이너의 디자인에 따라 크기와 위치를 조절한다. 예를 들어 스플릿 뷰 컨트롤러는 자식 뷰의 전체 크기와 위치를 관리하지만, 자식 뷰 컨트롤러는 그러한 뷰들의 실제 컨텐트를 관리한다.</p>
+<p>Managing View Layout에서 뷰 컨트롤러의 뷰를 관리하는 것에 관한 정보를 확인하라.</p>
+<h2 id="Data-Marshaling"><a href="#Data-Marshaling" class="headerlink" title="Data Marshaling"></a>Data Marshaling</h2><p>뷰 컨트롤러는 관리하는 뷰와 앱의 데이터 사이의 중재자 역할을 한다. <code>UIViewController</code> 클래승의 메소드와 프로퍼티는 앱의 시각적 표현을 관리할 수 있게 해준다. <code>UIViewController</code>를 서브클래싱할 때 서브클래스에서 데이터를 관리하기 위해 필요한 변수들을 추가한다. 커스텀 변수를 추가하여 데이터에 대한 참조와 데이터를 나타내기 위한 뷰에 대한 참조를 만들 수 있다. 그 둘 사이에서 데이터를 주고받는 것은 당신의 책임이다.</p>
+<p>뷰 컨트롤러와 데이터 객체에서 책임 분리를 항상 확실하게 유지해야 한다. 데이터 구조의 무결성을 보장하는 대부분의 로직은 데이터 객체 자체에 속한다. 뷰 컨트롤러는 뷰에서 오는 입력을 검증하고 그 입력을 데이터 객체가 요구하는 포맷으로 포장할 수 있지만, 실제 데이터를 관리하는 것에 있어서 뷰 컨트롤러의 역할을 최소화해야 한다.</p>
+<p><code>UIDocument</code> 객체는 뷰 컨트롤러에서 데이터를 분리시켜 관리하는 한 방법이다. 도큐먼트 객체는 영속성 있는 저장소에서 데이터를 읽고 쓰는 방법을 알고 있는 컨트롤러 객체다. 서브클래싱할 때 데이터를 추출하고 그것을 뷰 컨트롤러나 앱의 다른 부분에 전달하기 위해 필요한 로직과 메소드 무엇이든 추가할 수 있다. 뷰 컨트롤러는 뷰 갱신을 더 쉽게 하기 위해 전달받은 데이터의 복사본을 저장할 수 있지만 여전히 도큐먼트가 진짜 데이터를 가지고 있다.</p>
+<h2 id="User-Interactions"><a href="#User-Interactions" class="headerlink" title="User Interactions"></a>User Interactions</h2><p>뷰 컨트롤러는 리스폰더 객체이며 리스폰더 체인을 통해 내려오는 이벤트를 처리할 능력이 있다. 그렇게 할 수 있을지라도, 뷰 컨트롤러는 거의 터치 이벤트를 직접 처리하지 않는다. 대신 보통 뷰가 그 자신에 대한 터치 이벤트를 처리하고 결과를 관련 델리게이트의 메소드나 타겟 객체에 보고한다. 그러므로 뷰 컨트롤러에서 일어나는 대부분의 이벤트는 델리게이트 메소드나 액션 메소드를 사용하여 처리된다.</p>
+<p>Handling User Interactions에서 뷰 컨트롤러에서 액션 메소드를 구현하는 것에 관한 정보를 확인하라. Event Handling Guide for iOS에서 다른 타입의 이벤트들을 처리하는 것에 관한 정보를 확인하라.</p>
+<h2 id="Resource-Management"><a href="#Resource-Management" class="headerlink" title="Resource Management"></a>Resource Management</h2><p>뷰 컨트롤러는 그 뷰들과 만들어낸 객체들에 대한 모든 책임을 떠맡는다. <code>UIViewController</code> 클래스는 뷰 관리의 대부분의 양상을 자동으로 처리한다. 예를 들어 UIKit은 더이상 필요하지 않은 뷰와 관련된 리소스를 자동으로 릴리즈한다. <code>UIViewController</code> 서브클래스에서 명시적으로 만들어낸 객체를 관리하는 것은 당신의 책임이다.</p>
+<p>사용 가능한 메모리가 적어질 때 UIKit은 더이상 필요하지 않는 리소스를 해제할 것을 앱에게 요청한다. 이를 하는 한 가지 방법은 뷰 컨트롤러의 <code>didReceiveMemoryWarning()</code> 메소드를 호출하는 것이다. 이 메소드를 사용하여 더이상 필요하지 않거나 나중에 쉽게 다시 만들어질 수 있는 객체에 대한 참조를 제거하라. 예를 들어 이 메소드를 사용하여 캐시된 데이터를 제거할 수 있을 것이다. 메모리가 적어진 상태가 발생할 때 가능한 한 많은 메모리를 릴리즈하는 것이 중요하다. 너무 많은 메모리를 소비하는 앱은 메모리를 복구하기 위해 시스템에 의해 완전하게 종료될 수 있다.</p>
+<h2 id="Adaptivity"><a href="#Adaptivity" class="headerlink" title="Adaptivity"></a>Adaptivity</h2><p>뷰 컨트롤러는 뷰의 프레젠테이션에 대한 책임이 있고, 기반 환경과 맞추기 위해 그 프레젠테이션을 조절할 책임이 있다. 모든 iOS 앱은 iPad와 iPhone의 다른 크기들에서 작동할 수 있어야 한다. 각 디바이스마다 다른 뷰 컨트롤러와 뷰 계층을 제공하는 대신, 공간 요구사항을 변경하기 위해 뷰를 조절하는 하나의 뷰 컨트롤러를 사용하는 것이 더 간단하다.</p>
+<p>iOS에서 뷰 컨트롤러는 거칠고 세부적인 변경을 처리할 필요가 있다. 거친 변경은 뷰 컨트롤러의 trait가 변화할 때 발생한다. Trait는 디스플레이 스케일과 같은 전체 환경을 나타내는 특성을 말한다. 가장 중요한 trait 중 두 개는 뷰 컨트롤러의 수평 및 수직 사이즈 클래스다. 이들은 주어진 치수에서 뷰 컨트롤러가 얼마나 많은 공간을 가지고 있는지 알려준다. 사이즈 클래스의 변화를 사용하여 뷰를 레이아웃하는 방법을 변경할 수 있다. 수평 사이즈 클래스가 <em>레귤러</em>일 때 뷰 컨트롤러는 컨텐트를 정렬하기 위해 여분의 수평 공간의 이점을 취할 수 있다. 수평 사이즈 클래스가 <em>컴팩트</em>일 때 뷰 컨트롤러는 컨텐트를 수직 방향으로 정렬할 수 있을 것이다.</p>
+<p>주어진 사이즈 클래스에서 언제든지 더 세부적인 크기 변경이 일어날 수 있다. 사용자가 iPhone을 세로 방향에서 가로 방향으로 회전할 때 사이즈 클래스는 변화하지 않지만 보통 스크린 치수는 변화한다. 오토 레이아웃을 사용할 때 UIKit은 새로운 치수에 맞추기 위해 뷰의 크기와 위치를 자동으로 조절해준다. 뷰 컨트롤러는 필요하다면 추가적인 조절을 할 수 있다.</p>
+<p>The Adaptive model에서 적응성과 관련된 더 많은 정보를 확인하라.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#The-Role-of-View-Controllers"><span class="toc-number">1.</span> <span class="toc-text">The Role of View Controllers</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#View-Management"><span class="toc-number">1.2.</span> <span class="toc-text">View Management</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-Marshaling"><span class="toc-number">1.3.</span> <span class="toc-text">Data Marshaling</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#User-Interactions"><span class="toc-number">1.4.</span> <span class="toc-text">User Interactions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resource-Management"><span class="toc-number">1.5.</span> <span class="toc-text">Resource Management</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Adaptivity"><span class="toc-number">1.6.</span> <span class="toc-text">Adaptivity</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&text=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&is_video=false&description=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers&body=Check out this article: http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&title=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&name=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/&t=[번역] View Controller Programming Guide for iOS - Overview - The Role of View Controllers" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>
