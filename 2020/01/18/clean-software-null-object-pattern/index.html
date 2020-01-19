@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="널 오브젝트 패턴널 오브젝트 패턴을 사용하면 null 검사의 필요를 제거하고, 코드를 단순화할 수 있다. protocol Employee &amp;#123; ... &amp;#125;class NullEmployee: Employee &amp;#123; ... &amp;#125;class EmployeeImplementation: Employee &amp;#123; ... &amp;#125;  le">
+<meta property="og:type" content="article">
+<meta property="og:title" content="클린 소프트웨어 - 널 오브젝트 패턴">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="널 오브젝트 패턴널 오브젝트 패턴을 사용하면 null 검사의 필요를 제거하고, 코드를 단순화할 수 있다. protocol Employee &amp;#123; ... &amp;#125;class NullEmployee: Employee &amp;#123; ... &amp;#125;class EmployeeImplementation: Employee &amp;#123; ... &amp;#125;  le">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:40:31.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:40:59.811Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="software engineering">
+<meta property="article:tag" content="clean software">
+<meta property="article:tag" content="design pattern">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>클린 소프트웨어 - 널 오브젝트 패턴</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/yagom-swift-programming-object-oriented-programming-and-swift/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/clean-software-singleton-and-monospace-pattern/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&text=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&is_video=false&description=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 널 오브젝트 패턴&body=Check out this article: http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&name=클린 소프트웨어 - 널 오브젝트 패턴&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&t=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#널-오브젝트-패턴"><span class="toc-number">1.</span> <span class="toc-text">널 오브젝트 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.1.</span> <span class="toc-text">결론</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        클린 소프트웨어 - 널 오브젝트 패턴
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:40:31.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Software-Engineering/">Software Engineering</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/clean-software/" rel="tag">clean software</a>, <a class="tag-link" href="/tags/design-pattern/" rel="tag">design pattern</a>, <a class="tag-link" href="/tags/software-engineering/" rel="tag">software engineering</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="널-오브젝트-패턴"><a href="#널-오브젝트-패턴" class="headerlink" title="널 오브젝트 패턴"></a>널 오브젝트 패턴</h1><p>널 오브젝트 패턴을 사용하면 <code>null</code> 검사의 필요를 제거하고, 코드를 단순화할 수 있다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Employee</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NullEmployee</span>: <span class="title">Employee</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EmployeeImplementation</span>: <span class="title">Employee</span> </span>&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> employee: <span class="type">Employee</span> = <span class="type">DB</span>.getEmployee(<span class="string">"Bob"</span>)</span><br><span class="line"><span class="keyword">if</span> employee.isTimeToPay &#123;</span><br><span class="line">  employee.pay()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위의 코드에서, <code>DB.getEmployee(_:)</code> 메소드는 주어진 인자에 맞는 데이터가 있을 때는 <code>EmployeeImplementation</code> 객체를, 그렇지 않을 때는 <code>NullEmployee</code> 객체를 반환한다. <code>NullEmployee</code>의 구현은 ‘아무 일’도 하지 않게 한다. ‘아무 일’이라는 것은 메소드의 구현에 달려 있다. 이러한 구조로 <code>null</code> 생성을 대체할 수 있다.</p>
+<p><code>null</code> 체크를 하는 대신, 언제나 올바른 동작을 하도록 보장할 수 있다.</p>
+<blockquote>
+<p>Swift는 옵셔널을 지원하여 null 체크를 쉽게 할 수 있다.</p>
+</blockquote>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>C 기반 언어를 사용해온 사람에게, 어떤 종류의 실패에 대해 <code>null</code>이나 <code>0</code>을 반환하는 함수에 익숙하므로 이러한 것들을 체크하여 실패 여부를 확인하는 것에 익숙하다.</p>
+<p>널 오브젝트 패턴을 사용하면 함수가 실패한 경우에  <code>null</code>이나 <code>0</code>을 반환하거나, 에러를 던지는 대신, 항상 유효한 객체를 반환하는 것을 보장할 수 있다. 실패를 나타내는 객체는 ‘아무 일도’ 하지 않는다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#널-오브젝트-패턴"><span class="toc-number">1.</span> <span class="toc-text">널 오브젝트 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.1.</span> <span class="toc-text">결론</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&text=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&is_video=false&description=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 널 오브젝트 패턴&body=Check out this article: http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&title=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&name=클린 소프트웨어 - 널 오브젝트 패턴&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/clean-software-null-object-pattern/&t=클린 소프트웨어 - 널 오브젝트 패턴" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

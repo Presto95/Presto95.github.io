@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="부록스위프트의 주요 프로토콜   프로토콜 이름 설명    AnyObject 모든 클래스 타입이 암시적으로 준수   CustomStringConvertible description 프로퍼티를 재정의하여 사용자 정의 텍스트 표현을 할 수 있게 함   Equatable &#x3D;&#x3D; &#x2F; !&#x3D; 연산자를 사용하여 값이 동일한지 판단할 수 있는 타입&#x3D;&#x3D; 연산자를 구현해주어야">
+<meta property="og:type" content="article">
+<meta property="og:title" content="야곰의 스위프트 프로그래밍 - 부록">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="부록스위프트의 주요 프로토콜   프로토콜 이름 설명    AnyObject 모든 클래스 타입이 암시적으로 준수   CustomStringConvertible description 프로퍼티를 재정의하여 사용자 정의 텍스트 표현을 할 수 있게 함   Equatable &#x3D;&#x3D; &#x2F; !&#x3D; 연산자를 사용하여 값이 동일한지 판단할 수 있는 타입&#x3D;&#x3D; 연산자를 구현해주어야">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:49:22.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:49:34.877Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="swift">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>야곰의 스위프트 프로그래밍 - 부록</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/yagom-swift-programming-swift-advanced/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/yagom-swift-programming-object-oriented-programming-and-swift/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&text=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&is_video=false&description=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=야곰의 스위프트 프로그래밍 - 부록&body=Check out this article: http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&name=야곰의 스위프트 프로그래밍 - 부록&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&t=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#부록"><span class="toc-number">1.</span> <span class="toc-text">부록</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#스위프트의-주요-프로토콜"><span class="toc-number">1.1.</span> <span class="toc-text">스위프트의 주요 프로토콜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스위프트의-주요-함수"><span class="toc-number">1.2.</span> <span class="toc-text">스위프트의 주요 함수</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#abs"><span class="toc-number">1.2.1.</span> <span class="toc-text">abs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#assert"><span class="toc-number">1.2.2.</span> <span class="toc-text">assert</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#assertFailure"><span class="toc-number">1.2.3.</span> <span class="toc-text">assertFailure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#debugPrint"><span class="toc-number">1.2.4.</span> <span class="toc-text">debugPrint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dump"><span class="toc-number">1.2.5.</span> <span class="toc-text">dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fatalError"><span class="toc-number">1.2.6.</span> <span class="toc-text">fatalError</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getVaList"><span class="toc-number">1.2.7.</span> <span class="toc-text">getVaList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#max"><span class="toc-number">1.2.8.</span> <span class="toc-text">max</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#min"><span class="toc-number">1.2.9.</span> <span class="toc-text">min</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#numericCast"><span class="toc-number">1.2.10.</span> <span class="toc-text">numericCast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#precondition"><span class="toc-number">1.2.11.</span> <span class="toc-text">precondition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#preconditionFailure"><span class="toc-number">1.2.12.</span> <span class="toc-text">preconditionFailure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#print"><span class="toc-number">1.2.13.</span> <span class="toc-text">print</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#readLine"><span class="toc-number">1.2.14.</span> <span class="toc-text">readLine</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#repeatElement"><span class="toc-number">1.2.15.</span> <span class="toc-text">repeatElement</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swap"><span class="toc-number">1.2.16.</span> <span class="toc-text">swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#transcode"><span class="toc-number">1.2.17.</span> <span class="toc-text">transcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type"><span class="toc-number">1.2.18.</span> <span class="toc-text">type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unsafeBitCast"><span class="toc-number">1.2.19.</span> <span class="toc-text">unsafeBitCast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unsafeDownCast"><span class="toc-number">1.2.20.</span> <span class="toc-text">unsafeDownCast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#withoutActuallyEscaping"><span class="toc-number">1.2.21.</span> <span class="toc-text">withoutActuallyEscaping</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#withVaList"><span class="toc-number">1.2.22.</span> <span class="toc-text">withVaList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zip"><span class="toc-number">1.2.23.</span> <span class="toc-text">zip</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스위프트의-예약어"><span class="toc-number">1.3.</span> <span class="toc-text">스위프트의 예약어</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#예약어"><span class="toc-number">1.3.1.</span> <span class="toc-text">예약어</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#키워드"><span class="toc-number">1.3.2.</span> <span class="toc-text">키워드</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#디버깅-식별자"><span class="toc-number">1.4.</span> <span class="toc-text">디버깅 식별자</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#컴파일러-제어-구문"><span class="toc-number">1.5.</span> <span class="toc-text">컴파일러 제어 구문</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#조건부-컴파일-블록"><span class="toc-number">1.5.1.</span> <span class="toc-text">조건부 컴파일 블록</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#라인-제어-구문"><span class="toc-number">1.5.2.</span> <span class="toc-text">라인 제어 구문</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#사용-가능-조건-확인"><span class="toc-number">1.6.</span> <span class="toc-text">사용 가능 조건 확인</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#속성"><span class="toc-number">1.7.</span> <span class="toc-text">속성</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#선언-속성"><span class="toc-number">1.7.1.</span> <span class="toc-text">선언 속성</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#available"><span class="toc-number">1.7.1.1.</span> <span class="toc-text">available</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#discardableResult"><span class="toc-number">1.7.1.2.</span> <span class="toc-text">discardableResult</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objc"><span class="toc-number">1.7.1.3.</span> <span class="toc-text">objc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nonobjc"><span class="toc-number">1.7.1.4.</span> <span class="toc-text">nonobjc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#testable"><span class="toc-number">1.7.1.5.</span> <span class="toc-text">testable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objcMembers"><span class="toc-number">1.7.1.6.</span> <span class="toc-text">objcMembers</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#타입-속성"><span class="toc-number">1.7.2.</span> <span class="toc-text">타입 속성</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#autoclosure"><span class="toc-number">1.7.2.1.</span> <span class="toc-text">autoclosure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#convention"><span class="toc-number">1.7.2.2.</span> <span class="toc-text">convention</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#escaping"><span class="toc-number">1.7.2.3.</span> <span class="toc-text">escaping</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#타입-별칭-및-호환-타입"><span class="toc-number">1.8.</span> <span class="toc-text">타입 별칭 및 호환 타입</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Codable"><span class="toc-number">1.8.1.</span> <span class="toc-text">Codable</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        야곰의 스위프트 프로그래밍 - 부록
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:49:22.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Swift/">Swift</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/swift/" rel="tag">swift</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="부록"><a href="#부록" class="headerlink" title="부록"></a>부록</h1><h2 id="스위프트의-주요-프로토콜"><a href="#스위프트의-주요-프로토콜" class="headerlink" title="스위프트의 주요 프로토콜"></a>스위프트의 주요 프로토콜</h2><table>
+<thead>
+<tr>
+<th>프로토콜 이름</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AnyObject</td>
+<td>모든 클래스 타입이 암시적으로 준수</td>
+</tr>
+<tr>
+<td>CustomStringConvertible</td>
+<td>description 프로퍼티를 재정의하여 사용자 정의 텍스트 표현을 할 수 있게 함</td>
+</tr>
+<tr>
+<td>Equatable</td>
+<td>== / != 연산자를 사용하여 값이 동일한지 판단할 수 있는 타입<br />== 연산자를 구현해주어야 하고, 구현하면 != 연산자는 표준 라이브러리가 자동으로 구현해줌</td>
+</tr>
+<tr>
+<td>Error</td>
+<td>던질 수 있는 오류 값을 나타내는 타입</td>
+</tr>
+<tr>
+<td>IteratorProtocol</td>
+<td>시퀀스를 통한 반복을 위해 반복 상태와 인터페이스를 캡슐화</td>
+</tr>
+<tr>
+<td>Hashable</td>
+<td>정수 해시 값 제공. 딕셔너리의 키가 될 수 있는 타입</td>
+</tr>
+<tr>
+<td>Collection</td>
+<td>인덱스 및 서브스크립트로 요소에 접근할 수 있는 시퀀스</td>
+</tr>
+<tr>
+<td>IntegerArithmetic</td>
+<td>정수 연산을 지원하기 위한 요구사항</td>
+</tr>
+<tr>
+<td>BinaryInteger</td>
+<td>정수 타입을 위한 요구</td>
+</tr>
+<tr>
+<td>Sequence (SequenceType)</td>
+<td>시퀀스. for-in 구문으로 반복될 수 있는 타입</td>
+</tr>
+<tr>
+<td>SignedInteger</td>
+<td>부호 있는 정수 타입을 위한 요구사항</td>
+</tr>
+<tr>
+<td>SignedNumeric</td>
+<td>뺄셈 연산 가능 /  음수 표현 가능 / 0으로 초기화될 수 있는 타입</td>
+</tr>
+<tr>
+<td>TextOutputStreamable</td>
+<td>텍스트 스트리밍 기능을 실행할 수 있는 타입<br />String, Character, UnicodeScalar 등이 이 프로토콜을 준수함</td>
+</tr>
+<tr>
+<td>UnsignedInteger</td>
+<td>부호 없는 정수 타입</td>
+</tr>
+<tr>
+<td>ExpressibleBy???Literal</td>
+<td>??? 리터럴로 자신의 인스턴스를 초기화할 수 있는 타입<br />Set 타입은 ExpressibleByArrayLiteral 프로토콜을 준수하므로 배열의 형태로 Set 타입 인스턴스를 만들 수 있음<br />??? : Array / Boolean / Dictionary / Float / Integer / Nil / String / UnicodeScalar</td>
+</tr>
+</tbody></table>
+<h2 id="스위프트의-주요-함수"><a href="#스위프트의-주요-함수" class="headerlink" title="스위프트의 주요 함수"></a>스위프트의 주요 함수</h2><h3 id="abs"><a href="#abs" class="headerlink" title="abs"></a>abs</h3><ul>
+<li>전달인자로 전달받은 값의 절대 값을 반환</li>
+<li>전달인자로 <code>SignedNumeric</code> 프로토콜을 준수하는 타입을 받으므로 부호 있는 정수 타입이 들어올 수 있다.</li>
+</ul>
+<h3 id="assert"><a href="#assert" class="headerlink" title="assert"></a>assert</h3><ul>
+<li>C 스타일의 assert<ul>
+<li>Xcode의 디버그용 빌드 기본 구성인 경우 <code>condition</code> 실행 결과가 false이면 <code>message</code>를 출력한 후 프로그램을 중단하고 디버그 가능한 상태로 전환</li>
+<li>Xcode의 배포용 빌드 기본 구성인 경우 프로그램에 어떠한 영향도 미치지 않음</li>
+</ul>
+</li>
+</ul>
+<h3 id="assertFailure"><a href="#assertFailure" class="headerlink" title="assertFailure"></a>assertFailure</h3><ul>
+<li>디버그용 빌드에서 프로그램을 중단하고 디버그 가능한 상태로 전환하고 싶을 때 사용<ul>
+<li>Xcode의 디버그용 빌드 기본 구성인 경우 <code>message</code>를 출력한 후 프로그램을 중단하고 디버그 가능한 상태로 전환</li>
+<li>Xcode의 배포용 빌드 기본 구성인 경우 프로그램에 어떠한 영향도 미치지 않음</li>
+</ul>
+</li>
+</ul>
+<h3 id="debugPrint"><a href="#debugPrint" class="headerlink" title="debugPrint"></a>debugPrint</h3><ul>
+<li><code>output</code> 전달인자에 출력 타겟을 명시하여 디버깅에 적합하도록 함</li>
+</ul>
+<h3 id="dump"><a href="#dump" class="headerlink" title="dump"></a>dump</h3><ul>
+<li>표준 출력 또는 지정된 출력 스트림을 통해 객체 내용의 덤프를 생성</li>
+</ul>
+<h3 id="fatalError"><a href="#fatalError" class="headerlink" title="fatalError"></a>fatalError</h3><ul>
+<li><code>message</code> 전달인자에 명시된 내용을 출력하고 무조건 프로그램 실행을 중단시킴</li>
+</ul>
+<h3 id="getVaList"><a href="#getVaList" class="headerlink" title="getVaList"></a>getVaList</h3><ul>
+<li>매개변수를 통해 전달받은 <code>[CVarArg]</code> 타입을 C언어의 매개변수 리스트 포인터 타입인 <code>CVaListPointer</code>로 변환</li>
+<li><code>CVaListPointer</code> 타입은 C언어의 <code>va_list</code> 전달인자로 사용할 수 있음</li>
+<li>C언어 함수를 Swift 함수로 매핑할 때 활용할 수 있음</li>
+</ul>
+<h3 id="max"><a href="#max" class="headerlink" title="max"></a>max</h3><ul>
+<li>전달인자 중 가장 큰 값을 반환. 동일한 값이 있다면 제일 마지막의 값을 반환</li>
+</ul>
+<h3 id="min"><a href="#min" class="headerlink" title="min"></a>min</h3><ul>
+<li>전달인자 중 가장 작은 값을 반환. 동일한 값이 있다면 제일 처음의 값을 반환</li>
+</ul>
+<h3 id="numericCast"><a href="#numericCast" class="headerlink" title="numericCast"></a>numericCast</h3><ul>
+<li>정수 타입의 값을 다른 크기의 정수 타입으로 변환. 오버플로우 발생시 런타임 에러 발생함</li>
+</ul>
+<h3 id="precondition"><a href="#precondition" class="headerlink" title="precondition"></a>precondition</h3><ul>
+<li>Xcode의 디버그용 빌드 기본 구성인 경우 <code>condition</code> 실행 결과가 false이면 <code>message</code>를 출력한 후 프로그램을 중단하고 디버그 가능한 상태로 전환</li>
+<li>Xcode의 배포용 빌드 기본 구성인 경우 <code>condition</code> 실행 결과가 false이면 프로그램 실행을 중단함</li>
+</ul>
+<h3 id="preconditionFailure"><a href="#preconditionFailure" class="headerlink" title="preconditionFailure"></a>preconditionFailure</h3><ul>
+<li>Xcode의 디버그용 빌드 기본 구성인 경우 <code>message</code>를 출력한 후 프로그램을 중단하고 디버그 가능한 상태로 전환</li>
+<li>Xcode의 배포용 빌드 기본 구성인 경우 프로그램 실행을 중단함</li>
+</ul>
+<h3 id="print"><a href="#print" class="headerlink" title="print"></a>print</h3><ul>
+<li>표준 출력 또는 <code>output</code>에 <code>items</code>의 텍스트 표현을 작성</li>
+</ul>
+<h3 id="readLine"><a href="#readLine" class="headerlink" title="readLine"></a>readLine</h3><ul>
+<li>표준 입력을 통해 한 줄씩 혹은 EOF(End Of File)을 발견할 때까지 읽어 들여 문자열을 반환함</li>
+<li>UTF-8로 해석됨</li>
+<li><code>strippintNewLine</code> 매개변수에 true를 전달하면 한 줄씩 읽어들임. 기본값 true</li>
+</ul>
+<h3 id="repeatElement"><a href="#repeatElement" class="headerlink" title="repeatElement"></a>repeatElement</h3><ul>
+<li><code>count</code> 수만큼 <code>element</code> 타입의 <code>Repeated</code> 컬렉션을 생성하여 반환</li>
+</ul>
+<h3 id="swap"><a href="#swap" class="headerlink" title="swap"></a>swap</h3><ul>
+<li><code>a</code>와 <code>b</code>의 값을 서로 교환함</li>
+</ul>
+<h3 id="transcode"><a href="#transcode" class="headerlink" title="transcode"></a>transcode</h3><ul>
+<li>유니코드로 인코딩한 입력값을 다른 유니코드로 인코딩된 값으로 변경</li>
+<li>ex) UTF-8 -&gt; UTF-32</li>
+</ul>
+<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><ul>
+<li>전달받은 값의 메타 타입 인스턴스 반환. 전달받은 값의 타입을 알아낼 때 활용 가능</li>
+</ul>
+<h3 id="unsafeBitCast"><a href="#unsafeBitCast" class="headerlink" title="unsafeBitCast"></a>unsafeBitCast</h3><ul>
+<li>전달받은 값의 비트를 다른 타입의 형식으로 해석하여 반환</li>
+<li><code>type</code>은 원래 <code>x</code>와 같은 비트 자릿수를 가진 타입이어야 함<ul>
+<li><code>Int</code>를 <code>Double</code>로 해석 가능, <code>Int</code>를 <code>Float</code>로 해석 불가능</li>
+</ul>
+</li>
+</ul>
+<h3 id="unsafeDownCast"><a href="#unsafeDownCast" class="headerlink" title="unsafeDownCast"></a>unsafeDownCast</h3><ul>
+<li><code>x as T</code>와 동일한 결과 반환. <code>x is T</code>가 true인 것을 확신할 때만 사용할 것</li>
+</ul>
+<h3 id="withoutActuallyEscaping"><a href="#withoutActuallyEscaping" class="headerlink" title="withoutActuallyEscaping"></a>withoutActuallyEscaping</h3><ul>
+<li>비탈출 클로저로 전달된 클로저를 탈출 클로저인 척 실행할 수 있게 해줌</li>
+</ul>
+<h3 id="withVaList"><a href="#withVaList" class="headerlink" title="withVaList"></a>withVaList</h3><ul>
+<li><code>args</code> 매개변수로 전달받은 <code>[CVarArg]</code> 타입의 값들을 <code>CVaListPointer</code> 타입으로 변환한 후 함수의 <code>body</code> 매개변수로 전달받는 클로저의 매개변수로 다시 전달함. 클로저에서 결과값을 만들어 함수의 최종 반환값으로 함</li>
+</ul>
+<h3 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h3><ul>
+<li>두 시퀀스를 하나의 시퀀스로 짝을 이루도록 만들어줌</li>
+</ul>
+<h2 id="스위프트의-예약어"><a href="#스위프트의-예약어" class="headerlink" title="스위프트의 예약어"></a>스위프트의 예약어</h2><h3 id="예약어"><a href="#예약어" class="headerlink" title="예약어"></a>예약어</h3><ul>
+<li>프로그래밍 언어에서 미리 사용하기로 약속되어 있는 단어</li>
+<li>식별자로 사용할 수 없음</li>
+<li>일부 예약어는 `를 사용하여 이름으로 사용할 수 있음<ul>
+<li>let, self, var 등</li>
+</ul>
+</li>
+</ul>
+<h3 id="키워드"><a href="#키워드" class="headerlink" title="키워드"></a>키워드</h3><ul>
+<li>프로그래밍 언어에서 특정 기능을 실행하기 위해 미리 지정해둔 단어. 명령어나 어떤 의미가 부여된 단어<ul>
+<li>var, let, func 등</li>
+</ul>
+</li>
+<li>다른 용도로 사용하거나 다른 식별자로 사용할 수 없음</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>종류</th>
+<th>목록</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>선언</td>
+<td>associatetype / class / deinit / enum / extension / fileprivate / func / import / init / inout / internal / let / open /operator / private / protocol / public / static / struct / subscript / typealias / var</td>
+</tr>
+<tr>
+<td>구문</td>
+<td>break / case / continue / default / defer / do / else / through / fallthrough / for / guard / if / in / repeat / return / switch / where / while</td>
+</tr>
+<tr>
+<td>패턴</td>
+<td>_</td>
+</tr>
+<tr>
+<td>타입 및 기타 표현</td>
+<td>as / catch / false / is / nil / rethrows / super / self / Self / throw / throws / true / try / #column / #file / #function / #line / #sourceLocation</td>
+</tr>
+<tr>
+<td>#으로 시작</td>
+<td>#available / #column / #else / #elseif / #endif / #file / #function / #if / #selector / #sourceLocation</td>
+</tr>
+<tr>
+<td>특정 문맥에 의해 예약됨</td>
+<td>associativity / convenience / dynamic / didSet / final / get / infix / indirect / lazy / left / mutating / none / nonmutating / optional / override / postfix / precedence / prefix / Protocol / required / right / set / type / unowned / weak / willSet</td>
+</tr>
+<tr>
+<td>사용자 정의 연산자로 사용 불가능한 특수기호</td>
+<td>( / ) / { / } / [ / ] / . / , / : / ; / = / @ / # / &amp;(전위 연산자) / -&gt; / ` / ? / !(후위 연산자)</td>
+</tr>
+<tr>
+<td>선언 수식어</td>
+<td>dynamic / final / lazy / optional / required / weak / open / public / internal / fileprivate / private</td>
+</tr>
+</tbody></table>
+<h2 id="디버깅-식별자"><a href="#디버깅-식별자" class="headerlink" title="디버깅 식별자"></a>디버깅 식별자</h2><p>빌드 후 실행 중 디버깅을 할 때 유용하게 사용할 수 있는 식별자</p>
+<ul>
+<li><code>#file</code> : 현재 코드가 실행 중인 파일 이름. String</li>
+<li><code>#line</code> : 현재 코드가 실행되고 있는 파일의 몇 번 줄에 위치하는지 나타냄. Int</li>
+<li><code>#column</code> : 현재 코드가 실행되고 있는 줄의 몇 번 칸에 위치하는지 나타냄. Int</li>
+<li><code>#function</code> : 현재 코드가 실행되고 있는 함수의 이름. String</li>
+</ul>
+<h2 id="컴파일러-제어-구문"><a href="#컴파일러-제어-구문" class="headerlink" title="컴파일러 제어 구문"></a>컴파일러 제어 구문</h2><p>컴파일러 제어 구문을 사용하여 컴파일에 영향을 줄 수 있음</p>
+<h3 id="조건부-컴파일-블록"><a href="#조건부-컴파일-블록" class="headerlink" title="조건부 컴파일 블록"></a>조건부 컴파일 블록</h3><p>컴파일 조건에 맞는 코드는 컴파일 단계에서 포함시키고, 그렇지 않은 코드는 컴파일하지 않음</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">#<span class="keyword">if</span> 컴파일<span class="number">_</span>조건<span class="number">_1</span></span><br><span class="line"><span class="comment">// 컴파일_조건_1이 참이면 컴파일될 코드</span></span><br><span class="line">#elseif 컴파일<span class="number">_</span>조건<span class="number">_2</span></span><br><span class="line"><span class="comment">// 컴파일_조건_2가 참이면 컴파일될 코드</span></span><br><span class="line">#<span class="keyword">else</span></span><br><span class="line"><span class="comment">// 컴파일_조건_1과 컴파일_조건_2가 모두 거짓인 경우 컴파일될 코드</span></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<p>컴파일 조건으로 <code>Bool</code> 타입의 값 / 빌드 플래그 값 (<code>DEBUG</code> / <code>TEST_RELEASE</code> / <code>RELEASE</code> 등) / 플랫폼이나 언어 버전을 체크하는 함수 등이 들어갈 수 있음</p>
+<table>
+<thead>
+<tr>
+<th>플랫폼 및 언어 버전 체크 함수</th>
+<th>유효한 전달인자 값</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>os()</td>
+<td>macOS / iOS / watchOS / tvOS / Linux</td>
+</tr>
+<tr>
+<td>arch()</td>
+<td>I386 / x86_64 / arm / arm64</td>
+</tr>
+<tr>
+<td>swift()</td>
+<td>&gt;=버전숫자</td>
+</tr>
+</tbody></table>
+<p>조건부 컴파일 블록에 포함된 코드는 컴파일이 되든 안되든 문법 검사를 하나, Swift 버전을 검사하는 조건부 컴파일 블록 내부의 코드는 문법 검사를 하지 않음. 언어의 버전이 변경됨에 따라 변경된 문법이 컴파일 오류를 발생시키지 않게 하기 위함</p>
+<h3 id="라인-제어-구문"><a href="#라인-제어-구문" class="headerlink" title="라인 제어 구문"></a>라인 제어 구문</h3><ul>
+<li>라인 번호와 파일 이름을 소스 코드가 컴파일될 때 다른 라인 번호와 파일 이름을 사용하도록 의도적으로 변경할 때 사용</li>
+<li><code>#file</code> / <code>#line</code>의 값을 마음대로 변경해주거나 초기화할 수 있음</li>
+<li><code>#sourceLocation</code>을 사용</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// #file과 #line의 리터럴 표현값 변경. 파일명은 문자열, 라인번호는 0 이상의 정수</span></span><br><span class="line">#sourceLocation(file: 파일명, line: 라인번호)</span><br><span class="line"><span class="comment">// 위의 코드가 변경한 #file과 #line을 원래 파일에서의 위치대로 복원</span></span><br><span class="line">#sourceLocation()</span><br></pre></td></tr></table></figure>
+
+<h2 id="사용-가능-조건-확인"><a href="#사용-가능-조건-확인" class="headerlink" title="사용 가능 조건 확인"></a>사용 가능 조건 확인</h2><p>프로그램 실행 중 동적으로 API 사용이 가능한지 판단할 수 있음. <code>if</code>, <code>guard</code>, <code>while</code> 등과 함께 사용 가능</p>
+<p><code>&amp;&amp;</code>, <code>||</code> 등의 논리연산을 사용하여 조건을 추가하거나 병합할 수 없음</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> #available(플랫폼<span class="number">_</span>이름<span class="number">_</span>버전, ..., *) &#123;</span><br><span class="line">    <span class="comment">// API가 사용 가능하면 실행할 코드</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123; </span><br><span class="line">    <span class="comment">// API가 사용 불가능하면 실행할 코드</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>#available(iOS 11.3.1, *)</code> / <code>#available(macOS 10.13, *)</code> / <code>#available(iOS 12.0, macOS 10.14, *)</code>와 같이 작성 가능</p>
+<h2 id="속성"><a href="#속성" class="headerlink" title="속성"></a>속성</h2><p>선언 또는 타입에 대한 부가 정보를 나타냄</p>
+<p><code>@</code> 표시를 속성 이름 앞에 명시함. <code>@</code> 표시 뒤에는 속성 이름과 필요한 전달인자를 명시함</p>
+<h3 id="선언-속성"><a href="#선언-속성" class="headerlink" title="선언 속성"></a>선언 속성</h3><p>클래스 선언, 함수 선언, 열거형 선언, 프로토콜 선언 등 선언에만 적용 가능</p>
+<h4 id="available"><a href="#available" class="headerlink" title="available"></a>available</h4><ul>
+<li>특정 플랫폼 또는 운영체제의 버전에 관련된 속성. 현재 빌드 환경이 속성과 맞지 않는다면 해당 코드 블록은 컴파일되지 않음</li>
+<li>저장 프로퍼티에는 사용 가능 조건을 줄 수 없음</li>
+<li>매개변수가 두 개 이상 나열되는 리스트</li>
+<li>매개변수로 사용할 수 있는 플랫폼 이름<ul>
+<li>iOS / macOS / watchOS / tvOS / swift</li>
+<li>iOSApplicationExtension / macOSApplicationExtension / watchOSApplicationExtension / tvOSApplicationExtension / swiftApplicationExtension</li>
+</ul>
+</li>
+<li>모든 플랫폼에 적용하려면 <code>*</code>을 명시</li>
+<li>나머지 매개변수는 중요한 남김말이나 생명주기 등 추가 정보를 나타내기 위해 사용<ul>
+<li>unavailable : 해당 플랫폼에서 사용할 수 없는 선언. <code>@available(tvOS, unavailable)</code></li>
+<li>introduced : 이 선언이 어떤 버전에서 처음으로 작성되었는지 나타냄. <code>@available(swift, introduced: 4.2)</code></li>
+<li>deprecated : 이 선언이 어떤 버전에서 사용 중지되었는지 나타냄. <code>@available(*, deprecated: 2.0.0)</code><ul>
+<li>콜론과 버전 생략 가능</li>
+</ul>
+</li>
+<li>obsoleted : 이 선언이 어떤 버전부터 버려진 것인지 나타냄. <code>@available(*, obsoleted: 2.0.0)</code></li>
+<li>message : 사용이 제한되거나 불가능한 선언을 사용하려 할 때 컴파일러로 프로그래머에게 전달할 경고 또는 오류 메세지. 문자열 리터럴로 작성. <code>@available(*, deprecated: 2.0.0, message: &quot;deprecated since 2.0.0&quot;)</code></li>
+<li>renamed: 해당 선언이 다른 이름으로 변경되었을 때 그 다른 이름을 나타냄. <code>@available(*, deprecated: 2.0.0, message: &quot;deprecated since 2.0.0&quot;, renamed: &quot;NewClass&quot;)</code></li>
+</ul>
+</li>
+<li>여러 플랫폼과 여러 매개변수를 동시에 전달할 수 있음. 추가 정보를 위한 매개변수가 명시되지 않았다면 항상 <code>*</code>로 끝마쳐야 함. <code>@available(iOS 11, macOS 10.14, *)</code></li>
+</ul>
+<h4 id="discardableResult"><a href="#discardableResult" class="headerlink" title="discardableResult"></a>discardableResult</h4><ul>
+<li>반환 값을 무시하고 싶을 때 컴파일러 경고가 발생하지 않도록 하기 위해 discardableResult 속성을 명시함</li>
+</ul>
+<h4 id="objc"><a href="#objc" class="headerlink" title="objc"></a>objc</h4><ul>
+<li>Swift로 선언된 코드를 Objective-C의 코드에서 표현하고 사용할 수 있게 함<ul>
+<li>중첩 타입, 제네릭 열거형 등은 <code>objc</code> 속성 사용 불가능</li>
+</ul>
+</li>
+<li>Objective-C 클래스를 반드시 상속받아야 함. 보통 <code>NSObject</code></li>
+<li><code>objc</code> 속성이 부여된 클래스를 상속받는 클래스는 암시적으로 <code>objc</code> 속성이 부여됨</li>
+<li><code>objc</code> 속성이 부여된 프로토콜는 <code>objc</code> 속성이 부여되지 않은 Swift의 프로토콜을 상속받을 수 없음</li>
+<li><code>objc</code> 속성이 부여된 프로토콜을 상속받는 프로토콜은 암시적으로 <code>objc</code> 속성이 부여됨</li>
+<li>원시 값 타입이 <code>Int</code>인 열거형은 <code>objc</code> 속성을 부여하여 Objective-C 코드에서 사용 가능<ul>
+<li>Swift로 작성한 각 열거형 case의 이름은 Objective-C 코드에서는 Objective-C 스타일의 열거형 case 이름으로 나타남<ul>
+<li>Swift에서 School 열거형의 elementary case는 Objective-C에서 SchoolElementary라는 이름으로 나타남</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>매개변수에 이름을 전달하여 해당 선언이 Objective-C에서 사용할 이름을 명시할 수 있음<ul>
+<li>클래스 / 열거형 / 열거형 case / 프로토콜 / 메소드 / 접근자 / 설정자 / 이니셜라이저 등</li>
+</ul>
+</li>
+</ul>
+<h4 id="nonobjc"><a href="#nonobjc" class="headerlink" title="nonobjc"></a>nonobjc</h4><ul>
+<li>메소드, 프로퍼티, 서브스크립트, 이니셜라이저, 디이니셜라이저 등에 <code>nonobjc</code> 속성을 부여하여 Objective-C 코드에서 사용 불가능하게 함</li>
+<li><code>nonobjc</code> 속성을 부여받은 메소드는 <code>objc</code> 속성이 부여된 메소드로 재정의할 수 없음, <code>objc</code> 속성을 부여받은 프로토콜 요구사항을 충족할 수 없음</li>
+</ul>
+<h4 id="testable"><a href="#testable" class="headerlink" title="testable"></a>testable</h4><ul>
+<li>컴파일한 모듈에 정의한 내부 접근수준<em>private</em> 정의를 공개 접근수준<em>open</em>으로 정의한 것처럼 만들어줌</li>
+<li>외부에서 가져다 테스트할 수 있도록 함</li>
+</ul>
+<h4 id="objcMembers"><a href="#objcMembers" class="headerlink" title="objcMembers"></a>objcMembers</h4><ul>
+<li>클래스 선언에 <code>objcMembers</code> 속성을 적용하여 클래스에 <code>objc</code> 속성을 부여할 수 있음. 클래스의 멤버, 익스텐션, 하위 클래스 및 익스텐션도 암묵적으로 Objective-C와 호환되게 함</li>
+</ul>
+<h3 id="타입-속성"><a href="#타입-속성" class="headerlink" title="타입 속성"></a>타입 속성</h3><p>타입에만 적용 가능</p>
+<h4 id="autoclosure"><a href="#autoclosure" class="headerlink" title="autoclosure"></a>autoclosure</h4><ul>
+<li><code>autoclosure</code> 속성이 부여된 매개변수에 작성된 표현을 바로 실행하지 않고, 전달인자가 없는 클로저로 변경하고자 할 때 사용</li>
+</ul>
+<h4 id="convention"><a href="#convention" class="headerlink" title="convention"></a>convention</h4><ul>
+<li>함수의 타입이 어떤 호출 방식을 사용할지 결정.</li>
+<li>가능한 매개변수 목록<ul>
+<li><code>swift</code> : Swift 함수 참조</li>
+<li><code>block</code> : Objective-C의 블록 객체 참조</li>
+<li><code>c</code> : C언어 함수의 참조</li>
+</ul>
+</li>
+</ul>
+<h4 id="escaping"><a href="#escaping" class="headerlink" title="escaping"></a>escaping</h4><ul>
+<li>메소드나 함수의 매개변수 타입에 <code>escaping</code> 속성을 사용하여 매개변수의 값이 나중에 실행되기 위해 어딘가로 다시 저장될 가능성이 있음을 나타냄</li>
+<li>함수나 메소드의 호출이 끝난 후에도 매개변수를 사용할 수 있음</li>
+<li>탈출 클로저</li>
+</ul>
+<h2 id="타입-별칭-및-호환-타입"><a href="#타입-별칭-및-호환-타입" class="headerlink" title="타입 별칭 및 호환 타입"></a>타입 별칭 및 호환 타입</h2><p>Swift에서 많이 사용하는 타입이지만 실제로는 타입 별칭인 경우가 많음</p>
+<p>C언어 등과 타입을 호환하기 위해 별칭으로 사용하는 타입도 있음</p>
+<h3 id="Codable"><a href="#Codable" class="headerlink" title="Codable"></a>Codable</h3><p><code>Codable &amp; Decodable</code> : 사용자 정의 데이터 타입을 다른 형식으로 쉽게 인코딩하고 디코딩할 수 있는 청사진을 제공하는 프로토콜</p>
+<p>Foundation 프레임워크의 여러 클래스와 호환됨</p>
+<table>
+<thead>
+<tr>
+<th>Foundation 프레임워크의 클래스</th>
+<th>효과</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JSONEncoder / JSONDecoder</td>
+<td>Codable 프로토콜을 준수하는 타입의 데이터를 JSON 문자열로 변환하거나 JSON 문자열을 타입의 인스턴스로 변환</td>
+</tr>
+<tr>
+<td>NSKeyedArchiver / NSKeyedUnarchiver</td>
+<td>Codable 프로토콜을 준수하는 타입의 데이터를 JSON 문자열로 변환하거나 JSON 문자열을 타입의 인스턴스로 변환</td>
+</tr>
+<tr>
+<td>PropertyListEncoder / PropertyListDecoder</td>
+<td>Codable 프로토콜을 준수하는 타입의 데이터를 프로퍼티 리스트 데이터로 변환하거나 프로퍼티 리스트 데이터를 타입의 인스턴스로 변환</td>
+</tr>
+</tbody></table>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span>: <span class="title">Codable</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">Gender</span>: <span class="title">String</span>, <span class="title">Codable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> male, female, unknown</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> age: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">let</span> gender: <span class="type">Gender</span></span><br><span class="line">    <span class="keyword">let</span> friends: [<span class="type">Person</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Codable 프로토콜을 채택하는 열거형도 정의 가능함. case는 문자열로 인코딩됨</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#부록"><span class="toc-number">1.</span> <span class="toc-text">부록</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#스위프트의-주요-프로토콜"><span class="toc-number">1.1.</span> <span class="toc-text">스위프트의 주요 프로토콜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스위프트의-주요-함수"><span class="toc-number">1.2.</span> <span class="toc-text">스위프트의 주요 함수</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#abs"><span class="toc-number">1.2.1.</span> <span class="toc-text">abs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#assert"><span class="toc-number">1.2.2.</span> <span class="toc-text">assert</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#assertFailure"><span class="toc-number">1.2.3.</span> <span class="toc-text">assertFailure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#debugPrint"><span class="toc-number">1.2.4.</span> <span class="toc-text">debugPrint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dump"><span class="toc-number">1.2.5.</span> <span class="toc-text">dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fatalError"><span class="toc-number">1.2.6.</span> <span class="toc-text">fatalError</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getVaList"><span class="toc-number">1.2.7.</span> <span class="toc-text">getVaList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#max"><span class="toc-number">1.2.8.</span> <span class="toc-text">max</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#min"><span class="toc-number">1.2.9.</span> <span class="toc-text">min</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#numericCast"><span class="toc-number">1.2.10.</span> <span class="toc-text">numericCast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#precondition"><span class="toc-number">1.2.11.</span> <span class="toc-text">precondition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#preconditionFailure"><span class="toc-number">1.2.12.</span> <span class="toc-text">preconditionFailure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#print"><span class="toc-number">1.2.13.</span> <span class="toc-text">print</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#readLine"><span class="toc-number">1.2.14.</span> <span class="toc-text">readLine</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#repeatElement"><span class="toc-number">1.2.15.</span> <span class="toc-text">repeatElement</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#swap"><span class="toc-number">1.2.16.</span> <span class="toc-text">swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#transcode"><span class="toc-number">1.2.17.</span> <span class="toc-text">transcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type"><span class="toc-number">1.2.18.</span> <span class="toc-text">type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unsafeBitCast"><span class="toc-number">1.2.19.</span> <span class="toc-text">unsafeBitCast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unsafeDownCast"><span class="toc-number">1.2.20.</span> <span class="toc-text">unsafeDownCast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#withoutActuallyEscaping"><span class="toc-number">1.2.21.</span> <span class="toc-text">withoutActuallyEscaping</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#withVaList"><span class="toc-number">1.2.22.</span> <span class="toc-text">withVaList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zip"><span class="toc-number">1.2.23.</span> <span class="toc-text">zip</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스위프트의-예약어"><span class="toc-number">1.3.</span> <span class="toc-text">스위프트의 예약어</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#예약어"><span class="toc-number">1.3.1.</span> <span class="toc-text">예약어</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#키워드"><span class="toc-number">1.3.2.</span> <span class="toc-text">키워드</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#디버깅-식별자"><span class="toc-number">1.4.</span> <span class="toc-text">디버깅 식별자</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#컴파일러-제어-구문"><span class="toc-number">1.5.</span> <span class="toc-text">컴파일러 제어 구문</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#조건부-컴파일-블록"><span class="toc-number">1.5.1.</span> <span class="toc-text">조건부 컴파일 블록</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#라인-제어-구문"><span class="toc-number">1.5.2.</span> <span class="toc-text">라인 제어 구문</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#사용-가능-조건-확인"><span class="toc-number">1.6.</span> <span class="toc-text">사용 가능 조건 확인</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#속성"><span class="toc-number">1.7.</span> <span class="toc-text">속성</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#선언-속성"><span class="toc-number">1.7.1.</span> <span class="toc-text">선언 속성</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#available"><span class="toc-number">1.7.1.1.</span> <span class="toc-text">available</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#discardableResult"><span class="toc-number">1.7.1.2.</span> <span class="toc-text">discardableResult</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objc"><span class="toc-number">1.7.1.3.</span> <span class="toc-text">objc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nonobjc"><span class="toc-number">1.7.1.4.</span> <span class="toc-text">nonobjc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#testable"><span class="toc-number">1.7.1.5.</span> <span class="toc-text">testable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objcMembers"><span class="toc-number">1.7.1.6.</span> <span class="toc-text">objcMembers</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#타입-속성"><span class="toc-number">1.7.2.</span> <span class="toc-text">타입 속성</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#autoclosure"><span class="toc-number">1.7.2.1.</span> <span class="toc-text">autoclosure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#convention"><span class="toc-number">1.7.2.2.</span> <span class="toc-text">convention</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#escaping"><span class="toc-number">1.7.2.3.</span> <span class="toc-text">escaping</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#타입-별칭-및-호환-타입"><span class="toc-number">1.8.</span> <span class="toc-text">타입 별칭 및 호환 타입</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Codable"><span class="toc-number">1.8.1.</span> <span class="toc-text">Codable</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&text=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&is_video=false&description=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=야곰의 스위프트 프로그래밍 - 부록&body=Check out this article: http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&title=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&name=야곰의 스위프트 프로그래밍 - 부록&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/yagom-swift-programming-appendix/&t=야곰의 스위프트 프로그래밍 - 부록" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

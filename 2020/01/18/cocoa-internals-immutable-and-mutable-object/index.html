@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="불변 객체와 가변 객체Cocoa 프레임워크 객체는 크게 초기화 이후 내부 데이터를 변경할 수 없는 불변 객체와, 변경이 가능한 가변 객체로 분류할 수 있다. 일반적으로 NSString &lt;-&gt; NSMutableString 처럼 가변의 의미를 담아 클래스 이름이 지어져 있다. 불변 객체불변 객체의 특징 초기화 이후 객체 내부의 값이나 상태가 변하지">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cocoa Internals - 불변 객체와 가변 객체">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="불변 객체와 가변 객체Cocoa 프레임워크 객체는 크게 초기화 이후 내부 데이터를 변경할 수 없는 불변 객체와, 변경이 가능한 가변 객체로 분류할 수 있다. 일반적으로 NSString &lt;-&gt; NSMutableString 처럼 가변의 의미를 담아 클래스 이름이 지어져 있다. 불변 객체불변 객체의 특징 초기화 이후 객체 내부의 값이나 상태가 변하지">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:54:04.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:54:17.525Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="cocoa">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Cocoa Internals - 불변 객체와 가변 객체</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/cocoa-internals-collection-class/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/cocoa-internals-object-copying/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&text=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&is_video=false&description=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Cocoa Internals - 불변 객체와 가변 객체&body=Check out this article: http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&name=Cocoa Internals - 불변 객체와 가변 객체&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&t=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#불변-객체와-가변-객체"><span class="toc-number">1.</span> <span class="toc-text">불변 객체와 가변 객체</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#불변-객체"><span class="toc-number">1.1.</span> <span class="toc-text">불변 객체</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#불변-객체의-특징"><span class="toc-number">1.1.1.</span> <span class="toc-text">불변 객체의 특징</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#불변-객체-클래스"><span class="toc-number">1.1.2.</span> <span class="toc-text">불변 객체 클래스</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#불변-객체-구현하기"><span class="toc-number">1.1.3.</span> <span class="toc-text">불변 객체 구현하기</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약"><span class="toc-number">1.1.4.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#가변-객체"><span class="toc-number">1.2.</span> <span class="toc-text">가변 객체</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체의-특징"><span class="toc-number">1.2.1.</span> <span class="toc-text">가변 객체의 특징</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체-클래스"><span class="toc-number">1.2.2.</span> <span class="toc-text">가변 객체 클래스</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체-참조-사례1-가변-모델-객체와-뷰-객체"><span class="toc-number">1.2.3.</span> <span class="toc-text">가변 객체 참조 사례1 : 가변 모델 객체와 뷰 객체</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체-참조-사례2-NSMutableSet와-가변-객체"><span class="toc-number">1.2.4.</span> <span class="toc-text">가변 객체 참조 사례2 : NSMutableSet와 가변 객체</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">요약</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Cocoa Internals - 불변 객체와 가변 객체
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:54:04.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/cocoa/" rel="tag">cocoa</a>, <a class="tag-link" href="/tags/ios/" rel="tag">ios</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="불변-객체와-가변-객체"><a href="#불변-객체와-가변-객체" class="headerlink" title="불변 객체와 가변 객체"></a>불변 객체와 가변 객체</h1><p>Cocoa 프레임워크 객체는 크게 초기화 이후 내부 데이터를 변경할 수 없는 불변 객체와, 변경이 가능한 가변 객체로 분류할 수 있다.</p>
+<p>일반적으로 <code>NSString</code> &lt;-&gt; <code>NSMutableString</code> 처럼 가변의 의미를 담아 클래스 이름이 지어져 있다.</p>
+<h2 id="불변-객체"><a href="#불변-객체" class="headerlink" title="불변 객체"></a>불변 객체</h2><h3 id="불변-객체의-특징"><a href="#불변-객체의-특징" class="headerlink" title="불변 객체의 특징"></a>불변 객체의 특징</h3><ul>
+<li>초기화 이후 객체 내부의 값이나 상태가 변하지 않음</li>
+<li>여러 객체에서, 여러 스레드에서 참조해도 안전</li>
+<li>값이 바뀌는 상황을 고려하지 않아도 되므로 설계가 쉽고 구현하기 쉬움</li>
+<li>객체 내부에 모순된 상태가 줄어들어 사이드 이펙트가 적음</li>
+</ul>
+<p>특히 함수 중심 언어에서 불변 객체의 중요성을 강조한다.</p>
+<p>불변 객체의 값을 변경해야 하는 경우 새로운 객체를 만들어야 하는 것이 단점이다. 이 때문에 불변 객체 인스턴스가 많아질 경우를 대비한 최적화 과정을 두기도 한다.</p>
+<p>그 예시로 <code>NSString</code> 클래스의 리터럴 문자열은 불변 객체인데, 동일한 리터럴 문자열을 가리키는 경우 프로세스 메모리 영역에 문자열을 할당하여 중복 생성을 줄인다.</p>
+<h3 id="불변-객체-클래스"><a href="#불변-객체-클래스" class="headerlink" title="불변 객체 클래스"></a>불변 객체 클래스</h3><p>불변 객체는 초기화 메소드로 객체의 초기 값을 지정한 이후로는 상태를 변경할 수 없다.</p>
+<p>이를 위해 인스턴스 변수는 private 접근 수준을 갖게 하고, 이를 변경할 수 있는 인터페이스를 제공하지 않는다.</p>
+<p><code>NSString</code>, <code>NSData</code>와 같은 클래스는 <code>NSMutableString</code>, <code>NSMutableData</code>와 같은 동등 수준의 가변 클래스가 있으나 <code>NSNumber</code> 같은 클래스는 가변 객체 클래스가 존재하지 않는다.</p>
+<p>가변 객체 클래스가 존재한다면 객체를 복사할 때 <code>-mutableCopy</code> 메소드를 사용하여 가변 객체를 복사할 수 있는지 확인해야 한다.</p>
+<h3 id="불변-객체-구현하기"><a href="#불변-객체-구현하기" class="headerlink" title="불변 객체 구현하기"></a>불변 객체 구현하기</h3><ul>
+<li>초기화 이후 내부 값이나 상태를 재정의하는 메소드가 없어야 함</li>
+<li>내부 전용 인스턴스 변수는 감추고 접근하지 못하게 함</li>
+<li>인스턴스 변수는 상속이 불가능하도록 private 접근 수준을 부여하고 읽기 전용 접근자만 허용함</li>
+<li>내부 데이터를 변경하는 것이 아닌, 새로운 값을 반환하도록 구현함</li>
+<li>내부에서만 사용하는 가변 객체가 있다면, 외부에서 내부의 가변 객체를 반환하거나 수정할 수 있는 인터페이스가 없어야 함</li>
+</ul>
+<p>다음의 경우에는 가변 객체로 설계를 바꾸고 최대한 변동 가능성이 적도록 구현하는 것이 좋다.</p>
+<ul>
+<li>내부 데이터의 크기가 너무 커서 복사하기 부담되는 경우</li>
+<li>초기 생성자에서 모든 값을 결정하기 힘들고 나중에 또는 점진적으로 데이터를 정해야 하는 경우</li>
+<li>클래스 내부에 구조체를 포함하고 그 구조체 내부에 변경 가능한 하위 요소가 있는 경우</li>
+<li>상태를 공유하는 공용 컨테이너로 동작하는 경우</li>
+</ul>
+<h3 id="요약"><a href="#요약" class="headerlink" title="요약"></a>요약</h3><p>가변 객체를 반드시 사용해야 하는 이유가 없다면 불변 객체를 사용하도록 한다.</p>
+<p>불변 객체를 사용하는 것으로 객체 간 참조 관계를 단순화할 수 있고, 사이드 이펙트를 최소화할 수 있으며, 스레드 안전성을 누릴 수 있다.</p>
+<p>최근 블록을 활용한 핸들러 코드나 비동기 프로그래밍 방식에서도 불변 객체를 사용하는 것이 좋다.</p>
+<h2 id="가변-객체"><a href="#가변-객체" class="headerlink" title="가변 객체"></a>가변 객체</h2><h3 id="가변-객체의-특징"><a href="#가변-객체의-특징" class="headerlink" title="가변 객체의 특징"></a>가변 객체의 특징</h3><ul>
+<li>초기화 이후에도 객체 내부 값이나 상태를 추가, 삭제, 변경할 수 있음</li>
+<li>여러 객체나 여러 스레드에서 참조하기 위해서는 동시 접근에 대한 예외 처리가 필요함</li>
+<li>성능 특성을 고려해야 하며 불변 객체보다 설계가 복잡하고 구현하기 어렵다</li>
+<li>어느 시점이든 값이 변경되어 사이드 이펙트가 발생할 수 있다.</li>
+</ul>
+<p>내부 데이터를 변경할 수 있으므로 변경하는 값이 유효한지 판단해야 하고, 이를 참조하는 객체들은 변경 여부를 판단해야 하고, 사이드 이펙트가 없도록 예외 처리를 해야 한다.</p>
+<h3 id="가변-객체-클래스"><a href="#가변-객체-클래스" class="headerlink" title="가변 객체 클래스"></a>가변 객체 클래스</h3><p><code>NSMutableArray</code>는 <code>NSArray</code>를 상속받고, <code>NSMutableString</code>은 <code>NSString</code>을 상속받는 등, 가변 객체 클래스는 동등 수준의 불변 객체 클래스를 상속받고 추가, 삭제, 변경을 위한 인터페이스를 추가로 구현하는 식으로 구현된다.</p>
+<h3 id="가변-객체-참조-사례1-가변-모델-객체와-뷰-객체"><a href="#가변-객체-참조-사례1-가변-모델-객체와-뷰-객체" class="headerlink" title="가변 객체 참조 사례1 : 가변 모델 객체와 뷰 객체"></a>가변 객체 참조 사례1 : 가변 모델 객체와 뷰 객체</h3><p>가변 객체를 참조하는 경우 참조하는 객체 내용이 변경될 때 그 변화에 따른 일련의 추가 작업이 필요하다.</p>
+<p>예를 들어 어떠한 테이블 뷰가 가변 객체 모델을 참조하는 경우, 해당 모델에 변경이 일어날 때마다 뷰를 갱신하는 작업을 해주어야 한다.</p>
+<p>가변 데이터를 외부에서 직접 바꿀 수 없게 하였을지라도 KVC를 사용해서 우회적으로 변경할 수 있으므로, 읽기 전용 프로퍼티로 객체 외부에 노출하는 것보다는 아예 숨기는 것이 좋다.</p>
+<h3 id="가변-객체-참조-사례2-NSMutableSet와-가변-객체"><a href="#가변-객체-참조-사례2-NSMutableSet와-가변-객체" class="headerlink" title="가변 객체 참조 사례2 : NSMutableSet와 가변 객체"></a>가변 객체 참조 사례2 : NSMutableSet와 가변 객체</h3><p>가변 집합 객체에 차례대로 ‘unique-key’, ‘unique-key’, ‘unique’를 넣으면 집합 객체에는 ‘unique-key’와 ‘unique’가 유일하게 존재하게 된다.</p>
+<p>이 상태에서 ‘unique’를 ‘unique-key’로 바꾸면 집합 객체에는 ‘unique-key’가 두 개 존재하게 된다.</p>
+<p>이 때 이 집합 객체를 복사하면, 복사된 객체는 집합의 개념이 적용되어 유일한 ‘unique-key’가 존재하게 된다.</p>
+<p>이처럼 가변 객체를 참조하는 경우에는 의도치 않은 예외 상황에 대비해야 한다.</p>
+<h3 id="요약-1"><a href="#요약-1" class="headerlink" title="요약"></a>요약</h3><p>가변 객체를 사용하는 경우에는 가변 객체의 내부 값이 바뀌기 때문에 생기는 부작용에 대비해야 하며, 의도치 않은 변화에 대비해서 동작 방식을 정확하게 이해하고 있어야 한다.</p>
+<p>데이터 내용이 바뀌는 시점에 따라 데이터 흐름을 처리하는 코드가 있다면, 변화를 감지하기 위한 디자인 패턴을 적용하는 것이 좋다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#불변-객체와-가변-객체"><span class="toc-number">1.</span> <span class="toc-text">불변 객체와 가변 객체</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#불변-객체"><span class="toc-number">1.1.</span> <span class="toc-text">불변 객체</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#불변-객체의-특징"><span class="toc-number">1.1.1.</span> <span class="toc-text">불변 객체의 특징</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#불변-객체-클래스"><span class="toc-number">1.1.2.</span> <span class="toc-text">불변 객체 클래스</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#불변-객체-구현하기"><span class="toc-number">1.1.3.</span> <span class="toc-text">불변 객체 구현하기</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약"><span class="toc-number">1.1.4.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#가변-객체"><span class="toc-number">1.2.</span> <span class="toc-text">가변 객체</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체의-특징"><span class="toc-number">1.2.1.</span> <span class="toc-text">가변 객체의 특징</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체-클래스"><span class="toc-number">1.2.2.</span> <span class="toc-text">가변 객체 클래스</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체-참조-사례1-가변-모델-객체와-뷰-객체"><span class="toc-number">1.2.3.</span> <span class="toc-text">가변 객체 참조 사례1 : 가변 모델 객체와 뷰 객체</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#가변-객체-참조-사례2-NSMutableSet와-가변-객체"><span class="toc-number">1.2.4.</span> <span class="toc-text">가변 객체 참조 사례2 : NSMutableSet와 가변 객체</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">요약</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&text=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&is_video=false&description=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Cocoa Internals - 불변 객체와 가변 객체&body=Check out this article: http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&title=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&name=Cocoa Internals - 불변 객체와 가변 객체&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/cocoa-internals-immutable-and-mutable-object/&t=Cocoa Internals - 불변 객체와 가변 객체" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

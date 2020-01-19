@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="프로세스프로세스 개념프로세스실행 중인 프로그램 프로세스는 다음의 것들로 구성되어 있다.  텍스트 섹션 : 프로그램 코드 위치 현재 상태 : 프로그램 카운터를 포함한 현재 프로세스의 레지스터 값 스택stack : 일시 데이터(파라미터, 복귀 주소, 지역 변수 등)를 저장하는 곳 데이터 섹션 : 전역 변수를 저장하는 곳  프로그램 자체는 프로세스가 아니다. 여">
+<meta property="og:type" content="article">
+<meta property="og:title" content="운영체제 강의노트 정리 - 프로세스">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/os-lecture-note-process/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="프로세스프로세스 개념프로세스실행 중인 프로그램 프로세스는 다음의 것들로 구성되어 있다.  텍스트 섹션 : 프로그램 코드 위치 현재 상태 : 프로그램 카운터를 포함한 현재 프로세스의 레지스터 값 스택stack : 일시 데이터(파라미터, 복귀 주소, 지역 변수 등)를 저장하는 곳 데이터 섹션 : 전역 변수를 저장하는 곳  프로그램 자체는 프로세스가 아니다. 여">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:21:36.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:21:54.221Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="operating system">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>운영체제 강의노트 정리 - 프로세스</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/os-lecture-note-thread/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/os-lecture-note-os-structure/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/os-lecture-note-process/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&text=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&is_video=false&description=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=운영체제 강의노트 정리 - 프로세스&body=Check out this article: http://presto95.github.io/2020/01/18/os-lecture-note-process/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&name=운영체제 강의노트 정리 - 프로세스&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/os-lecture-note-process/&t=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#프로세스"><span class="toc-number">1.</span> <span class="toc-text">프로세스</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-개념"><span class="toc-number">1.1.</span> <span class="toc-text">프로세스 개념</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#프로세스-1"><span class="toc-number">1.1.1.</span> <span class="toc-text">프로세스</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프로세스의-상태"><span class="toc-number">1.1.2.</span> <span class="toc-text">프로세스의 상태</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프로세스-제어-블록"><span class="toc-number">1.1.3.</span> <span class="toc-text">프로세스 제어 블록</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드"><span class="toc-number">1.1.4.</span> <span class="toc-text">스레드</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-스케줄링"><span class="toc-number">1.2.</span> <span class="toc-text">프로세스 스케줄링</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#스케줄링-큐"><span class="toc-number">1.2.1.</span> <span class="toc-text">스케줄링 큐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스케줄러"><span class="toc-number">1.2.2.</span> <span class="toc-text">스케줄러</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#문맥-전환"><span class="toc-number">1.2.3.</span> <span class="toc-text">문맥 전환</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스에-대한-연산"><span class="toc-number">1.3.</span> <span class="toc-text">프로세스에 대한 연산</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#생성"><span class="toc-number">1.3.1.</span> <span class="toc-text">생성</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#종료"><span class="toc-number">1.3.2.</span> <span class="toc-text">종료</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-간-협력"><span class="toc-number">1.4.</span> <span class="toc-text">프로세스 간 협력</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#소비자-생산자-문제"><span class="toc-number">1.4.1.</span> <span class="toc-text">소비자 생산자 문제</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-간-통신"><span class="toc-number">1.5.</span> <span class="toc-text">프로세스 간 통신</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#메세지-전달-시스템"><span class="toc-number">1.5.1.</span> <span class="toc-text">메세지 전달 시스템</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#명명"><span class="toc-number">1.5.2.</span> <span class="toc-text">명명</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#직접-통신"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">직접 통신</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#간접-통신"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">간접 통신</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#동기화"><span class="toc-number">1.5.3.</span> <span class="toc-text">동기화</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#버퍼링"><span class="toc-number">1.5.4.</span> <span class="toc-text">버퍼링</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#클라이언트-서버-시스템에서의-통신"><span class="toc-number">1.6.</span> <span class="toc-text">클라이언트-서버 시스템에서의 통신</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#소켓"><span class="toc-number">1.6.1.</span> <span class="toc-text">소켓</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#원격-프로시저-호출"><span class="toc-number">1.6.2.</span> <span class="toc-text">원격 프로시저 호출</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        운영체제 강의노트 정리 - 프로세스
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:21:36.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Operating-System/">Operating System</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/operating-system/" rel="tag">operating system</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="프로세스"><a href="#프로세스" class="headerlink" title="프로세스"></a>프로세스</h1><h2 id="프로세스-개념"><a href="#프로세스-개념" class="headerlink" title="프로세스 개념"></a>프로세스 개념</h2><h3 id="프로세스-1"><a href="#프로세스-1" class="headerlink" title="프로세스"></a>프로세스</h3><p>실행 중인 프로그램</p>
+<p>프로세스는 다음의 것들로 구성되어 있다.</p>
+<ul>
+<li>텍스트 섹션 : 프로그램 코드 위치</li>
+<li>현재 상태 : 프로그램 카운터를 포함한 현재 프로세스의 레지스터 값</li>
+<li>스택<em>stack</em> : 일시 데이터(파라미터, 복귀 주소, 지역 변수 등)를 저장하는 곳</li>
+<li>데이터 섹션 : 전역 변수를 저장하는 곳</li>
+</ul>
+<p>프로그램 자체는 프로세스가 아니다.</p>
+<p>여러 프로세스가 같은 프로그램과 관련되어 있다고 할지라도 서로 같은 것으로 간주하지 않는다.</p>
+<h3 id="프로세스의-상태"><a href="#프로세스의-상태" class="headerlink" title="프로세스의 상태"></a>프로세스의 상태</h3><ul>
+<li><p><strong>생성중<em>new</em></strong> : 프로세스가 생성 중</p>
+</li>
+<li><p><strong>실행중<em>running</em></strong> : 프로세스가 실행 중</p>
+</li>
+<li><p><strong>대기중<em>waiting</em></strong> : 프로세스가 어떠한 사건을 기다리는 중</p>
+</li>
+<li><p><strong>준비<em>ready</em></strong> : 프로세스가 프로세서에 할당되기를 기다리는 중</p>
+</li>
+<li><p><strong>종료<em>terminated</em></strong> : 프로세스 실행이 종료됨</p>
+</li>
+<li><p>프로세스 생성이 완료되면 생성중 상태에서 준비 상태로 바뀐다.</p>
+</li>
+<li><p>스케줄러 디스패치에 의해 준비 상태에서 실행중 상태로 바뀐다.</p>
+</li>
+<li><p>인터럽트에 의해 실행중 상태에서 준비 상태로 바뀐다.</p>
+</li>
+<li><p>입출력 또는 이벤트 처리를 기다리기 위해 실행중 상태에서 대기중 상태로 바뀐다.</p>
+</li>
+<li><p>입출력 또는 이벤트 처리가 완료되면 대기중 상태에서 준비 상태로 바뀐다.</p>
+</li>
+<li><p>프로세스 실행이 끝나면 실행중 상태에서 종료 상태로 바뀐다.</p>
+</li>
+</ul>
+<p>단일 프로세스 시스템에서 실행중 상태에 있을 수 있는 프로세스는 오직 하나지만, 많은 프로세스가 대기중 또는 준비 상태에 있을 수 있다.</p>
+<p>대기중 프로세스는 현재 프로세서가 실행할 프로세스가 없더라도 실행될 수 없다.</p>
+<p>유닉스에서의 프로세스 상태</p>
+<ul>
+<li>프로세스가 exit 시스템 호출을 수행하면 좀비 상태가 되어 프로세스의 종료 상태나 수행 결과를 얻을 수 있도록 한다.</li>
+<li>주기억 장치에 적재되어 있는 프로세스 수를 줄이기 위해 프로세스를 중지<em>suspend</em>할 수 있으며, 중지된 프로세스는 주기억 장치에서 일시적으로 제거되어 디스크에 보관되고, 재개될 때까지 스케줄링 대상에서 제외된다.</li>
+</ul>
+<h3 id="프로세스-제어-블록"><a href="#프로세스-제어-블록" class="headerlink" title="프로세스 제어 블록"></a>프로세스 제어 블록</h3><p>PCB, Process Control Block</p>
+<p>다음의 것들이 PCB에 의해 관리된다.</p>
+<ul>
+<li>프로세스 상태</li>
+<li>프로그램 카운터 : 다음에 실행할 명령어 주소</li>
+<li>CPU 레지스터 : 실행중 상태에서 대기중 또는 준비 상태가 될 때 현재 레지스터의 값을 보관</li>
+<li>CPU 스케줄링 정보</li>
+<li>주기억 장치 관리 정보 : 기준 레지스터, 한계 레지스터와 같은 주기억 장치 관리에 필요한 정보</li>
+<li>회계 정보 : CPU 사용 시간과 같은 통계 정보</li>
+<li>입출력 상태 정보 : 프로세스에 할당된 입출력 장치, 프로세스가 연 파일 목록 등</li>
+</ul>
+<h3 id="스레드"><a href="#스레드" class="headerlink" title="스레드"></a>스레드</h3><p>프로세스 모델에서 프로세스는 단일 실행 흐름을 가지며, 이를 스레드<em>thread</em>라고 말한다.</p>
+<p>최근에는 하나의 프로세스가 여러 개의 실행 흐름을 가질 수 있게 되었으며, 말하자면 여러 개의 스레드를 가질 수 있게 되어 한번에 여러 개의 작업을 수행할 수 있다.</p>
+<h2 id="프로세스-스케줄링"><a href="#프로세스-스케줄링" class="headerlink" title="프로세스 스케줄링"></a>프로세스 스케줄링</h2><p>다중 프로그래밍의 목적은 항상 어떠한 프로세스를 실행하는 것이며, 이를 통해 CPU 사용 효율을 최대화할 수 있다.</p>
+<p>시분할 시스템의 목적은 프로세스를 빈번하게 바꾸어 가며 실행하여 사용자가 프로그램과 상호 작용할 수 있도록 하는 것이다.</p>
+<h3 id="스케줄링-큐"><a href="#스케줄링-큐" class="headerlink" title="스케줄링 큐"></a>스케줄링 큐</h3><p>프로세스의 스케줄링을 위해 운영체제는 여러 종류의 큐를 관리한다.</p>
+<p>큐는 일반적으로 연결 리스트로 구현되어 있다. 큐의 헤더는 첫 번째와 마지막 PCB를 가리키는 포인터를 가지고 있고, 각 PCB는 다음 PCB를 가리키는 포인터를 가지고 있다.</p>
+<p>큐의 종류는 다음과 같다.</p>
+<ul>
+<li><strong>작업 큐<em>job queue</em></strong> : 프로세스가 시스템에 처음 들어와서 대기하는 큐</li>
+<li><strong>준비 큐<em>ready queue</em></strong> : 주기억 장치에 적재되어 실행을 기다리는 프로세스를 관리하는 큐</li>
+<li><strong>장치 큐<em>device queue</em></strong> : 장치를 사용하기 위해 기다리는 큐. 각 장치는 자신만의 장치 큐를 가지고 있다.</li>
+<li><strong>대기 큐<em>waiting queue</em></strong> : 특정한 사건마다 그 사건을 기다리는 프로세스를 관리하는 큐</li>
+</ul>
+<p>프로세스가 실행중 상태일 때 발생할 수 있는 사건은 다음과 같다.</p>
+<ul>
+<li>입출력을 요청하면 프로세스는 해당 장치 큐로 옮겨진다.</li>
+<li>새로운 프로세스를 생성하여 그 프로세스의 종료를 기다리는 경우 대기 큐로 옮겨진다. 부모 및 자식 프로세스가 병행 수행이 가능한 경우 준비 큐로 옮겨진다.</li>
+<li>인터럽트가 발생하면 현재 수행 중인 프로세스를 중단하고 인터럽트를 처리해야 한다. 인터럽트 처리가 완료되면 일반적으로 현재 프로세스를 준비 큐로 옮긴다.</li>
+</ul>
+<p>모드 스위치는 사용자 모드에서 커널 모드로 변경될 때 발생하며, 완전한 문맥 전환이 필요하지 않고 시스템 스택을 사용한다. (시스템 콜)</p>
+<p>프로세스 스위치는 현재 실행 중인 프로세스를 중단하고 새로운 프로세스를 실행할 때 발생하며, 완전한 문맥 전환이 필요하다.</p>
+<h3 id="스케줄러"><a href="#스케줄러" class="headerlink" title="스케줄러"></a>스케줄러</h3><p>각 큐마다 다음 차례의 프로세스를 결정하여 주는 <strong>스케줄러<em>scheduler</em></strong>를 가지고 있다.</p>
+<p>스케줄러의 종류는 다음과 같다.</p>
+<ul>
+<li><strong>입출력 중심 프로세스<em>I/O-bound process</em></strong></li>
+<li><strong>계산 중심 프로세스<em>CPU-bound process</em></strong></li>
+</ul>
+<p><strong>장기 스케줄러<em>long-term scheduler</em></strong>는 작업 스케줄러<em>job scheduler</em>라고도 불리며, 준비 큐에 수용하지 못하는 작업을 디스크에 유지되는 작업 풀에 유지하여, 작업 풀에서 준비 큐로 옮겨질 다음 작업을 결정한다.</p>
+<p>이 스케줄러는 다중 프로그래밍의 정도를 결정하고, 입출력 중심 프로세스와 계산 중심 프로세스를 적절한 비율로 선택해야 한다.</p>
+<p>유닉스는 장기 스케줄러를 사용하지 않는다.</p>
+<p><strong>단기 스케줄러<em>short-term scheduler</em></strong>는 CPU 스케줄러라고도 불리며, 준비 큐에서 다음에 CPU에 할당하여 실행할 프로세스를 결정한다.</p>
+<p><strong>중기 스케줄러<em>medium-term scheduler</em></strong>는 시분할 시스템에서 프로세스를 메모리에서 디스크로 옮겨 다중 프로그래밍의 정도를 조절하는 것에 사용된다.</p>
+<p>단기 스케줄러는 장기 스케줄러와 비교하여 상대적으로 빈번하게 실행된다.</p>
+<h3 id="문맥-전환"><a href="#문맥-전환" class="headerlink" title="문맥 전환"></a>문맥 전환</h3><p><strong>문맥 전환<em>context switch</em></strong>은 실행 중인 프로세스의 상태를 보관하고 새로운 프로세스의 상태를 CPU에 적재하는 과정을 말한다.</p>
+<p>프로세스의 컨텍스트는 PCB에 저장된다.</p>
+<p>문맥 교환에 소요되는 시간은 순수 오버헤드이다.</p>
+<p>위의 오버헤드를 극복하기 위한 특수 명령어, 레지스터 집합, 스레드 사용 등의 방안이 있다.</p>
+<h2 id="프로세스에-대한-연산"><a href="#프로세스에-대한-연산" class="headerlink" title="프로세스에 대한 연산"></a>프로세스에 대한 연산</h2><h3 id="생성"><a href="#생성" class="headerlink" title="생성"></a>생성</h3><p>프로세스는 수행 도중에 여러 개의 새로운 프로세스를 생성할 수 있다.</p>
+<p>이 때 프로세스를 생성하는 프로세스를 <strong>부모 프로세스<em>parent process</em></strong>, 생성된 프로세스를 <strong>자식 프로세스<em>child process</em></strong>라고 한다.</p>
+<p>자식 프로세스는 그것이 필요로 하는 자원을 운영체제로부터 직접 받거나, 부모 프로세스의 자원에 한정되어 받을 수 있다.</p>
+<p>자식 프로세스가 얻을 수 있는 자원을 한정하면 어떠한 프로세스가 수많은 자식 프로세스를 생성하여 시스템을 마비시키는 것을 방지할 수 있다.</p>
+<p>부모와 자식 프로세스는 병행으로 실행되거나, 자식 프로세스가 완료될 때까지 부모 프로세스가 기다린다.</p>
+<p>자식 프로세스에 부모 프로세스의 주소 공간의 복사본이 할당되며, 자신의 공간에 적재할 프로그램을 가지고 있다.</p>
+<p>유닉스의 경우 다음과 같이 프로세스를 생성한다.</p>
+<ul>
+<li>각 프로세스는 <strong>프로세스 식별자<em>PID, process identifier</em></strong>를 가지며 이에 의해 식별된다.</li>
+<li>fork 시스템 호출을 통해 프로세스를 생성한다. 그 결과로 자식 프로세스는 부모 프로세스의 주소 공간의 복사본을 할당받는다.</li>
+<li>자식 프로세스는 보통 execlp와 같은 시스템 호출로 할당받은 기존 주소 공간에 새로운 프로그램을 덮어쓴 다음 그 프로그램을 수행한다.</li>
+<li>부모 프로세스는 할 일이 없으면 wait 시스템 호출을 통해 자식 프로세스의 종료를 기다릴 수 있다.</li>
+</ul>
+<h3 id="종료"><a href="#종료" class="headerlink" title="종료"></a>종료</h3><p>프로세스는 자신의 마지막 문장을 수행 완료하면 종료되며, 이 때 exit 시스템 호출을 통해 운영체제에게 자신의 삭제를 요청한다.</p>
+<p>이 때 자식은 부모에게 결과 데이터를 전달할 수 있고, 부모는 wait 시스템 호출을 통해 이 데이터를 전달받을 수 있다.</p>
+<p>부모 프로세스는 abort 시스템 호출을 통해 자식 프로세스를 강제로 종료시킬 수 있다.</p>
+<p>유닉스에서는 부모 프로세스가 종료되면 고아가 된 자식 프로세스는 init이라고 하는 시스템 프로세스를 새로운 부모로 설정한다.</p>
+<h2 id="프로세스-간-협력"><a href="#프로세스-간-협력" class="headerlink" title="프로세스 간 협력"></a>프로세스 간 협력</h2><p>독립 프로세스<em>independent process</em> : 다른 프로세스의 실행에 영향을 주지도, 받지도 않는 프로세스</p>
+<p>협조 프로세스<em>cooperating process</em> : 다른 프로세스의 실행에 영향을 주는, 영향을 받는 프로세스</p>
+<p>협조 프로세스는 정보 공유 / 계산 가속화(계산을 나누어 실행) / 모듈화(기능 분리) / 편리성(동시 실행) 측면에서 필요하다.</p>
+<p>프로세스 간 협조가 이루어지기 위해서는 상호 통신하는 메커니즘과 동기화 메커니즘이 필요하다.</p>
+<h3 id="소비자-생산자-문제"><a href="#소비자-생산자-문제" class="headerlink" title="소비자 생산자 문제"></a>소비자 생산자 문제</h3><p>생산자 프로세스는 소비자 프로세스가 필요로 하는 정보를 생산하며, 이를 공유하기 위해 버퍼를 공유해야 한다.</p>
+<p>이 때 생산자의 생산 속도와 소비자의 소비 속도를 맞추어야 할 필요가 있다.</p>
+<p>무한 버퍼의 경우 소비자는 기다려야 하는 경우가 있으나, 생산자는 기다려야 하는 경우가 없다.</p>
+<p>유한 버퍼의 경우 소비자는 버퍼가 비워져 있으면 기다려야 하고, 생산자는 버퍼가 가득 차 있으면 기다려야 한다.</p>
+<p>이러한 버퍼는 프로세스 간 통신<em>IPC, InterProcess Communication</em> 기능을 이용하여 만들 수 있으며, 프로그래머가 공유 메모리를 이용하여 직접 구현할 수도 있다.</p>
+<h2 id="프로세스-간-통신"><a href="#프로세스-간-통신" class="headerlink" title="프로세스 간 통신"></a>프로세스 간 통신</h2><p>IPC는 프로세스가 같은 주소 공간을 공유하지 않아도 프로세스 간에 통신하고 동기화해줄 수 있는 메커니즘을 제공한다.</p>
+<h3 id="메세지-전달-시스템"><a href="#메세지-전달-시스템" class="headerlink" title="메세지 전달 시스템"></a>메세지 전달 시스템</h3><p>데이터의 공유 없이 프로세스 간에 통신을 할 수 있도록 해준다.</p>
+<p>기본적으로 <code>send(msg)</code>와 <code>receive(msg)</code>의 두 가지 연산을 제공한다.</p>
+<p>메세지 크기는 가변적일 수도 있고, 고정적일 수도 있다.</p>
+<p>두 프로세스 간에 통신하기 위해서는 통신 링크가 필요하다.</p>
+<h3 id="명명"><a href="#명명" class="headerlink" title="명명"></a>명명</h3><h4 id="직접-통신"><a href="#직접-통신" class="headerlink" title="직접 통신"></a>직접 통신</h4><p>각 프로세스는 수신자 또는 송신자의 이름을 명백하게 제시해야 한다.</p>
+<p>상대방의 이름만 알면 통신을 하고자 하는 프로세스 간에 자동으로 링크가 설정되며, 정확하게 두 개의 프로세스만 연관되며, 두 프로세스 간에는 오직 하나의 링크만 존재한다.</p>
+<p>대칭 방식</p>
+<ul>
+<li><code>send(P, msg)</code> : 프로세스 P에게 msg를 전송한다.</li>
+<li><code>receive(Q, msg)</code> : 프로세스 Q로부터 msg를 수신한다.</li>
+</ul>
+<p>비대칭 방식</p>
+<ul>
+<li><code>send(P, msg)</code> : 프로세스 P에게 msg를 전송한다.</li>
+<li><code>receive(id, msg)</code> : 임의의 프로세스로부터 msg를 수신한다. 송신한 프로세스의 이름이 id에 저장된다.</li>
+</ul>
+<h4 id="간접-통신"><a href="#간접-통신" class="headerlink" title="간접 통신"></a>간접 통신</h4><p>메세지는 메일 박스나 포트로 전달되며, 이를 통해 여러 개의 메일 박스를 이용하여 통신할 수 있다.</p>
+<p>메일 박스를 서로 공유해야 통신이 이루어질 수 있다.</p>
+<p>두 프로세스가 메일 박스를 공유하는 경우에만 프로세스 간에 링크가 설정되며, 링크는 여러 개의 프로세스와 연관될 수 있으며, 두 프로세스 간에는 여러 개의 링크가 존재할 수 있다.</p>
+<ul>
+<li><code>send(A, msg)</code> : 메일 박스 A로 msg를 전달한다.</li>
+<li><code>receive(A, msg)</code> 메일 박스 A로부터 msg를 수신한다.</li>
+</ul>
+<p>여러 프로세스가 하나의 메일 박스로부터 메세지를 수신하려 할 때, 다음과 같은 제한을 둘 수 있다.</p>
+<ul>
+<li>메일 박스를 오직 두 프로세스 간에만 공유할 수 있도록 한다.</li>
+<li>한번에 한 프로세스만 <code>receive</code>를 실행할 수 있도록 한다.</li>
+<li>시스템이 두 프로세스 중 임의로 하나를 선택하여 하나만 실행할 수 있도록 한다.</li>
+</ul>
+<p>메일 박스는 프로세스가 소유할 수도 있고, 운영체제가 소유할 수도 있다.</p>
+<p>메일 박스를 프로세스가 소유하는 경우</p>
+<ul>
+<li>소유자와 그것의 사용자를 구분하며, 소유자는 그 메일 박스로부터 수신만 할 수 있고, 사용자는 그 메일 박스로 메세지를 전달만 할 수 있다.</li>
+</ul>
+<p>메일 박스를 운영체제가 소유하는 경우</p>
+<ul>
+<li>메일 박스는 특정 프로세스에 연관되지 않는다.</li>
+<li>프로세스가 새로운 메일 박스를 생성하고, 메일 박스를 통해 메세지를 송수신하고, 메일 박스를 삭제하는 것을 가능하게 하는 메커니즘을 제공해야 한다.</li>
+<li>메일 박스를 생성한 프로세스가 기본적으로 소유자가 되며, 그 프로세스만이 이 메일 박스로부터 메세지를 수신할 수 있다.</li>
+<li>시스템 호출을 통해 소유권과 수신 권한을 다른 프로세스에게 줄 수 있다.</li>
+</ul>
+<h3 id="동기화"><a href="#동기화" class="headerlink" title="동기화"></a>동기화</h3><p>메세지 전달을 구현하는 방법</p>
+<ul>
+<li><strong>봉쇄형<em>blocking</em>(동기식<em>synchronous</em>)</strong> : 송신 프로세스는 수신자가 메세지를 수신하거나 메일 박스가 받아들일 때까지 대기하며, 수신 프로세스는 수신할 메세지가 있을 때까지 대기한다.</li>
+<li><strong>비봉쇄형<em>nonblocking</em>(비동기식<em>asynchronous</em>)</strong> : 송신 프로세스는 메세지를 수신하고 다른 작업을 수행하며, 수신 프로세스는 유효한 메세지를 수신하거나 널 메세지를 수신한다.</li>
+</ul>
+<p>위의 방식은 여러 조합으로 사용될 수 있다.</p>
+<h3 id="버퍼링"><a href="#버퍼링" class="headerlink" title="버퍼링"></a>버퍼링</h3><p>교환되는 메세지는 임시 큐에 보관된다.</p>
+<ul>
+<li><strong>무용량</strong> : 링크는 대기하는 메세지를 가질 수 없으므로, 송신자는 반드시 수신자가 메세지를 수신할 때까지 기다려야 한다.</li>
+<li><strong>유한 용량</strong> : 송신자는 링크가 채워져 있는 경우 대기해야 한다.</li>
+<li><strong>무한 용량</strong> : 송신자는 대기하는 경우가 없다.</li>
+</ul>
+<p>자동 버퍼링은 유한 용량 또는 무한 용량의 버퍼를 사용하는 것을 말한다.</p>
+<h2 id="클라이언트-서버-시스템에서의-통신"><a href="#클라이언트-서버-시스템에서의-통신" class="headerlink" title="클라이언트-서버 시스템에서의 통신"></a>클라이언트-서버 시스템에서의 통신</h2><h3 id="소켓"><a href="#소켓" class="headerlink" title="소켓"></a>소켓</h3><p><strong>소켓<em>socket</em></strong>은 통신의 끝을 정의하며, 네트워크를 통해 통신하는 두 프로세스는 각자 소켓을 만들고 그것을 이용하여 통신한다.</p>
+<p>소켓은 IP 주소와 포트 번호에 의해 식별된다.</p>
+<p>특정 서비스를 제공하는 서버는 80(HTTP)과 같은 잘 알려진 포트 번호로 클라이언트의 요청을 기다린다.</p>
+<p>TCP, UDP 등의 소켓이 있다.</p>
+<h3 id="원격-프로시저-호출"><a href="#원격-프로시저-호출" class="headerlink" title="원격 프로시저 호출"></a>원격 프로시저 호출</h3><p><strong>원격 프로시저 호출<em>RPC, Remote Procedure Call</em></strong>을 통해 원격에 있는 프로시저를 지역 프로시저를 호출하듯 호출할 수 있도록 해준다.</p>
+<p>RPC는 소켓보다는 상위 레벨의 통신 메커니즘이다.</p>
+<p>원격에서 프로시저를 호출할 수 있도록 하기 위해서는 먼저 그것들을 사용할 수 있도록 등록해 놓아야 한다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#프로세스"><span class="toc-number">1.</span> <span class="toc-text">프로세스</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-개념"><span class="toc-number">1.1.</span> <span class="toc-text">프로세스 개념</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#프로세스-1"><span class="toc-number">1.1.1.</span> <span class="toc-text">프로세스</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프로세스의-상태"><span class="toc-number">1.1.2.</span> <span class="toc-text">프로세스의 상태</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프로세스-제어-블록"><span class="toc-number">1.1.3.</span> <span class="toc-text">프로세스 제어 블록</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드"><span class="toc-number">1.1.4.</span> <span class="toc-text">스레드</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-스케줄링"><span class="toc-number">1.2.</span> <span class="toc-text">프로세스 스케줄링</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#스케줄링-큐"><span class="toc-number">1.2.1.</span> <span class="toc-text">스케줄링 큐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스케줄러"><span class="toc-number">1.2.2.</span> <span class="toc-text">스케줄러</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#문맥-전환"><span class="toc-number">1.2.3.</span> <span class="toc-text">문맥 전환</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스에-대한-연산"><span class="toc-number">1.3.</span> <span class="toc-text">프로세스에 대한 연산</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#생성"><span class="toc-number">1.3.1.</span> <span class="toc-text">생성</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#종료"><span class="toc-number">1.3.2.</span> <span class="toc-text">종료</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-간-협력"><span class="toc-number">1.4.</span> <span class="toc-text">프로세스 간 협력</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#소비자-생산자-문제"><span class="toc-number">1.4.1.</span> <span class="toc-text">소비자 생산자 문제</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#프로세스-간-통신"><span class="toc-number">1.5.</span> <span class="toc-text">프로세스 간 통신</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#메세지-전달-시스템"><span class="toc-number">1.5.1.</span> <span class="toc-text">메세지 전달 시스템</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#명명"><span class="toc-number">1.5.2.</span> <span class="toc-text">명명</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#직접-통신"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">직접 통신</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#간접-통신"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">간접 통신</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#동기화"><span class="toc-number">1.5.3.</span> <span class="toc-text">동기화</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#버퍼링"><span class="toc-number">1.5.4.</span> <span class="toc-text">버퍼링</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#클라이언트-서버-시스템에서의-통신"><span class="toc-number">1.6.</span> <span class="toc-text">클라이언트-서버 시스템에서의 통신</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#소켓"><span class="toc-number">1.6.1.</span> <span class="toc-text">소켓</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#원격-프로시저-호출"><span class="toc-number">1.6.2.</span> <span class="toc-text">원격 프로시저 호출</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/os-lecture-note-process/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&text=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&is_video=false&description=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=운영체제 강의노트 정리 - 프로세스&body=Check out this article: http://presto95.github.io/2020/01/18/os-lecture-note-process/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&title=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/os-lecture-note-process/&name=운영체제 강의노트 정리 - 프로세스&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/os-lecture-note-process/&t=운영체제 강의노트 정리 - 프로세스" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

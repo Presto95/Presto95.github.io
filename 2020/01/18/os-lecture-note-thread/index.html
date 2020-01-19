@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="스레드개요스레드thread는 프로세스와 마찬가지로 CPU의 작업 단위이나, 경량 프로세스lightweight process라고 불린다. 스레드는 자원의 관리보다는, 프로그램의 하나의 실행 흐름으로서 CPU에서 실행되기 위해 스케줄되어야 하는 개체이다. (프로세스는 프로그램 수행과 그것에 필요한 자원을 하나의 개체에서 관리하기 위한 방법이다.) 스레드는 스레">
+<meta property="og:type" content="article">
+<meta property="og:title" content="운영체제 강의노트 정리 - 스레드">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/os-lecture-note-thread/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="스레드개요스레드thread는 프로세스와 마찬가지로 CPU의 작업 단위이나, 경량 프로세스lightweight process라고 불린다. 스레드는 자원의 관리보다는, 프로그램의 하나의 실행 흐름으로서 CPU에서 실행되기 위해 스케줄되어야 하는 개체이다. (프로세스는 프로그램 수행과 그것에 필요한 자원을 하나의 개체에서 관리하기 위한 방법이다.) 스레드는 스레">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:22:00.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:22:16.536Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="operating system">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>운영체제 강의노트 정리 - 스레드</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/os-lecture-note-cpu-scheduling/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/os-lecture-note-process/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/os-lecture-note-thread/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&text=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&is_video=false&description=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=운영체제 강의노트 정리 - 스레드&body=Check out this article: http://presto95.github.io/2020/01/18/os-lecture-note-thread/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&name=운영체제 강의노트 정리 - 스레드&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&t=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#스레드"><span class="toc-number">1.</span> <span class="toc-text">스레드</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#개요"><span class="toc-number">1.1.</span> <span class="toc-text">개요</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#동기"><span class="toc-number">1.1.1.</span> <span class="toc-text">동기</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드의-특성"><span class="toc-number">1.1.2.</span> <span class="toc-text">스레드의 특성</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#장점"><span class="toc-number">1.1.3.</span> <span class="toc-text">장점</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#사용자-및-커널-스레드"><span class="toc-number">1.1.4.</span> <span class="toc-text">사용자 및 커널 스레드</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#사용자-스레드user-thread"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">사용자 스레드user thread</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#커널-스레드kernel-thread"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">커널 스레드kernel thread</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#다중-스레드-모델"><span class="toc-number">1.2.</span> <span class="toc-text">다중 스레드 모델</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#다대일-모델"><span class="toc-number">1.2.1.</span> <span class="toc-text">다대일 모델</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#일대일-모델"><span class="toc-number">1.2.2.</span> <span class="toc-text">일대일 모델</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#다대다-모델"><span class="toc-number">1.2.3.</span> <span class="toc-text">다대다 모델</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스레드-쟁점"><span class="toc-number">1.3.</span> <span class="toc-text">스레드 쟁점</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fork-및-exec-시스템-호출"><span class="toc-number">1.3.1.</span> <span class="toc-text">fork 및 exec 시스템 호출</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#취소"><span class="toc-number">1.3.2.</span> <span class="toc-text">취소</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#신호-처리"><span class="toc-number">1.3.3.</span> <span class="toc-text">신호 처리</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드-풀"><span class="toc-number">1.3.4.</span> <span class="toc-text">스레드 풀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드-전용-데이터"><span class="toc-number">1.3.5.</span> <span class="toc-text">스레드 전용 데이터</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        운영체제 강의노트 정리 - 스레드
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:22:00.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Operating-System/">Operating System</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/operating-system/" rel="tag">operating system</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="스레드"><a href="#스레드" class="headerlink" title="스레드"></a>스레드</h1><h2 id="개요"><a href="#개요" class="headerlink" title="개요"></a>개요</h2><p><strong>스레드<em>thread</em></strong>는 프로세스와 마찬가지로 CPU의 작업 단위이나, <strong>경량 프로세스<em>lightweight process</em></strong>라고 불린다.</p>
+<p>스레드는 자원의 관리보다는, 프로그램의 하나의 실행 흐름으로서 CPU에서 실행되기 위해 스케줄되어야 하는 개체이다.</p>
+<p>(프로세스는 프로그램 수행과 그것에 필요한 자원을 하나의 개체에서 관리하기 위한 방법이다.)</p>
+<p>스레드는 스레드 식별자 / 프로그램 카운터 / 레지스터 집합 / 스택을 별도로 가지며, 텍스트 / 데이터 섹션, 다른 운영체제 자원 등은 같은 프로세스에 속한 다른 스레드와 공유한다.</p>
+<p>하나의 프로세스에서 병행 수행되는 스레드는 같은 주소 공간과 자원을 공유하며, 하나의 컴퓨터에서 병행 수행되는 프로세스는 같은 물리 메모리와 디스크를 공유한다.</p>
+<p>다중 스레드를 사용하는 것이 무조건적인 성능 향상을 의미하는 것은 아니다.</p>
+<h3 id="동기"><a href="#동기" class="headerlink" title="동기"></a>동기</h3><p>다중 스레드를 활용하면 한 응용 프로그램에서 여러 가지 일을 동시에 수행할 수 있다.</p>
+<p>물론 자식 프로세스를 생성하여 이를 처리할 수 있으나, 프로세스 생성은 비용이 크며, 자원 공유도 쉽지 않다.</p>
+<p>유닉스의 경우 스레드 생성 비용은 프로세스 생성 비용보다 10배 정도 빠르다.</p>
+<h3 id="스레드의-특성"><a href="#스레드의-특성" class="headerlink" title="스레드의 특성"></a>스레드의 특성</h3><p>스레드도 프로세스와 마찬가지로 같은 상태 변화를 한다.</p>
+<p>프로세스는 부모 프로세스와 자식 프로세스를 구분하지만, 같은 프로세스 내에 있는 스레드는 보통 이러한 구분을 하지 않는다.</p>
+<h3 id="장점"><a href="#장점" class="headerlink" title="장점"></a>장점</h3><ul>
+<li><strong>응답성<em>responsiveness</em></strong> : 다중 스레드 프로그램은 일부가 블록되어도 나머지 부분은 계속 실행될 수 있다.</li>
+<li><strong>자원 공유<em>resource sharing</em></strong> : 같은 프로세스의 스레드는 메모리와 그 밖의 프로세스 자원을 공유한다. 때문에 스레드 간 통신이 용이하다.</li>
+<li><strong>경제성<em>economy</em></strong> : 프로세스마다 자원과 메모리를 할당하면 많은 오버헤드가 발생하는데, 스레드를 사용하여 생성 비용을 저렴하게 하고 스레드 간 문맥 전환을 용이하게 한다.</li>
+</ul>
+<h3 id="사용자-및-커널-스레드"><a href="#사용자-및-커널-스레드" class="headerlink" title="사용자 및 커널 스레드"></a>사용자 및 커널 스레드</h3><p>스레드는 사용자 공간에 구현되거나, 커널 공간에 구현되거나, 혼합되어 구현될 수 있다.</p>
+<h4 id="사용자-스레드user-thread"><a href="#사용자-스레드user-thread" class="headerlink" title="사용자 스레드user thread"></a>사용자 스레드<em>user thread</em></h4><p>스레드 라이브러리를 통해 제공되며, 커널의 지원 없이 스레드의 생성, 스케줄링, 관리를 제공한다. 때문에 모드 변경이 필요 없어 스레드의 생성과 관리를 빠르게 할 수 있다.</p>
+<p>프로세스마다 자체적 스케줄링 알고리즘을 가질 수 있으나, 커널은 스레드 단위로 시분할 하지 않는다.</p>
+<p>커널이 단일 스레드일 때, 프로세스의 하나의 스레드가 블록되면 전체 프로세스가 블록된다.</p>
+<p>다중 프로세서의 장점을 이용할 수 없다.</p>
+<p>POSIX의 Pthread 등이 해당된다.</p>
+<h4 id="커널-스레드kernel-thread"><a href="#커널-스레드kernel-thread" class="headerlink" title="커널 스레드kernel thread"></a>커널 스레드<em>kernel thread</em></h4><p>운영체제가 직접 지원하며, 커널이 스레드의 생성, 스케줄링, 관리를 담당한다.</p>
+<p>모드 변경이 필요하므로 스레드 생성 및 관리가 사용자 스레드보다 느리다.</p>
+<p>하나의 스레드가 블록되어도 같은 프로세스에 있는 다른 스레드를 계속 실행할 수 있다.</p>
+<h2 id="다중-스레드-모델"><a href="#다중-스레드-모델" class="headerlink" title="다중 스레드 모델"></a>다중 스레드 모델</h2><p>일반적으로 운영체제는 사용자 스레드와 커널 스레드를 모두 제공한다.</p>
+<p>커널은 커널 스레드의 존재만 인식하며, 커널은 커널 스레드를 스케줄링하여 실행한다.</p>
+<h3 id="다대일-모델"><a href="#다대일-모델" class="headerlink" title="다대일 모델"></a>다대일 모델</h3><p>여러 사용자 스레드 &lt;-&gt; 하나의 커널 스레드</p>
+<p>스레드 관리가 사용자 모드에서 이루어져 처리가 빠르나, 하나의 스레드가 블록되면 전체 프로세스가 블록되며, 다중 프로세스에서 다중 스레드가 동시에 수행될 수 없다.</p>
+<h3 id="일대일-모델"><a href="#일대일-모델" class="headerlink" title="일대일 모델"></a>일대일 모델</h3><p>하나의 사용자 스레드 &lt;-&gt; 하나의 커널 스레드</p>
+<p>하나의 스레드가 블록되어도 나머지 스레드는 계속 실행될 수 있고, 다중 프로세스에서 동시에 수행될 수 있으나, 비용이 비싸다.</p>
+<h3 id="다대다-모델"><a href="#다대다-모델" class="headerlink" title="다대다 모델"></a>다대다 모델</h3><p>여러 사용자 스레드 &lt;-&gt; 여러 커널 스레드</p>
+<p>비용이 일대일 모델모다 저저렴하며, 스레드의 동시 수행도 가능하다.</p>
+<h2 id="스레드-쟁점"><a href="#스레드-쟁점" class="headerlink" title="스레드 쟁점"></a>스레드 쟁점</h2><h3 id="fork-및-exec-시스템-호출"><a href="#fork-및-exec-시스템-호출" class="headerlink" title="fork 및 exec 시스템 호출"></a>fork 및 exec 시스템 호출</h3><p>유닉스는 두 종류의 fork 시스템 호출을 제공한다.</p>
+<ul>
+<li>스레드가 fork 시스템 호출을 하면 프로세스의 모든 스레드가 복사된다.</li>
+<li>스레드가 fork 시스템 호출을 하면 호출한 스레드만 복사된다.</li>
+</ul>
+<p>스레드가 exec 시스템 호출을 하면 전체 프로세스가 새로운 프로그램으로 교체된다.</p>
+<h3 id="취소"><a href="#취소" class="headerlink" title="취소"></a>취소</h3><p>스레드 취소<em>thread cancellation</em>은 실행 중인 스레드를 강제로 종료하는 것을 말한다.</p>
+<p>스레드 취소는 두 가지 형태를 갖는다.</p>
+<ul>
+<li>비동기식 취소 : 목표 스레드가 바로 종료된다.<ul>
+<li>스레드에게 할당된 자원이 모두 자동으로 해제되지 않을 수 있다.</li>
+</ul>
+</li>
+<li>지연된 취소 : 목표 스레드는 주기적으로 자신이 종료되어야 하는지 검사하고 적절한 시기에 종료된다.</li>
+</ul>
+<h3 id="신호-처리"><a href="#신호-처리" class="headerlink" title="신호 처리"></a>신호 처리</h3><p>유닉스에서는 신호<em>signal</em>를 이용하여 특정 사건이 일어났음을 프로세스에 통보한다. 신호는 소프트웨어 인터럽트다.</p>
+<p>동기식 신호는 자신에 의해 생성된 신호를 말하며, 그것을 생성한 프로세스에게 전달된다. (예. 잘못된 메모리 접근)</p>
+<p>비동기식 신호는 외부에 의해 생성된 신호를 말하며, 그 생성은 예측될 수 없다. (예. ctrl+c)</p>
+<p>특정 사건의 발생에 의해 신호가 발생하면, 그 신호는 프로세스에게 전달되고, 프로세스는 신호를 처리한다.</p>
+<p>모든 신호마다 그것을 처리하는 기본 신호 처리기가 있으며, 이는 커널이 수행한다.</p>
+<p>사용자가 신호 처리기를 커스터마이징하면, 기본 신호 처리기 대신 이 처리기가 신호를 처리한다.</p>
+<p>스레드에서 신호를 처리하는 방법은 다음과 같다.</p>
+<ul>
+<li>신호에 해당하는 스레드에게만 전달 (동기식 신호 처리에 적합)</li>
+<li>프로세스의 모든 스레드에 전달 (비동기식 신호 처리에 적합)</li>
+<li>프로세스의 일부 스레드에게만 전달</li>
+<li>프로세스의 모든 신호를 처리하는 특정 스레드를 두어 처리</li>
+</ul>
+<p>유닉스에서는 스레드가 수신할 신호와 무시할 신호를 지정할 수 있다.</p>
+<h3 id="스레드-풀"><a href="#스레드-풀" class="headerlink" title="스레드 풀"></a>스레드 풀</h3><p>프로세스가 생성할 수 있는 스레드의 수를 적절하게 관리하기 위해 사용되는 메커니즘.</p>
+<p>프로세스가 시작될 때 적정 수의 스레드를 생성하여 스레드 풀에 대기하도록 하며, 스레드가 필요할 때 풀에 있는 스레드를 활성화하여 사용하고, 실행이 끝나면 다시 스레드 풀로 들어가 대기한다.</p>
+<p>스레드 풀을 이용하여 작업을 빠르게 처리할 수 있으며, 스레드 수를 효과적으로 제한할 수 있다.</p>
+<h3 id="스레드-전용-데이터"><a href="#스레드-전용-데이터" class="headerlink" title="스레드 전용 데이터"></a>스레드 전용 데이터</h3><p>스레드는 보통 같은 프로세스에 속한 스레드와 데이터를 공유하며, 스레드 라이브러리가 지원하는 스레드 전용 데이터<em>thread-specific data</em>를 사용할 수 있다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#스레드"><span class="toc-number">1.</span> <span class="toc-text">스레드</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#개요"><span class="toc-number">1.1.</span> <span class="toc-text">개요</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#동기"><span class="toc-number">1.1.1.</span> <span class="toc-text">동기</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드의-특성"><span class="toc-number">1.1.2.</span> <span class="toc-text">스레드의 특성</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#장점"><span class="toc-number">1.1.3.</span> <span class="toc-text">장점</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#사용자-및-커널-스레드"><span class="toc-number">1.1.4.</span> <span class="toc-text">사용자 및 커널 스레드</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#사용자-스레드user-thread"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">사용자 스레드user thread</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#커널-스레드kernel-thread"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">커널 스레드kernel thread</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#다중-스레드-모델"><span class="toc-number">1.2.</span> <span class="toc-text">다중 스레드 모델</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#다대일-모델"><span class="toc-number">1.2.1.</span> <span class="toc-text">다대일 모델</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#일대일-모델"><span class="toc-number">1.2.2.</span> <span class="toc-text">일대일 모델</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#다대다-모델"><span class="toc-number">1.2.3.</span> <span class="toc-text">다대다 모델</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스레드-쟁점"><span class="toc-number">1.3.</span> <span class="toc-text">스레드 쟁점</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fork-및-exec-시스템-호출"><span class="toc-number">1.3.1.</span> <span class="toc-text">fork 및 exec 시스템 호출</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#취소"><span class="toc-number">1.3.2.</span> <span class="toc-text">취소</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#신호-처리"><span class="toc-number">1.3.3.</span> <span class="toc-text">신호 처리</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드-풀"><span class="toc-number">1.3.4.</span> <span class="toc-text">스레드 풀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#스레드-전용-데이터"><span class="toc-number">1.3.5.</span> <span class="toc-text">스레드 전용 데이터</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/os-lecture-note-thread/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&text=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&is_video=false&description=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=운영체제 강의노트 정리 - 스레드&body=Check out this article: http://presto95.github.io/2020/01/18/os-lecture-note-thread/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&title=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&name=운영체제 강의노트 정리 - 스레드&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/os-lecture-note-thread/&t=운영체제 강의노트 정리 - 스레드" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="리팩토링리팩토링은 프로그램이 그냥 동작하기보다는 올바르게 동작하게 하며, 개발자가 코드의 구조에 더 많은 가치를 부여하는 것이다. 마틴 파울러는 리팩토링을 ‘외부 행위를 바꾸지 않으면서 내부 구조를 개선하는 방법으로, 소프트웨어 시스템을 변경하는 프로세스’라고 정의하였다. 모든 소프트웨어 모듈에는 세 가지 기능이 있다.  실행 중에 동작하는 기능  이는 모">
+<meta property="og:type" content="article">
+<meta property="og:title" content="클린 소프트웨어 - 리팩토링">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/clean-software-refactoring/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="리팩토링리팩토링은 프로그램이 그냥 동작하기보다는 올바르게 동작하게 하며, 개발자가 코드의 구조에 더 많은 가치를 부여하는 것이다. 마틴 파울러는 리팩토링을 ‘외부 행위를 바꾸지 않으면서 내부 구조를 개선하는 방법으로, 소프트웨어 시스템을 변경하는 프로세스’라고 정의하였다. 모든 소프트웨어 모듈에는 세 가지 기능이 있다.  실행 중에 동작하는 기능  이는 모">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:33:22.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:33:45.946Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="software engineering">
+<meta property="article:tag" content="clean software">
+<meta property="article:tag" content="agile">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>클린 소프트웨어 - 리팩토링</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/clean-software-programming-episode/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/clean-software-test/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/clean-software-refactoring/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&text=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&is_video=false&description=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 리팩토링&body=Check out this article: http://presto95.github.io/2020/01/18/clean-software-refactoring/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&name=클린 소프트웨어 - 리팩토링&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/clean-software-refactoring/&t=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#리팩토링"><span class="toc-number">1.</span> <span class="toc-text">리팩토링</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#소수-생성기-리팩토링의-간단한-예"><span class="toc-number">1.1.</span> <span class="toc-text">소수 생성기: 리팩토링의 간단한 예</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#함수를-여러-개의-독립된-함수로-나누기"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">함수를 여러 개의 독립된 함수로 나누기</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#함수-및-변수의-이름-변경하기"><span class="toc-number">1.1.0.2.</span> <span class="toc-text">함수 및 변수의 이름 변경하기</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.2.</span> <span class="toc-text">결론</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        클린 소프트웨어 - 리팩토링
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:33:22.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Software-Engineering/">Software Engineering</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/agile/" rel="tag">agile</a>, <a class="tag-link" href="/tags/clean-software/" rel="tag">clean software</a>, <a class="tag-link" href="/tags/software-engineering/" rel="tag">software engineering</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="리팩토링"><a href="#리팩토링" class="headerlink" title="리팩토링"></a>리팩토링</h1><p>리팩토링은 프로그램이 그냥 동작하기보다는 올바르게 동작하게 하며, 개발자가 코드의 구조에 더 많은 가치를 부여하는 것이다.</p>
+<p>마틴 파울러는 리팩토링을 ‘외부 행위를 바꾸지 않으면서 내부 구조를 개선하는 방법으로, 소프트웨어 시스템을 변경하는 프로세스’라고 정의하였다.</p>
+<p>모든 소프트웨어 모듈에는 세 가지 기능이 있다.</p>
+<ul>
+<li>실행 중에 동작하는 기능</li>
+</ul>
+<p>이는 모듈의 존재 이유가 된다.</p>
+<ul>
+<li>변경 기능</li>
+</ul>
+<p>모듈은 언제든지 변경 가능해야 한다. 변경하기 힘든 모듈은 잘못된 것이며 고쳐져야 한다.</p>
+<ul>
+<li>모듈을 읽는 사람과 의사소통하는 기능</li>
+</ul>
+<p>모듈은 특별한 훈련 없이도 개발자가 쉽게 읽고 이해할 수 있어야 한다. 그렇지 않다면 고쳐져야 한다.</p>
+<p>읽기 쉽고 변경하기 쉬운 모듈을 만들기 위해서는 원칙과 패턴이 아닌, 주의력과 훈련, 미를 창조하기 위한 열정이 필요하다.</p>
+<h2 id="소수-생성기-리팩토링의-간단한-예"><a href="#소수-생성기-리팩토링의-간단한-예" class="headerlink" title="소수 생성기: 리팩토링의 간단한 예"></a>소수 생성기: 리팩토링의 간단한 예</h2><p>책은 에라토스테네스의 체 알고리즘을 사용하여, 주어진 숫자까지 존재하는 소수를 구하는 프로그램을 제시하고 있다. 하나의 메소드에 모든 구현 코드가 위치해 있고, 변수의 의미를 파악하기 힘들고, 주석을 사용하여 로직을 설명하고 있다.</p>
+<p>이 코드는 또한 책이 제시한 테스트 코드를 통과하므로 잘 동작하는 프로그램이다. 하지만 이 프로그램을 작성한 개발자가 아닌 다른 사람이 코드를 읽기에는 쉽지 않다.</p>
+<p>책은 차례대로 다음의 기법을 사용하여 코드를 리팩토링하고 있다.</p>
+<h4 id="함수를-여러-개의-독립된-함수로-나누기"><a href="#함수를-여러-개의-독립된-함수로-나누기" class="headerlink" title="함수를 여러 개의 독립된 함수로 나누기"></a>함수를 여러 개의 독립된 함수로 나누기</h4><p>기존에 프로그램은 하나의 함수에 모든 코드가 위치해 있었으므로, 여러 개의 함수로 나누어 로직을 위치시킨다. 에라토스테네스의 체 알고리즘을 사용하므로 1. 모든 변수를 초기화하고 체를 기본 상태로 설정하며, 2. 체로 걸러내는 동작을 실제로 실행하고, 3. 체로 걸러낸 결과를 정수 배열에 넣는 각각의 함수를 만들어 로직을 분리하였다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> primes: [<span class="type">Int</span>] = []</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generatePrimes</span><span class="params">(upTo maxValue: Int)</span></span> -&gt; [<span class="type">Int</span>] &#123;</span><br><span class="line">  <span class="keyword">if</span> maxValue &lt; <span class="number">2</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="number">0</span>]</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    initializeSieve(maxValue)</span><br><span class="line">    sieve()</span><br><span class="line">    loadPrimes()</span><br><span class="line">    <span class="keyword">return</span> primes</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="함수-및-변수의-이름-변경하기"><a href="#함수-및-변수의-이름-변경하기" class="headerlink" title="함수 및 변수의 이름 변경하기"></a>함수 및 변수의 이름 변경하기</h4><p>함수 및 변수가 사용되는 위치에서 그 의미를 드러낼 수 있도록 이름을 다시 짓는다.</p>
+<p>ex 1)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> isCrossed[i] == <span class="literal">false</span> &#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위의 코드도 다음과 같이 다시 작성될 수 있다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> notCrossed(i) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">notCrossed</span><span class="params">(i: Int)</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> isCrossed[i] == <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ex 2)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">unCrossed[i] = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>위의 코드는 이중 부정으로 인한 혼란을 불러일으킬 수 있다. 변수의 이름은 부정보다는 긍정의 의미를 갖는 것이 좋다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>이러한 과정을 통해 최종 코드는 처음에 작성된 코드와 비교하여 훨씬 읽기 쉽고 프로그램 자체도 좀 더 정확하게 동작하게 된다. 이해하기도, 변경하기도 훨씬 쉬워진다. 서로 분리된 프로그램 구조가 만들어진 것이 프로그램을 변경하기 쉽게 만들어준다.</p>
+<p>한 번만 호출되는 로직을 함수로 분리하고 호출하는 것에서 오는 오버헤드보다, 이를 통해 가독성을 얻는 것이 더욱 가치가 있을 수 있다.</p>
+<p>작성한 모든 모듈과 유지보수하는 모든 모듈에 대해 항상 이러한 리팩토링 과정을 거치는 것이 중요하다. 이것에 투자하는 시간은 쓸 데 없는 것이 아니다. 향후 이 프로그램을 작성한 사람과 다른 사람들이 들여야 할 시간과 수고에 비하면 극히 적은 시간을 투자하게 될 것이다.</p>
+<p>리팩토링의 목표는 매일 코드를 청소하는 것이다. 코드를 항상 깔끔하게 유지하여 시스템을 확장하고 변경하기 쉽게 해야 한다.</p>
+<p>원칙과 패턴을 적용하기 전에, 간결하고 분명한 코드를 만드는 것에 신경을 써야 한다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#리팩토링"><span class="toc-number">1.</span> <span class="toc-text">리팩토링</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#소수-생성기-리팩토링의-간단한-예"><span class="toc-number">1.1.</span> <span class="toc-text">소수 생성기: 리팩토링의 간단한 예</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#함수를-여러-개의-독립된-함수로-나누기"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">함수를 여러 개의 독립된 함수로 나누기</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#함수-및-변수의-이름-변경하기"><span class="toc-number">1.1.0.2.</span> <span class="toc-text">함수 및 변수의 이름 변경하기</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.2.</span> <span class="toc-text">결론</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/clean-software-refactoring/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&text=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&is_video=false&description=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 리팩토링&body=Check out this article: http://presto95.github.io/2020/01/18/clean-software-refactoring/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&title=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/clean-software-refactoring/&name=클린 소프트웨어 - 리팩토링&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/clean-software-refactoring/&t=클린 소프트웨어 - 리팩토링" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

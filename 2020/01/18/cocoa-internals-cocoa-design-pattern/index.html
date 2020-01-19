@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="코코아 디자인 패턴디자인 패턴은 프로그래밍 과정에서 문제 해결을 위해 반복해서 경험하는 객체와 클래스 관계를 정리한 것이다. Cocoa 프레임워크는 디자인 패턴 책이 나오기 이전 NeXT 시절부터 객체 중심 소프트웨어를 만들기 위해 다양한 패턴을 반영하여 만들어졌다. 코코아 프레임워크 핵심 패턴두 단계 초기화 패턴초기화 과정NSObject를 상속받은 모든">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cocoa Internals - 코코아 디자인 패턴">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="코코아 디자인 패턴디자인 패턴은 프로그래밍 과정에서 문제 해결을 위해 반복해서 경험하는 객체와 클래스 관계를 정리한 것이다. Cocoa 프레임워크는 디자인 패턴 책이 나오기 이전 NeXT 시절부터 객체 중심 소프트웨어를 만들기 위해 다양한 패턴을 반영하여 만들어졌다. 코코아 프레임워크 핵심 패턴두 단계 초기화 패턴초기화 과정NSObject를 상속받은 모든">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:54:45.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:54:59.521Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="cocoa">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Cocoa Internals - 코코아 디자인 패턴</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/cocoa-internals-block/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/cocoa-internals-collection-class/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&text=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&is_video=false&description=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Cocoa Internals - 코코아 디자인 패턴&body=Check out this article: http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&name=Cocoa Internals - 코코아 디자인 패턴&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&t=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#코코아-디자인-패턴"><span class="toc-number">1.</span> <span class="toc-text">코코아 디자인 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#코코아-프레임워크-핵심-패턴"><span class="toc-number">1.1.</span> <span class="toc-text">코코아 프레임워크 핵심 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#두-단계-초기화-패턴"><span class="toc-number">1.1.1.</span> <span class="toc-text">두 단계 초기화 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#초기화-과정"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">초기화 과정</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#지정-초기화-메소드"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">지정 초기화 메소드</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MVC-Model-View-Controller-패턴"><span class="toc-number">1.1.2.</span> <span class="toc-text">MVC(Model-View-Controller) 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#모델-객체"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">모델 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#뷰-객체"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">뷰 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#컨트롤러-객체"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">컨트롤러 객체</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#메세지-셀렉터-패턴"><span class="toc-number">1.1.3.</span> <span class="toc-text">메세지 셀렉터 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#셀렉터-SEL-와-구현-포인터-IMP"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">셀렉터(SEL)와 구현 포인터(IMP)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#셀렉터-실행-및-지연-실행"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">셀렉터 실행 및 지연 실행</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#타깃과-액션"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">타깃과 액션</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약"><span class="toc-number">1.1.4.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#객체-사이-결합성을-줄여주는-패턴"><span class="toc-number">1.2.</span> <span class="toc-text">객체 사이 결합성을 줄여주는 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#싱글턴-패턴"><span class="toc-number">1.2.1.</span> <span class="toc-text">싱글턴 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UIApplication-공유-인스턴스"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">UIApplication 공유 인스턴스</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#싱글턴-구현-방법"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">싱글턴 구현 방법</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NSFileManager-공유-인스턴스"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">NSFileManager 공유 인스턴스</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#옵저버-패턴"><span class="toc-number">1.2.2.</span> <span class="toc-text">옵저버 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#통보"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">통보</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-1"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#응답-체인-패턴"><span class="toc-number">1.2.3.</span> <span class="toc-text">응답 체인 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#응답-객체"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">응답 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#처음-응답-객체"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">처음 응답 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#응답-체인-탐색"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">응답 체인 탐색</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-2"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#호출-패턴"><span class="toc-number">1.2.4.</span> <span class="toc-text">호출 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NSInvocation-클래스"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">NSInvocation 클래스</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-3"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#객체-내부의-복잡성을-감춰주는-패턴"><span class="toc-number">1.3.</span> <span class="toc-text">객체 내부의 복잡성을 감춰주는 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#팩토리-추상화-패턴"><span class="toc-number">1.3.1.</span> <span class="toc-text">팩토리 추상화 패턴</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#파사드-패턴"><span class="toc-number">1.3.2.</span> <span class="toc-text">파사드 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-4"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#번들-패턴"><span class="toc-number">1.3.3.</span> <span class="toc-text">번들 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Info-plist-파일"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">Info.plist 파일</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#리소스-지역화"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">리소스 지역화</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iOS-앱-번들"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">iOS 앱 번들</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프록시-패턴"><span class="toc-number">1.3.4.</span> <span class="toc-text">프록시 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#메세지-포워딩"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">메세지 포워딩</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#뒤늦게-동적-메소드-추가하기"><span class="toc-number">1.3.4.1.1.</span> <span class="toc-text">뒤늦게 동적 메소드 추가하기</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#곧바로-포워딩하기"><span class="toc-number">1.3.4.1.2.</span> <span class="toc-text">곧바로 포워딩하기</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#완전-포워딩하기"><span class="toc-number">1.3.4.1.3.</span> <span class="toc-text">완전 포워딩하기</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-5"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-2"><span class="toc-number">1.3.5.</span> <span class="toc-text">요약</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Cocoa Internals - 코코아 디자인 패턴
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:54:45.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/cocoa/" rel="tag">cocoa</a>, <a class="tag-link" href="/tags/ios/" rel="tag">ios</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="코코아-디자인-패턴"><a href="#코코아-디자인-패턴" class="headerlink" title="코코아 디자인 패턴"></a>코코아 디자인 패턴</h1><p>디자인 패턴은 프로그래밍 과정에서 문제 해결을 위해 반복해서 경험하는 객체와 클래스 관계를 정리한 것이다.</p>
+<p>Cocoa 프레임워크는 디자인 패턴 책이 나오기 이전 NeXT 시절부터 객체 중심 소프트웨어를 만들기 위해 다양한 패턴을 반영하여 만들어졌다.</p>
+<h2 id="코코아-프레임워크-핵심-패턴"><a href="#코코아-프레임워크-핵심-패턴" class="headerlink" title="코코아 프레임워크 핵심 패턴"></a>코코아 프레임워크 핵심 패턴</h2><h3 id="두-단계-초기화-패턴"><a href="#두-단계-초기화-패턴" class="headerlink" title="두 단계 초기화 패턴"></a>두 단계 초기화 패턴</h3><h4 id="초기화-과정"><a href="#초기화-과정" class="headerlink" title="초기화 과정"></a>초기화 과정</h4><p><code>NSObject</code>를 상속받은 모든 클래스는 인스턴스가 만들어지기까지 두 단계<em>two-phase</em>에 걸쳐서 초기화가 이루어진다.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Pen *pen &#x3D; [[Pen alloc] init];</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>+alloc</code> 메세지를 보내어 힙 공간에 객체 인스턴스 메모리 공간을 할당한다.</li>
+<li><code>-init</code> 메세지를 보내어 객체 인스턴스 속성이나 내부에 필요한 객체나 값을 초기화한다.</li>
+</ol>
+<p>1단계의 메모리 할당이 되어 있지 않다면 2단계의 초기화 과정은 진행이 불가능하다.</p>
+<p>1단계의 메모리 할당이 되었으나 2단계 초기화 과정을 진행하지 않아도 메모리 할당 과정에서 객체 내부의 모든 값이 0으로 초기화되나, 명시적인 초기화 과정을 진행하는 것을 권장한다.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Pen *pen &#x3D; [Pen new];</span><br></pre></td></tr></table></figure>
+
+<p>위와 같이 간편한 메소드를 사용하여 메모리 할당 및 초기화 과정을 한꺼번에 진행할 수 있다.</p>
+<p><code>+new</code>에 메세지를 보내는 것은 <code>+alloc</code>에 메세지를 보낸 후 <code>-init</code>에 메세지를 보내는 것과 동일하다.</p>
+<h4 id="지정-초기화-메소드"><a href="#지정-초기화-메소드" class="headerlink" title="지정 초기화 메소드"></a>지정 초기화 메소드</h4><p>Designated Initializer</p>
+<p>메소드 명칭이 <code>init</code>으로만 시작하면 인자 값에 따라 여러 개의 초기화 메소드를 만들 수 있다.</p>
+<p>여러 초기화 메소드 중에서도 기준이 되는 지정 초기화 메소드를 둘 것을 권장한다.</p>
+<p>예를 들어 <code>NSString</code>의 지정 초기화 메소드는 <code>-init</code>이고, <code>UIView</code>의 지정 초기화 메소드는 <code>-initWithFrame:</code>이다.</p>
+<p>지정 초기화 메소드를 만들 때 다음을 주의해야 한다.</p>
+<ul>
+<li>서브클래스에서 지정 초기화 메소드를 구현할 때는 반드시 부모의 지정 초기화 메소드를 호출해야 한다.</li>
+<li>서브클래스에서 부모에 없는 새로운 보조 초기화 메소드를 만들 때는 반드시 자신의 지정 초기화 메소드를 호출해야 한다.<ul>
+<li>Swift의 편의 이니셜라이저<em>convenience initializer</em>의 개념과 동일함</li>
+</ul>
+</li>
+<li>수퍼클래스의 지정 초기화 메소드에서 반환되는 객체를 <code>self</code>에 할당한다.</li>
+<li>수퍼클래스의 지정 초기화 메소드가 <code>nil</code>을 반환하면 인스턴스 내부 변수를 사용하지 않고 <code>nil</code>을 그대로 반환한다.</li>
+</ul>
+<blockquote>
+<p>위의 내용은 Swift의 지정 이니셜라이저와 편의 이니셜라이저의 관계, Swift의 2단계 초기화와 그 맥락을 같이 한다.</p>
+</blockquote>
+<h3 id="MVC-Model-View-Controller-패턴"><a href="#MVC-Model-View-Controller-패턴" class="headerlink" title="MVC(Model-View-Controller) 패턴"></a>MVC(Model-View-Controller) 패턴</h3><p>Objective-C에 가장 많은 영향을 준 언어는 Smalltalk이며, MVC 패턴 또한 이것에서 이어진 흐름이라고 할 수 있다.</p>
+<ul>
+<li>컨트롤러 객체는 모델 객체를 업데이트하며, 모델 객체는 컨트롤러 객체에 변화를 준다.</li>
+<li>컨트롤러 객체는 뷰 객체를 업데이트하며, 뷰 객체는 컨트롤러 객체에 입력 및 변화를 준다.</li>
+</ul>
+<h4 id="모델-객체"><a href="#모델-객체" class="headerlink" title="모델 객체"></a>모델 객체</h4><p>화면을 구성하거나 내부 처리를 위한 데이터를 추상화하여, 타입을 지정한 자료 구조로 표현하고, 데이터를 처리하는 로직을 정의한다.</p>
+<p>모델 객체를 정의하거나 파일, 데이터베이스의 형태로 저장될 수 있다.</p>
+<p>모델 객체는 뷰 객체와 직접적으로 연결되지 않으며, 데이터에 접근하는 유일한 추상화 객체가 된다.</p>
+<h4 id="뷰-객체"><a href="#뷰-객체" class="headerlink" title="뷰 객체"></a>뷰 객체</h4><p>iOS에서는 일반적으로 <code>UIView</code>를 상속받는 클래스에 해당한다. 앱 화면 자체를 그려서 표시하며, 사용자 선택에 따라 입력을 받거나 피드백을 준다.</p>
+<p>뷰 객체가 화면에 표시하는 정보는 모델 객체가 가지고 있는 데이터에 기반한다.</p>
+<h4 id="컨트롤러-객체"><a href="#컨트롤러-객체" class="headerlink" title="컨트롤러 객체"></a>컨트롤러 객체</h4><p>뷰 객체와 모델 객체 사이에서 중재자 역할을 한다.</p>
+<p>사용자 입력에 따른 새로운 데이터 변화를 확인하고, 관련 모델에 새로운 데이터를 업데이트해준다.</p>
+<p>모델에서 데이터가 변화하면 뷰에 전달하여 새로운 데이터를 화면에 표시한다.</p>
+<p>iOS에서 MVC 패턴을 구현할 때 컨트롤러 객체가 비대해지는 경향이 있다. 이를 해결하기 위한 MVVM, VIPER 등의 패턴이 있다.</p>
+<h3 id="메세지-셀렉터-패턴"><a href="#메세지-셀렉터-패턴" class="headerlink" title="메세지 셀렉터 패턴"></a>메세지 셀렉터 패턴</h3><p>어떤 객체가 Cocoa 객체에게 메세지를 보내면, Cocoa 런타임은 해당 객체 메소드 중에서 메세지를 처리할 메소드를 찾아 메소드의 함수 포인터를 호출한다.</p>
+<p>위의 과정을 ‘다이나믹 디스패치’라고 부른다.</p>
+<p>런타임에서 메세지를 처리하기 이전에 메소드를 선택하거나 메소드 바인드를 지연시키기 위해 메세지 셀렉터가 사용된다.</p>
+<h4 id="셀렉터-SEL-와-구현-포인터-IMP"><a href="#셀렉터-SEL-와-구현-포인터-IMP" class="headerlink" title="셀렉터(SEL)와 구현 포인터(IMP)"></a>셀렉터(SEL)와 구현 포인터(IMP)</h4><p>Cocoa 객체의 메소드를 찾기 위해 셀렉터와 구현 포인터가 사용된다.</p>
+<p>셀렉터는 메세지를 받을 객체의 메소드 중 적합한 메소드를 고르는 역할을 한다.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SEL theSelector &#x3D; @selector(drawSomething);</span><br></pre></td></tr></table></figure>
+
+<p>셀렉터 선언시 <code>SEL</code> 타입과 <code>@selector()</code> 예약어를 사용한다. 위 코드의 결과로 <code>theSelector</code>는 <code>drawSomething</code>이라는 이름의 메소드를 골라서 사용할 수 있는 상태가 된다.</p>
+<p>런타임에서 객체 메소드를 저장하는 구조체(<code>objc_method</code> == <code>Method</code>)는 메소드 시그니처(셀렉터), 메소드 매개 변수 타입(문자열), 메소드 구현 포인터(IMP)를 포함한다.</p>
+<p><code>Method</code> 구조체는 Objective-C 런타임의 <code>objc_getClassMethod()</code>나 <code>objc_getInstanceMethod()</code>와 같은 함수를 사용하여 얻을 수 잇다.</p>
+<h4 id="셀렉터-실행-및-지연-실행"><a href="#셀렉터-실행-및-지연-실행" class="headerlink" title="셀렉터 실행 및 지연 실행"></a>셀렉터 실행 및 지연 실행</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[myPen drawSomething];</span><br><span class="line">[myPen performSelector:@selector(drawSomething)];</span><br><span class="line">[myPen performSelector:theSelector];</span><br></pre></td></tr></table></figure>
+
+<p>위의 세 문장은 같은 동작을 한다.</p>
+<ul>
+<li>첫 번째 문장은 객체에 메세지를 보내는 방식이다.</li>
+<li>두 번째 문장은 메소드에 대한 셀렉터를 찾아 셀렉터를 실행하는 방식이다.</li>
+<li>세 번째는 미리 찾았던 셀렉터를 실행하는 방식이다.</li>
+</ul>
+<p><code>NSSelectorFromString()</code> 함수를 사용하여 문자열로 된 메소드 시그니처로부터 셀렉터를 얻을 수 있다.</p>
+<p>셀렉터 실행을 통해 메세지를 보내면서 일부러 전달하는 시점을 지연시키는 것이 가능하다. <code>-performSelector:withObject:afterDelay:</code>와 같은 <code>NSObject</code>의 인스턴스 메소드를 사용한다.</p>
+<p>최근 이러한 지연 실행은 GCD를 활용하여 구현된다.</p>
+<h4 id="타깃과-액션"><a href="#타깃과-액션" class="headerlink" title="타깃과 액션"></a>타깃과 액션</h4><p>타겟-액션 패턴에서 셀렉터 패턴이 자주 활용된다.</p>
+<ul>
+<li>사용자 인터페이스 객체의 특정 이벤트를 받을 객체를 타겟으로 설정한다.</li>
+<li>이벤트를 받아 처리할 메소드를 액션으로 지정한다. 이 때 셀렉터를 사용한다.</li>
+</ul>
+<p>셀렉터는 실행 중에 문자열로 지정하는 방식이 가능하기 때문에 특정 객체의 이벤트 처리를 실행 중에 타겟과 액션으로 지정하여 연결할 수 있다.</p>
+<h3 id="요약"><a href="#요약" class="headerlink" title="요약"></a>요약</h3><p>Cocoa 프레임워크에서 전체적으로 적용되는 두 단계 초기화 패턴 / MVC 패턴 / 셀렉터 패턴에 대해 알아두자.</p>
+<p>셀렉터 패턴은 메소드를 동적으로 지정할 수 있게 한다.</p>
+<h2 id="객체-사이-결합성을-줄여주는-패턴"><a href="#객체-사이-결합성을-줄여주는-패턴" class="headerlink" title="객체 사이 결합성을 줄여주는 패턴"></a>객체 사이 결합성을 줄여주는 패턴</h2><p>객체 관계가 복잡해지고 결합성이 높아지면 요구사항이 변경되었을 때 특정 객체의 인터페이스나 동작을 변경하기 어려워진다.</p>
+<p>관련된 객체 사이의 결합성을 줄이고 변화에 대비해서 보다 유연한 구조를 갖도록 하기 위해 몇몇 디자인 패턴을 활용할 수 있다.</p>
+<h3 id="싱글턴-패턴"><a href="#싱글턴-패턴" class="headerlink" title="싱글턴 패턴"></a>싱글턴 패턴</h3><p>인스턴스가 오직 하나만 있는 객체. 공유 인스턴스<em>shared instance</em>.</p>
+<h4 id="UIApplication-공유-인스턴스"><a href="#UIApplication-공유-인스턴스" class="headerlink" title="UIApplication 공유 인스턴스"></a>UIApplication 공유 인스턴스</h4><p><code>UIApplication</code> 클래스는 iOS 앱 프로젝트에서 자주 사용하는 싱글턴 객체 중 하나다.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int main(int argc, char * argv[]) &#123;</span><br><span class="line">  @autoreleasepool &#123;</span><br><span class="line">    return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위와 같은 코드를 작성하여 <code>UIApplication</code>의 싱글턴 객체를 생성할 수 있으며, 이는 앱의 이벤트 전달과 액션 처리를 위한 무한 루프를 가지고 있다.</p>
+<p><code>UIApplicationDelegate</code>에서 앱 수준의 중요한 이벤트와 생명 주기를 관리한다.</p>
+<p>초기 iOS는 앱에서 여러 화면을 윈도우 단위가 아닌 뷰 단위로 처리하게 하였으나, 현재는 애플 TV 등과의 화면 연동이 가능해지면서 <code>UIScreen</code> 객체를 활용하여 멀티 스크린의 멀티 윈도우 앱 개발이 가능해졌다.</p>
+<p><code>UIWindow</code> 목록을 관리하고 현재 표시되는 key window를 찾게 해준다.</p>
+<h4 id="싱글턴-구현-방법"><a href="#싱글턴-구현-방법" class="headerlink" title="싱글턴 구현 방법"></a>싱글턴 구현 방법</h4><ol>
+<li>앱 시작 시점에 미리 만들어놓고 곧바로 공유 인스턴스를 참조하여 사용</li>
+<li>공유 인스턴스에 처음 접근하는 시점에 객체 인스턴스 생성 (지연 생성)</li>
+<li>앱 생명주기에 맞추어 한 번만 실행되는 부분에서 객체 인스턴스를 미리 만들어둠</li>
+</ol>
+<h4 id="NSFileManager-공유-인스턴스"><a href="#NSFileManager-공유-인스턴스" class="headerlink" title="NSFileManager 공유 인스턴스"></a>NSFileManager 공유 인스턴스</h4><p>멀티 스레드 환경에서 해당 클래스의 공유 인스턴스에 접근하는 경우 안정적이지 않으므로 스레드별로 인스턴스를 생성하여 사용하는 것이 권장된다.</p>
+<p>우리가 만드는 공유 객체가 멀티 스레드 환경에서 안전하지 못하다면 이 또한 스레드별로 인스턴스를 생성하여 사용하는 것이 좋다.</p>
+<h4 id="생각거리"><a href="#생각거리" class="headerlink" title="생각거리"></a>생각거리</h4><p>싱글턴 객체는 다른 객체와의 과도한 결합성을 줄이는 데 도움을 준다.</p>
+<p>하지만 멀티 스레드 환경이나 참조하는 객체가 너무 많은 경우 좋은 선택이 아닐 수 있다.</p>
+<h3 id="옵저버-패턴"><a href="#옵저버-패턴" class="headerlink" title="옵저버 패턴"></a>옵저버 패턴</h3><p>객체 상태 또는 내부 값이 바뀌면 이와 관련 있는 다수 객체에 한꺼번에 알려주기 위해 사용된다.</p>
+<p>상태 변화가 발생했을 때 이 알림을 받을 객체<em>observer<em>를 등록</em>subscribe<em>하고 변화 발생을 알리는</em>publish</em> 방식으로 구현된다.</p>
+<p>옵저버의 메소드를 지정하기 위해 셀렉터 패턴도 함께 사용된다.</p>
+<h4 id="통보"><a href="#통보" class="headerlink" title="통보"></a>통보</h4><p>Notification</p>
+<p>Cocoa의 모든 객체는 옵저버가 될 수 있고, 자기 자신이나 다른 객체를 통보 센터<em>notification center</em>에 옵저버로 등록할 수 있다.</p>
+<p>모든 객체는 등록되어 있는 옵저버들에게 통보 센터를 통하여 통보를 전달할 수 있다.</p>
+<p>통보 센터는 통보를 확인하고 통보룰 전송할 조건을 확인하여 조건에 부합하는 옵저버 객체에게 메세지를 보낸다.</p>
+<p><code>NSNotificationCenter</code>가 통보 센터의 역할을 한다. 해당 클래스의 공유 인스턴스를 통하여 옵저버 등록 및 통보 전달을 한다.</p>
+<p>notification name이나 sender가 <code>nil</code>인 경우 해당 조건에 대하여 조건 없이 통보받을 수 있다.</p>
+<h4 id="생각거리-1"><a href="#생각거리-1" class="headerlink" title="생각거리"></a>생각거리</h4><p>통보를 보내는 메소드는 기본적으로 동기적으로 동작한다.</p>
+<p>옵저버 개수가 많거나 옵저버에서 처리하는 동작이 느린 경우 <code>NSNotificationQueue</code>와 같은 것을 사용하여 비동기 방식으로 동작하게 하는 것을 생각해볼 수 있다.</p>
+<h3 id="응답-체인-패턴"><a href="#응답-체인-패턴" class="headerlink" title="응답 체인 패턴"></a>응답 체인 패턴</h3><p>Chain of Responsibility. 책임 연쇄 패턴.</p>
+<p>응답할 가능성이 있는 객체들을 체인 형태로 차례대로 확인하고, 더 이상 응답할 객체가 없을 때까지 반복해서 확인하는 방식이다.</p>
+<p>체인에 등록된 객체들은 해당 메세지를 처리하거나, 처리하지 않고 다음 객체로 전달할 수 있다.</p>
+<h4 id="응답-객체"><a href="#응답-객체" class="headerlink" title="응답 객체"></a>응답 객체</h4><p>Responder Object</p>
+<p>Cocoa Touch 프레임워크에서 <code>UIResponder</code> 클래스는 이벤트를 받아서 응답하는 모든 객체의 최상위 클래스가 된다.</p>
+<p>이는 뷰나 윈도우를 포함하므로 화면을 구성하는 모든 클래스는 응답이 가능한 객체다.</p>
+<h4 id="처음-응답-객체"><a href="#처음-응답-객체" class="headerlink" title="처음 응답 객체"></a>처음 응답 객체</h4><p>처음 응답 객체는 응답 체인의 처음 항목을 지칭하는 프록시 객체다.</p>
+<p>일반적으로 특정 메세지나 이벤트를 처리할 객체를 고정적으로 바인딩하게 되는데, 이러한 것을 원하지 않는다면 이벤트 처리 대상을 처음 응답 객체로 지정할 수 있다. 이러면 응답 체인을 따라 응답 객체에게 해당 이벤트를 순서대로 보낼 수 있다.</p>
+<p>처음 응답 객체와 연결한 이벤트에 대한 액션 처리는, 응답 체인에 있는 객체들을 차례대로 확인하면서 처리된다. 처리한 객체가 없다면 해당 이벤트는 무시된다.</p>
+<p>일반적인 응답 체인 계층 구조는, hit-test가 가능한 최상위 뷰가 처음 응답 객체가 되어, 수퍼 뷰를 따라 올라가, 뷰 컨트롤러, 윈도우, 애플리케이션 객체까지 올라간다.</p>
+<h4 id="응답-체인-탐색"><a href="#응답-체인-탐색" class="headerlink" title="응답 체인 탐색"></a>응답 체인 탐색</h4><p><code>-setNextResponder:</code> 메소드를 사용해서 명시적으로 다음 응답 객체를 지정할 수 있다.</p>
+<p>멀티 윈도우 환경에서는 활성화된 키 윈도우 객체에 대한 탐색을 마친 후 메인 윈도우로 넘어가서 응답 체인을 탐색하기도 한다.</p>
+<h4 id="생각거리-2"><a href="#생각거리-2" class="headerlink" title="생각거리"></a>생각거리</h4><p>iOS는 단일 윈도우 기반이라 응답 체인을 고려하는 경우가 적지만, 화면 구조가 복잡할수록 뷰와 뷰의 이벤트를 처리하는 객체를 명시적으로 바인딩하는 것을 지양해야 한다.</p>
+<p>UI 변화와 기능 변경에 유연하게 대처하기 위해, 결합성을 줄일 수 있는 응답 체인을 구성하여 이벤트를 처리하는 것이 권장된다.</p>
+<h3 id="호출-패턴"><a href="#호출-패턴" class="headerlink" title="호출 패턴"></a>호출 패턴</h3><p>Cocoa의 호출<em>invocation</em> 기법은 일반적인 커맨드<em>command</em> 패턴과 비슷하나 애플 스타일로 해당 패턴을 다시 정의한 것이다.</p>
+<p>셀렉터와 타겟 객체를 지정하고 인자 값을 넘겨서 타겟의 셀렉터를 호출하는 방식으로 구현되었다.</p>
+<p>프록시 패턴과 함께 사용하여 특정 객체가 메세지를 받기 전에 인자 값을 확인하거나, 내용을 변경하거나 동일한 메세지를 복사하여 다른 객체에 전달하는 방식을 구현할 수 있다.</p>
+<h4 id="NSInvocation-클래스"><a href="#NSInvocation-클래스" class="headerlink" title="NSInvocation 클래스"></a>NSInvocation 클래스</h4><p>메세지 이름, 시그니처, 메세지 수신자, 인자 값을 포함하고, 실행 후 반환 값을 담을 수 있다.</p>
+<ol>
+<li>메소드 시그니처를 문자열 형태로 지정</li>
+<li>문자열 형태의 메소드 시그니처로부터 셀렉터 획득</li>
+<li>셀렉터로부터 메소드 시그니처 객체(<code>NSMethodSignature</code>) 획득</li>
+<li>위의 값들을 사용하여 <code>NSInvocation</code> 객체 생성</li>
+</ol>
+<h4 id="생각거리-3"><a href="#생각거리-3" class="headerlink" title="생각거리"></a>생각거리</h4><p><code>NSInvocation</code> 객체를 직접 생성하여 사용하는 것은 타겟-액션 패턴을 사용하는 것보다 번거롭다.</p>
+<p>객체에 보내는 메세지 자체를 추상화하여 복사하거나, 일부러 지연시키거나 반복하여 여러 객체에 전달하려는 경우 호출 패턴을 사용할 수 있다.</p>
+<h3 id="요약-1"><a href="#요약-1" class="headerlink" title="요약"></a>요약</h3><p>객체들 사이의 결합성을 줄여서 유연한 구조를 갖도록 도와주는 패턴들을 염두해두자.</p>
+<p>객체가 많아지고 그 관계가 복잡해지면 결합성이 높아져 코드의 변경이 어렵게 된다.</p>
+<ul>
+<li>싱글턴 패턴은 한 개의 리소스에 접근해야 하는 경우 유용하다.</li>
+<li>옵저버 패턴은 어떠한 객체의 변화를 다른 여러 객체에 알려야 하는 경우 유용하다.</li>
+<li>응답 체인 패턴은 이벤트 메세지를 받을 객체를 명시적으로 지정하지 않고 처리할 수 있게 한다.</li>
+<li>호출 패턴은 객체가 보내는 메세지를 객체로 만들 수 있게 한다.</li>
+</ul>
+<h2 id="객체-내부의-복잡성을-감춰주는-패턴"><a href="#객체-내부의-복잡성을-감춰주는-패턴" class="headerlink" title="객체 내부의 복잡성을 감춰주는 패턴"></a>객체 내부의 복잡성을 감춰주는 패턴</h2><p>객체 설계 범위는 객체마다 갖는 고유한 역할과 책임을 기준으로 한다.</p>
+<p>객체의 역할과 책임에 대한 내부 구현 방식은 최대한 감추고 부품화하여 손쉬운 재사용을 가능하게 한다.</p>
+<h3 id="팩토리-추상화-패턴"><a href="#팩토리-추상화-패턴" class="headerlink" title="팩토리 추상화 패턴"></a>팩토리 추상화 패턴</h3><p>추상 팩토리<em>abstract factory</em> 패턴.</p>
+<p>세부 클래스를 지정하지 않고 관련된 클래스 패밀리(클래스 클러스터)를 생성할 수 있는 인터페이스를 제공한다.</p>
+<p>예를 들어 <code>NSNumber</code> 클래스는 다양한 수를 저장할 수 있도록 여러 타입(<code>int</code>, <code>char</code>, <code>float</code> 등)을 하나의 클래스로 추상화하였다.</p>
+<p><code>NSString</code> 클래스로 인스턴스를 만들어도 내부적으로는 그 하위 클래스를 사용하여 인스턴스를 생성하며, 그 구현은 개발자가 몰라도 된다. 단지 <code>NSString</code>에 정의된 인터페이스를 사용하기만 하면 된다.</p>
+<p>이러한 방식으로 구현된 클래스는 복잡함을 감추어 단순하게 사용할 수 있는 반면 감춘 부분이 많아 확장하기 어렵다. 따라서 카테고리 방식으로 원하는 기능을 추가하는 것이 권장된다.</p>
+<h3 id="파사드-패턴"><a href="#파사드-패턴" class="headerlink" title="파사드 패턴"></a>파사드 패턴</h3><p>내부 객체들의 복잡한 관계를 감추고 하나의 클래스가 인터페이스를 모두 담당하는 패턴.</p>
+<p><code>UIImage</code>와 같은 클래스가 파사드 패턴을 적용한 대표적인 클래스다. 해당 클래스는 여러 이미지 포맷 처리, 압축 데이터 처리, 그리는 방식, 헤더 데이터 구조 등 이미지와 관련된 내부 구조를 자세히 모르더라도 해당 클래스의 인터페이스를 사용하여 거의 모든 동작을 실행할 수 있게 하였다.</p>
+<h4 id="생각거리-4"><a href="#생각거리-4" class="headerlink" title="생각거리"></a>생각거리</h4><p>파사드 패턴은 복잡한 협력 관계를 가진 객체들에 접근하는 단순한 인터페이스를 제공해주는 경우 유용하다.</p>
+<p>그러므로 복잡한 협력 관계를 갖는 내부 객체를 먼저 개선하는 것이 중요하다.</p>
+<p>Cocoa에서는 클래스 클러스터 객체가 파사드 객체 역할까지 하는 경우가 많다.</p>
+<h3 id="번들-패턴"><a href="#번들-패턴" class="headerlink" title="번들 패턴"></a>번들 패턴</h3><p>번들 구조란, 실행 파일과 프로그램에서 사용하는 인터페이스, 문자열, 이미지, 음악 같은 리소스를 디렉토리에 구조적으로 묶어놓은 것을 말한다.</p>
+<p>모든 macOS 또는 iOS 앱은 ‘앱 번들 구조’로 되어 있고, 개발 과정에 사용하는 프레임워크는 ‘패키지 번들 구조’를 갖추고 있다.</p>
+<h4 id="Info-plist-파일"><a href="#Info-plist-파일" class="headerlink" title="Info.plist 파일"></a>Info.plist 파일</h4><p>번들 구조에서 앱에 대한 기본 정보를 담고 있는 파일</p>
+<p>키 값은 Core Foundation의 <code>CFBundle</code>에 선언되어 있어 <code>CF</code> 접두어가 붙는다.</p>
+<h4 id="리소스-지역화"><a href="#리소스-지역화" class="headerlink" title="리소스 지역화"></a>리소스 지역화</h4><p>번들 내부에서 리소스 파일을 찾을 때 다음의 규칙을 따른다.</p>
+<ul>
+<li>지역화<em>localized</em>하지 않는 글로벌 리소스는 Resources 디렉토리에 포함한다.</li>
+<li>사용자 지역 설정에 맞추어 지역별 지역화 리소스를 찾는다.</li>
+<li>사용자 언어 설정에 맞추어 언어별 지역화 리소스를 찾는다.</li>
+<li>Info.plist에 기본 언어로 지정한 개발 언어 리소스를 찾는다.</li>
+</ul>
+<p>글로벌 리소스 파일들은 리소스 디렉토리 바로 아래에 있어야 한다.</p>
+<ul>
+<li><code>KR.lproj</code> 디렉토리 : 한국 지역</li>
+<li><code>en_KR.lproj</code> 디렉토리 : 한국 지역의 영어 사용자</li>
+<li><code>ko.lproj</code> 디렉토리 : 한국어 사용자</li>
+</ul>
+<h4 id="iOS-앱-번들"><a href="#iOS-앱-번들" class="headerlink" title="iOS 앱 번들"></a>iOS 앱 번들</h4><p>실행 파일과 리소스 전체가 하나의 디렉토리로 구성된다.</p>
+<p>앱 바이너리 실행 파일 / Info.plist / 앱 아이콘 및 런치 이미지 등을 포함한다.</p>
+<p>이처럼 번들 구조는 앱 뿐만 아니라 프레임워크, 플러그인 등 다양한 곳에서 활용된다.</p>
+<h3 id="프록시-패턴"><a href="#프록시-패턴" class="headerlink" title="프록시 패턴"></a>프록시 패턴</h3><p>프록시<em>proxy</em> 객체는 다른 객체를 감싸거나 대신해서 접근하는 기능을 제공한다.</p>
+<p><code>NSProxy</code> 클래스는 Cocoa 프레임워크에서 유일하게 <code>NSObject</code> 클래스를 상속받지 않고 <code>NSObjectProtocol</code> 프로토콜만 채택하는, 숨겨진 최상위 객체다.</p>
+<p>이를 상속받아 만들어진 프록시 객체는 원하는 메세지를 다른 객체로 전달하는 역할을 한다.</p>
+<p>송신 객체와 수신 객체 사이에 프록시 객체가 위치하여 중재하는 역할을 한다.</p>
+<h4 id="메세지-포워딩"><a href="#메세지-포워딩" class="headerlink" title="메세지 포워딩"></a>메세지 포워딩</h4><p>특정 객체에 구현되지 않은 메세지를 보내면 셀렉터와 일치하는 메소드가 없어 런타임 에러가 발생하게 된다.</p>
+<p>이 때 메세지를 포워딩하여 에러를 발생시키지 않고 해결할 수 있다.</p>
+<h5 id="뒤늦게-동적-메소드-추가하기"><a href="#뒤늦게-동적-메소드-추가하기" class="headerlink" title="뒤늦게 동적 메소드 추가하기"></a>뒤늦게 동적 메소드 추가하기</h5><p><code>+resolveInstanceMethod:</code> 메소드의 구현 여부를 살핀다. 구현되어 있다면 구현된 메소드를 호출한다.</p>
+<h5 id="곧바로-포워딩하기"><a href="#곧바로-포워딩하기" class="headerlink" title="곧바로 포워딩하기"></a>곧바로 포워딩하기</h5><p>다른 객체가 처리할 수 있는지 확인하여 다른 객체로 메세지를 포워딩한다.</p>
+<h5 id="완전-포워딩하기"><a href="#완전-포워딩하기" class="headerlink" title="완전 포워딩하기"></a>완전 포워딩하기</h5><p><code>NSInvocation</code> 클래스를 사용하여 메세지를 담고 원하는 대상 객체로 보낸다.</p>
+<h4 id="생각거리-5"><a href="#생각거리-5" class="headerlink" title="생각거리"></a>생각거리</h4><p>특정 객체 내부에 복잡한 관계를 가진 객체들에게 메세지를 단계적으로 전달해야 하는 경우가 있다.</p>
+<p>이 때 내부 객체를 연속해서 델리게이트 객체로 지정하거나 노티피케이션을 보내기보다는, 프록시 패턴을 사용하여 해결하는 것이 좋다.</p>
+<h3 id="요약-2"><a href="#요약-2" class="headerlink" title="요약"></a>요약</h3><p>객체가 많아질수록 객체 간 상속 관계, 참조 관계, 협력 관계는 복잡해질 수밖에 없다.</p>
+<p>객체가 복잡한 객체 관계를 숨기고, 적합한 인터페이스만을 제공하고, 객체끼리 효과적이고 효율적인 협력 관계를 갖도록 설계하는 것은 중요하다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#코코아-디자인-패턴"><span class="toc-number">1.</span> <span class="toc-text">코코아 디자인 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#코코아-프레임워크-핵심-패턴"><span class="toc-number">1.1.</span> <span class="toc-text">코코아 프레임워크 핵심 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#두-단계-초기화-패턴"><span class="toc-number">1.1.1.</span> <span class="toc-text">두 단계 초기화 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#초기화-과정"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">초기화 과정</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#지정-초기화-메소드"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">지정 초기화 메소드</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MVC-Model-View-Controller-패턴"><span class="toc-number">1.1.2.</span> <span class="toc-text">MVC(Model-View-Controller) 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#모델-객체"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">모델 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#뷰-객체"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">뷰 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#컨트롤러-객체"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">컨트롤러 객체</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#메세지-셀렉터-패턴"><span class="toc-number">1.1.3.</span> <span class="toc-text">메세지 셀렉터 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#셀렉터-SEL-와-구현-포인터-IMP"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">셀렉터(SEL)와 구현 포인터(IMP)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#셀렉터-실행-및-지연-실행"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">셀렉터 실행 및 지연 실행</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#타깃과-액션"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">타깃과 액션</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약"><span class="toc-number">1.1.4.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#객체-사이-결합성을-줄여주는-패턴"><span class="toc-number">1.2.</span> <span class="toc-text">객체 사이 결합성을 줄여주는 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#싱글턴-패턴"><span class="toc-number">1.2.1.</span> <span class="toc-text">싱글턴 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UIApplication-공유-인스턴스"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">UIApplication 공유 인스턴스</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#싱글턴-구현-방법"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">싱글턴 구현 방법</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NSFileManager-공유-인스턴스"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">NSFileManager 공유 인스턴스</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#옵저버-패턴"><span class="toc-number">1.2.2.</span> <span class="toc-text">옵저버 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#통보"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">통보</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-1"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#응답-체인-패턴"><span class="toc-number">1.2.3.</span> <span class="toc-text">응답 체인 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#응답-객체"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">응답 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#처음-응답-객체"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">처음 응답 객체</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#응답-체인-탐색"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">응답 체인 탐색</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-2"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#호출-패턴"><span class="toc-number">1.2.4.</span> <span class="toc-text">호출 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NSInvocation-클래스"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">NSInvocation 클래스</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-3"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#객체-내부의-복잡성을-감춰주는-패턴"><span class="toc-number">1.3.</span> <span class="toc-text">객체 내부의 복잡성을 감춰주는 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#팩토리-추상화-패턴"><span class="toc-number">1.3.1.</span> <span class="toc-text">팩토리 추상화 패턴</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#파사드-패턴"><span class="toc-number">1.3.2.</span> <span class="toc-text">파사드 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-4"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#번들-패턴"><span class="toc-number">1.3.3.</span> <span class="toc-text">번들 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Info-plist-파일"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">Info.plist 파일</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#리소스-지역화"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">리소스 지역화</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iOS-앱-번들"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">iOS 앱 번들</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프록시-패턴"><span class="toc-number">1.3.4.</span> <span class="toc-text">프록시 패턴</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#메세지-포워딩"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">메세지 포워딩</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#뒤늦게-동적-메소드-추가하기"><span class="toc-number">1.3.4.1.1.</span> <span class="toc-text">뒤늦게 동적 메소드 추가하기</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#곧바로-포워딩하기"><span class="toc-number">1.3.4.1.2.</span> <span class="toc-text">곧바로 포워딩하기</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#완전-포워딩하기"><span class="toc-number">1.3.4.1.3.</span> <span class="toc-text">완전 포워딩하기</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#생각거리-5"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">생각거리</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-2"><span class="toc-number">1.3.5.</span> <span class="toc-text">요약</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&text=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&is_video=false&description=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Cocoa Internals - 코코아 디자인 패턴&body=Check out this article: http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&title=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&name=Cocoa Internals - 코코아 디자인 패턴&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/cocoa-internals-cocoa-design-pattern/&t=Cocoa Internals - 코코아 디자인 패턴" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

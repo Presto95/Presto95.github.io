@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="계획 세우기XP에서 일을 계획하는 방식 초기 탐색처음부터 사용자 스토리를 확정하는 것은 매우 어려운 일이다. 고객은 매번 새로운 사용자 스토리를 작성할 것이며 이는 프로젝트가 완료될 때까지 계속될 것이다. 개발자는 스토리의 구현에 필요한 비용을 상대적으로 계산한다. 각각의 스토리에 몇몇 스토리 포인트를 작성한다. 스토리 포인트가 구현에 필요한 상대적인 비용">
+<meta property="og:type" content="article">
+<meta property="og:title" content="클린 소프트웨어 - 계획 세우기">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="계획 세우기XP에서 일을 계획하는 방식 초기 탐색처음부터 사용자 스토리를 확정하는 것은 매우 어려운 일이다. 고객은 매번 새로운 사용자 스토리를 작성할 것이며 이는 프로젝트가 완료될 때까지 계속될 것이다. 개발자는 스토리의 구현에 필요한 비용을 상대적으로 계산한다. 각각의 스토리에 몇몇 스토리 포인트를 작성한다. 스토리 포인트가 구현에 필요한 상대적인 비용">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:32:09.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:32:33.393Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="software engineering">
+<meta property="article:tag" content="clean software">
+<meta property="article:tag" content="agile">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>클린 소프트웨어 - 계획 세우기</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/clean-software-test/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/clean-software-introducing-extreme-programming/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&text=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&is_video=false&description=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 계획 세우기&body=Check out this article: http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&name=클린 소프트웨어 - 계획 세우기&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&t=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#계획-세우기"><span class="toc-number">1.</span> <span class="toc-text">계획 세우기</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#초기-탐색"><span class="toc-number">1.1.</span> <span class="toc-text">초기 탐색</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#스파이크-분할-속도"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">스파이크, 분할, 속도</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#릴리즈-계획-세우기"><span class="toc-number">1.2.</span> <span class="toc-text">릴리즈 계획 세우기</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#반복-계획-세우기"><span class="toc-number">1.3.</span> <span class="toc-text">반복 계획 세우기</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#태스크-계획-세우기"><span class="toc-number">1.4.</span> <span class="toc-text">태스크 계획 세우기</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#반환점"><span class="toc-number">1.4.1.</span> <span class="toc-text">반환점</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#반복"><span class="toc-number">1.5.</span> <span class="toc-text">반복</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.6.</span> <span class="toc-text">결론</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        클린 소프트웨어 - 계획 세우기
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:32:09.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Software-Engineering/">Software Engineering</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/agile/" rel="tag">agile</a>, <a class="tag-link" href="/tags/clean-software/" rel="tag">clean software</a>, <a class="tag-link" href="/tags/software-engineering/" rel="tag">software engineering</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="계획-세우기"><a href="#계획-세우기" class="headerlink" title="계획 세우기"></a>계획 세우기</h1><p>XP에서 일을 계획하는 방식</p>
+<h2 id="초기-탐색"><a href="#초기-탐색" class="headerlink" title="초기 탐색"></a>초기 탐색</h2><p>처음부터 사용자 스토리를 확정하는 것은 매우 어려운 일이다. 고객은 매번 새로운 사용자 스토리를 작성할 것이며 이는 프로젝트가 완료될 때까지 계속될 것이다.</p>
+<p>개발자는 스토리의 구현에 필요한 비용을 상대적으로 계산한다. 각각의 스토리에 몇몇 스토리 포인트를 작성한다. 스토리 포인트가 구현에 필요한 상대적인 비용을 나타낸다.</p>
+<h4 id="스파이크-분할-속도"><a href="#스파이크-분할-속도" class="headerlink" title="스파이크, 분할, 속도"></a>스파이크, 분할, 속도</h4><p>스토리는 적절한 크기로 분할되어야 한다. 스토리가 분할되거나 합쳐지면 이에 소요될 비용을 다시 추정해야 한다.</p>
+<p>포인트가 5개라고 추정했던 스토리가, 포인트가 10개인 여러 개의 스토리로 분할되는 것은 전혀 이상한 일이 아니다. 오히려 스토리가 좀 더 정확하게 추정된 것이다.</p>
+<p>상대적인 추정은 스토리의 절대적 크기를 알지 못하므로 스토리를 분할하거나 합병하는 데 있어서 도움을 주지 못한다. 이 때 속도라는 개념을 사용하여 스토리의 추정에 속도를 곱하면 실제 소요 기간 추정 결과를 알 수 있다.</p>
+<p>프로젝트가 진행됨에 따라 각 반복마다 완료한 스토리의 포인트 수를 측정할 수 있으므로 속도는 점점 더 정확하게 측정된다. 처음에는 한두개의 스토리로 프로토타입을 만들어 보면서 팀의 속도를 추정할 수 있다. 이 단계를 스파이크라고 한다.</p>
+<h2 id="릴리즈-계획-세우기"><a href="#릴리즈-계획-세우기" class="headerlink" title="릴리즈 계획 세우기"></a>릴리즈 계획 세우기</h2><p>릴리즈는 보통 2~4달 간격으로 이루어진다. 고객은 해당 릴리즈에서 구현되었으면 하는 스토리와 대략적인 구현 순서를 선택하며, 현재 속도에 알맞는 수준보다 더 많은 스토리를 선택할 수 없다.</p>
+<p>릴리즈 계획은 속도가 더 정확하게 추정되면서 언제든 조정될 수 있다.</p>
+<h2 id="반복-계획-세우기"><a href="#반복-계획-세우기" class="headerlink" title="반복 계획 세우기"></a>반복 계획 세우기</h2><p>반복은 보통 2주 간격으로 이루어진다. 고객은 해당 반복에 구현되었으면 하는 스토리를 선택하며, 현재 속도에 알맞는 수준보다 더 많은 스토리를 선택할 수 없다.</p>
+<p>개발자는 선택된 스토리를 구현하기 위한 가장 합리적인 순서를 찾아서 구현해야 한다.</p>
+<p>일단 반복이 시작되면 고객은 그 반복의 스토리를 변경할 수 없다.</p>
+<p>모든 스토리 구현이 완료되지 않은 경우에도 반복은 정해진 날짜에 끝난다. 이를 피드백하여 반복의 속도를 계산하고 일정을 조정하여 팀이 계획을 유지할 수 있도록 한다.</p>
+<h2 id="태스크-계획-세우기"><a href="#태스크-계획-세우기" class="headerlink" title="태스크 계획 세우기"></a>태스크 계획 세우기</h2><p>반복을 새롭게 시작할 때 다시 계획을 세운다. 개발자는 스토리를 분할하여 개발 태스크로 만든다. 각 개발자가 태스크에 참여할 때 개발자는 그 태스크를 임의의 태스크 포인트로 추정한다. 태스크 포인트는 개발자가 온전히 프로그래밍에 집중했을 때 구현 가능한 단위를 말한다.</p>
+<p>개발자는 어떠한 종류의 태스크에든 참여할 수 있다. 이는 개발자가 전체 프로젝트에 대해 알 수 있게 되어 팀이 더욱 탄탄해지고 더 많은 정보를 얻는 결과를 가져온다.</p>
+<p>어떠한 팀원도 자신이 처리할 수 있는 태스크 포인트보다 더 많은 포인트에 참여하지 않는다.</p>
+<p>태스크 선택 과정은 유연하게 이루어질 수 있다. 모든 태스크를 완료할 여유가 없다면 해당 태스크를 취소해 달라고 고객에게 부탁할 수 있고, 여유가 있다면 고객에게 스토리를 더 달라고 요청할 수 있다.</p>
+<h3 id="반환점"><a href="#반환점" class="headerlink" title="반환점"></a>반환점</h3><p>반복이 반쯤 진행되었을 때 고객과 개발자는 미팅을 갖는다. 이 시점에 해당 반복에서 계획한 스토리의 절반 정도는 구현되어 있어야 한다. 그렇지 않으면 태스크와 책임을 재분배하여 정해진 시간 내에 완료될 수 있게 해야 한다.</p>
+<p>태스크를 완료하는 것이 목표가 아니라, 스토리를 완료하는 것이 목표가 되어야 한다.</p>
+<h2 id="반복"><a href="#반복" class="headerlink" title="반복"></a>반복</h2><p>각 반복의 마지막에는 구현된 것을 고객에게 시연하고 피드백을 받는다.</p>
+<p>이를 통해 고객은 진행 상황을 수시로 확인할 수 있고 속도도 측정할 수 있어 계획을 더욱 정확하게 설정할 수 있다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>반복에서 반복으로, 릴리즈에서 릴리즈로, 프로젝트가 진행됨에 따라 예측 가능하고 안정적인 리듬을 찾아간다.</p>
+<p>이해당사자는 자주 구현된 것을 확인하여 피드백을 제공한다.</p>
+<p>개발자는 마음 편하게 작업할 수 있는 양의 태스크를 할당받고 작업하여 자신의 기량을 최상으로 유지한다.</p>
+<p>관리자는 각 반복마다 팀의 속도를 측정하여 프로젝트를 관리한다. 독단적이고 비현실적인 기한을 설정하지 않아야 한다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#계획-세우기"><span class="toc-number">1.</span> <span class="toc-text">계획 세우기</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#초기-탐색"><span class="toc-number">1.1.</span> <span class="toc-text">초기 탐색</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#스파이크-분할-속도"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">스파이크, 분할, 속도</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#릴리즈-계획-세우기"><span class="toc-number">1.2.</span> <span class="toc-text">릴리즈 계획 세우기</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#반복-계획-세우기"><span class="toc-number">1.3.</span> <span class="toc-text">반복 계획 세우기</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#태스크-계획-세우기"><span class="toc-number">1.4.</span> <span class="toc-text">태스크 계획 세우기</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#반환점"><span class="toc-number">1.4.1.</span> <span class="toc-text">반환점</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#반복"><span class="toc-number">1.5.</span> <span class="toc-text">반복</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#결론"><span class="toc-number">1.6.</span> <span class="toc-text">결론</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&text=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&is_video=false&description=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=클린 소프트웨어 - 계획 세우기&body=Check out this article: http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&title=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&name=클린 소프트웨어 - 계획 세우기&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/clean-software-establish-a-plan/&t=클린 소프트웨어 - 계획 세우기" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

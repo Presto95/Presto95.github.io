@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="자동 메모리 관리ARC에 대해 알아본다. ARCAutomatic Reference Counting 2010년 Clang을 공개하면서 정적 분석을 통해 실행 시점에서 발생할 수 있는 이슈를 Xcode 상에 표시할 수 있었다. 2011년 WWDC에서 ARC가 소개되었다. 이는 Clang 정적 분석 기술의 발전에 의한 것이었다. 수동 참조 계산 방식과 비교여전히">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cocoa Internals - 자동 메모리 관리">
+<meta property="og:url" content="http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="자동 메모리 관리ARC에 대해 알아본다. ARCAutomatic Reference Counting 2010년 Clang을 공개하면서 정적 분석을 통해 실행 시점에서 발생할 수 있는 이슈를 Xcode 상에 표시할 수 있었다. 2011년 WWDC에서 ARC가 소개되었다. 이는 Clang 정적 분석 기술의 발전에 의한 것이었다. 수동 참조 계산 방식과 비교여전히">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-17T15:53:18.000Z">
+<meta property="article:modified_time" content="2020-01-17T15:53:37.078Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="cocoa">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Cocoa Internals - 자동 메모리 관리</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/18/cocoa-internals-object-copying/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/01/18/cocoa-internals-memory-management/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&text=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&is_video=false&description=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Cocoa Internals - 자동 메모리 관리&body=Check out this article: http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&name=Cocoa Internals - 자동 메모리 관리&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&t=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#자동-메모리-관리"><span class="toc-number">1.</span> <span class="toc-text">자동 메모리 관리</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ARC"><span class="toc-number">1.1.</span> <span class="toc-text">ARC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#수동-참조-계산-방식과-비교"><span class="toc-number">1.1.1.</span> <span class="toc-text">수동 참조 계산 방식과 비교</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ARC-규칙"><span class="toc-number">1.1.2.</span> <span class="toc-text">ARC 규칙</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#메모리-관리-메소드를-구현하지-않는다"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">메모리 관리 메소드를 구현하지 않는다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#객체-생성을-위한-메소드-이름-규칙을-따른다"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">객체 생성을 위한 메소드 이름 규칙을 따른다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#C-구조체-내부에-객체-포인터를-넣지-않는다"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">C 구조체 내부에 객체 포인터를 넣지 않는다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#id와-void-타입을-명시적으로-타입-변환한다"><span class="toc-number">1.1.2.4.</span> <span class="toc-text">id와 void* 타입을 명시적으로 타입 변환한다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NSAutoreleasePool-대신-autoreleasepool-블록을-사용한다"><span class="toc-number">1.1.2.5.</span> <span class="toc-text">NSAutoreleasePool 대신 @autoreleasepool 블록을 사용한다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#메모리-지역zone을-사용하지-않는다"><span class="toc-number">1.1.2.6.</span> <span class="toc-text">메모리 지역zone을 사용하지 않는다.</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#소유권-수식어"><span class="toc-number">1.1.3.</span> <span class="toc-text">소유권 수식어</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#strong"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">__strong</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#weak"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">__weak</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#unsafe-unretained"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">__unsafe_unretained</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#autoreleasing"><span class="toc-number">1.1.3.4.</span> <span class="toc-text">__autoreleasing</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#타입-연결"><span class="toc-number">1.1.4.</span> <span class="toc-text">타입 연결</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#bridge"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">__bridge</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bridge-retained-또는-CFBridgingRetain"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">__bridge_retained 또는 CFBridgingRetain</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bridge-transfer-또는-CFBridgingRelease"><span class="toc-number">1.1.4.3.</span> <span class="toc-text">__bridge_transfer 또는 CFBridgingRelease</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#무비용-연결-타입"><span class="toc-number">1.1.4.4.</span> <span class="toc-text">무비용 연결 타입</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프로퍼티와-인스턴스-변수"><span class="toc-number">1.1.5.</span> <span class="toc-text">프로퍼티와 인스턴스 변수</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약"><span class="toc-number">1.1.6.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ARC-구현-방식"><span class="toc-number">1.2.</span> <span class="toc-text">ARC 구현 방식</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#강한-참조"><span class="toc-number">1.2.1.</span> <span class="toc-text">강한 참조</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-storeStrong-구현"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">objc_storeStrong 구현</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#자동-반환용-리턴-값"><span class="toc-number">1.2.2.</span> <span class="toc-text">자동 반환용 리턴 값</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NSDictionary의-dictionary-메소드-살펴보기"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">NSDictionary의 +dictionary 메소드 살펴보기</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-retainAutoreleasedReturnValue-함수에-대하여"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">objc_retainAutoreleasedReturnValue() 함수에 대하여</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#약한-참조"><span class="toc-number">1.2.3.</span> <span class="toc-text">약한 참조</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-initWeak-구현"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">objc_initWeak 구현</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-destroyWeak-구현"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">objc_destroyWeak 구현</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#약한-참조-불가능-객체"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">약한 참조 불가능 객체</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#자동-반환-방식"><span class="toc-number">1.2.4.</span> <span class="toc-text">자동 반환 방식</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">요약</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Cocoa Internals - 자동 메모리 관리
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-17T15:53:18.000Z" itemprop="datePublished">2020-01-18</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/cocoa/" rel="tag">cocoa</a>, <a class="tag-link" href="/tags/ios/" rel="tag">ios</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="자동-메모리-관리"><a href="#자동-메모리-관리" class="headerlink" title="자동 메모리 관리"></a>자동 메모리 관리</h1><p>ARC에 대해 알아본다.</p>
+<h2 id="ARC"><a href="#ARC" class="headerlink" title="ARC"></a>ARC</h2><p>Automatic Reference Counting</p>
+<p>2010년 Clang을 공개하면서 정적 분석을 통해 실행 시점에서 발생할 수 있는 이슈를 Xcode 상에 표시할 수 있었다.</p>
+<p>2011년 WWDC에서 ARC가 소개되었다. 이는 Clang 정적 분석 기술의 발전에 의한 것이었다.</p>
+<h3 id="수동-참조-계산-방식과-비교"><a href="#수동-참조-계산-방식과-비교" class="headerlink" title="수동 참조 계산 방식과 비교"></a>수동 참조 계산 방식과 비교</h3><p>여전히 객체마다 참조 횟수가 있고 객체 소유권에 대한 동일한 규칙을 적용하지만 ARC에서는 객체 소유권을 획득 및 반환하는 코드를 개발자가 작성하지 않고 컴파일러가 채워넣어준다.</p>
+<h3 id="ARC-규칙"><a href="#ARC-규칙" class="headerlink" title="ARC 규칙"></a>ARC 규칙</h3><h4 id="메모리-관리-메소드를-구현하지-않는다"><a href="#메모리-관리-메소드를-구현하지-않는다" class="headerlink" title="메모리 관리 메소드를 구현하지 않는다."></a>메모리 관리 메소드를 구현하지 않는다.</h4><p><code>retain</code>, <code>release</code>, <code>retainCount</code>, <code>autorelease</code>, <code>dealloc</code>과 같은 메소드를 구현해서는 안되며, 호출해서도 안된다.</p>
+<p><code>dealloc</code> 메소드 (Swift의 <code>deinit</code>) 도 옵저버를 제거하는 등의 작업을 하지 않는다면 이 메소드를 구현할 필요가 없으며, <code>[super dealloc]</code> 코드를 넣지 않아야 한다.</p>
+<p><code>Core Foundation</code> 스타일의 객체를 관리하기 위한 <code>CFRetain</code>이나 <code>CFRelease</code> 등의 함수는 여전히 사용할 수 있다.</p>
+<h4 id="객체-생성을-위한-메소드-이름-규칙을-따른다"><a href="#객체-생성을-위한-메소드-이름-규칙을-따른다" class="headerlink" title="객체 생성을 위한 메소드 이름 규칙을 따른다."></a>객체 생성을 위한 메소드 이름 규칙을 따른다.</h4><p><code>alloc</code>, <code>new</code>, <code>copy</code>, <code>mutableCopy</code> 계열의 메소드는 객체 소유권을 증가시키며, ARC 기반에서도 이러한 메소드 이름 규칙을 따르도록 한다.</p>
+<p><code>init</code> 계열의 인스턴스 메소드는 <code>+alloc</code> 메소드로 생성한 객체를 초기화하여 반환하는 용도로 사용되어야 한다.</p>
+<h4 id="C-구조체-내부에-객체-포인터를-넣지-않는다"><a href="#C-구조체-내부에-객체-포인터를-넣지-않는다" class="headerlink" title="C 구조체 내부에 객체 포인터를 넣지 않는다."></a>C 구조체 내부에 객체 포인터를 넣지 않는다.</h4><p>C 언어의 <code>struct</code>나 <code>union</code> 내부에 Objective-C 객체 포인터를 넣으면 ARC가 메모리 관리를 할 수 없다.</p>
+<p><code>__unsafe_unretained</code> 수식어를 사용하여 ARC가 관리하지 않도록 할 수 있으나 이에 대한 위험은 개발자가 감수해야 할 것이다.</p>
+<h4 id="id와-void-타입을-명시적으로-타입-변환한다"><a href="#id와-void-타입을-명시적으로-타입-변환한다" class="headerlink" title="id와 void* 타입을 명시적으로 타입 변환한다."></a>id와 void* 타입을 명시적으로 타입 변환한다.</h4><p>ARC에서는 객체 생명 주기를 관리하기 위해 타입 변환시 명시적으로 타입 변환 연산자를 사용해야 한다.</p>
+<h4 id="NSAutoreleasePool-대신-autoreleasepool-블록을-사용한다"><a href="#NSAutoreleasePool-대신-autoreleasepool-블록을-사용한다" class="headerlink" title="NSAutoreleasePool 대신 @autoreleasepool 블록을 사용한다."></a>NSAutoreleasePool 대신 @autoreleasepool 블록을 사용한다.</h4><p><code>NAutoreleasePool</code> 객체를 사용하려 한다면 컴파일러가 오류를 표시할 것이다.</p>
+<h4 id="메모리-지역zone을-사용하지-않는다"><a href="#메모리-지역zone을-사용하지-않는다" class="headerlink" title="메모리 지역zone을 사용하지 않는다."></a>메모리 지역<em>zone</em>을 사용하지 않는다.</h4><p>zone은 deprecated되었으며 ARC 환경에서도 마찬가지다.</p>
+<h3 id="소유권-수식어"><a href="#소유권-수식어" class="headerlink" title="소유권 수식어"></a>소유권 수식어</h3><h4 id="strong"><a href="#strong" class="headerlink" title="__strong"></a>__strong</h4><p>강한 참조. Swift의 <code>strong</code>과 같은 개념. 기본 수식어.</p>
+<p>객체 소유권을 획득하면서 참조한다.</p>
+<h4 id="weak"><a href="#weak" class="headerlink" title="__weak"></a>__weak</h4><p>약한 참조. Swift의 <code>weak</code>와 같은 개념.</p>
+<p>객체 소유권을 획득하지 않으면서 참조한다.</p>
+<p>해당 객체를 참조하는 곳이 없으면 객체는 즉시 사라지고 포인터는 <code>nil</code>이 된다.</p>
+<h4 id="unsafe-unretained"><a href="#unsafe-unretained" class="headerlink" title="__unsafe_unretained"></a>__unsafe_unretained</h4><p>미소유 참조. Swift의 <code>unowned</code>와 같은 개념.</p>
+<p>객체 소유권을 획득하지 않으면서 참조한다.</p>
+<p>객체가 사라지면 <code>nil</code>로 바꿔주지 않고 메모리 관리를 하지도 않아서 위험하다. 허상 포인터가 될 가능성이 있다.</p>
+<p>참조하는 객체가 확실히 존재하는 경우나 참조할 객체가 약한 참조될 수 없는 경우에 이를 사용할 수 있다.</p>
+<h4 id="autoreleasing"><a href="#autoreleasing" class="headerlink" title="__autoreleasing"></a>__autoreleasing</h4><p>이 수식어를 통해 자동 해제될 대상이라고 명시할 수 있다.</p>
+<h3 id="타입-연결"><a href="#타입-연결" class="headerlink" title="타입 연결"></a>타입 연결</h3><p>Objective-C로 작성된 Cocoa 프레임워크 내부에는 Core Foundation 프레임워크가 있으며, 이는 C 언어로 작성되었다.</p>
+<p>Objective-C 객체의 내부 구현도 Core Foundation C 구조체를 사용하므로 서로 타입 연결할 수 있다.</p>
+<p>Core Foundation 구조체와 Objective-C 객체 사이를 비용 없이 연결<em>toll-free bridge</em>할 수 있다.</p>
+<h4 id="bridge"><a href="#bridge" class="headerlink" title="__bridge"></a>__bridge</h4><p>Objective-C 객체 &lt;-&gt; Core Foundation 포인터 양방향 연결에 모두 사용 가능하다.</p>
+<p>객체 소유권을 넘기지 않고 타입 연결만 하는 경우 사용한다.</p>
+<p>허상 포인터가 생길 가능성이 있으므로 개발자가 잘 관리해 주어야 한다.</p>
+<h4 id="bridge-retained-또는-CFBridgingRetain"><a href="#bridge-retained-또는-CFBridgingRetain" class="headerlink" title="__bridge_retained 또는 CFBridgingRetain"></a>__bridge_retained 또는 CFBridgingRetain</h4><p>Objective-C 객체를 Core Foundation 포인터로 연결하면서 객체 소유권도 주기 위해 사용한다.</p>
+<p>객체 소유권을 획득하므로 참조가 끝나면 <code>CFRelease()</code>와 같은 함수를 이용하여 소유권을 반환해야 한다.</p>
+<h4 id="bridge-transfer-또는-CFBridgingRelease"><a href="#bridge-transfer-또는-CFBridgingRelease" class="headerlink" title="__bridge_transfer 또는 CFBridgingRelease"></a>__bridge_transfer 또는 CFBridgingRelease</h4><p>Core Foundation 참조 포인터를 Objective-C 객체로 연결하면서 객체 소유권을 넘기기 위해 사용한다.</p>
+<h4 id="무비용-연결-타입"><a href="#무비용-연결-타입" class="headerlink" title="무비용 연결 타입"></a>무비용 연결 타입</h4><p>Core Foundation 구조체와 Foundation 객체는 서로 무비용 연결이 가능하며, 그러한 쌍들이 존재한다.</p>
+<p><code>CFRunLoop</code> &lt;-&gt; <code>NSRunLoop</code> / <code>CFBundle</code> &lt;-&gt; <code>NSBundle</code>과 같은 경우는 무비용 연결이 불가능하다.</p>
+<h3 id="프로퍼티와-인스턴스-변수"><a href="#프로퍼티와-인스턴스-변수" class="headerlink" title="프로퍼티와 인스턴스 변수"></a>프로퍼티와 인스턴스 변수</h3><table>
+<thead>
+<tr>
+<th>프로퍼티 수식어</th>
+<th>ARC 소유권 수식어</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>copy</td>
+<td>__strong</td>
+<td>새로운 객체가 복사되고 소유권 획득</td>
+</tr>
+<tr>
+<td>assign</td>
+<td>__unsafe_unretaiend</td>
+<td>값만 그대로 할당</td>
+</tr>
+<tr>
+<td>retain</td>
+<td>__strong</td>
+<td>소유권 획득</td>
+</tr>
+<tr>
+<td>strong</td>
+<td>__strong</td>
+<td>소유권 획득</td>
+</tr>
+<tr>
+<td>weak</td>
+<td>__weak</td>
+<td>약한 참조</td>
+</tr>
+<tr>
+<td>unsafe_unretained</td>
+<td>__unsafe_unretained</td>
+<td>미소유 참조</td>
+</tr>
+</tbody></table>
+<h3 id="요약"><a href="#요약" class="headerlink" title="요약"></a>요약</h3><p>ARC를 사용하더라도 메모리 관리가 내부적으로 어떻게 이루어지는지 이해해야 한다.</p>
+<p>Swift와 C/C++ 코드를 연결하기 위해서는 Objective-C 객체로 포장을 해야 하는 경우가 있다.</p>
+<h2 id="ARC-구현-방식"><a href="#ARC-구현-방식" class="headerlink" title="ARC 구현 방식"></a>ARC 구현 방식</h2><p>ARC 환경에서 컴파일러가 추가하는 코드는 Objective-C 런타임 함수로 구성된다.</p>
+<h3 id="강한-참조"><a href="#강한-참조" class="headerlink" title="강한 참조"></a>강한 참조</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">NSString __strong *aString &#x3D; [[NSString alloc] init];</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id tmp &#x3D; objc_msgSend(NSString, @selector(alloc));</span><br><span class="line">objc_msgSend(tmp, @selector(init));</span><br><span class="line">NSString* aString;</span><br><span class="line">objc_storeStrong(&amp;astring, tmp);</span><br></pre></td></tr></table></figure>
+
+<h4 id="objc-storeStrong-구현"><a href="#objc-storeStrong-구현" class="headerlink" title="objc_storeStrong 구현"></a>objc_storeStrong 구현</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void objc_storeStrong(id *location, id obj) &#123;</span><br><span class="line">  id prev &#x3D; *location;</span><br><span class="line">  if (obj &#x3D;&#x3D; prev) &#123;</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line">  objc_retain(obj);</span><br><span class="line">  *location &#x3D; obj;</span><br><span class="line">  objc_release(prev);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>강한 참조 방식으로 선언한 변수는 ARC 기반에서 <code>objc_retain()</code> 함수를 사용하여 객체 소유권을 갖게 된다.</p>
+<h3 id="자동-반환용-리턴-값"><a href="#자동-반환용-리턴-값" class="headerlink" title="자동 반환용 리턴 값"></a>자동 반환용 리턴 값</h3><p>두 단계 생성 패턴 : 객체 인스턴스를 힙 공간에 생성 -&gt; 할당한 메모리 공간을 초기 값으로 채워 넣음</p>
+<p>Objective-C의 간편한 메소드<em>convenience method</em>는 위의 과정을 한번에 하면서 만들어진 객체는 자동 해제 대상이 된다.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">NSDictionary __strong *dictionary &#x3D; [NSDictionary dictionary];</span><br></pre></td></tr></table></figure>
+
+<p>위의 코드처럼 간편한 메소드로 객체를 생성하면 자동 반환 대상으로 자동 반환 목록에 등록한 객체를 반환한다.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id tmp &#x3D; objc_msgSend(NSDictionary, @selector(dictionary));</span><br><span class="line">objc_retainAutoreleasedReturnValue(tmp);</span><br><span class="line">NSDictionary *dictionary;</span><br><span class="line">objc_storeStrong(&amp;dictionary, tmp);</span><br></pre></td></tr></table></figure>
+
+<p><code>objc_retainAutoreleasedReturnValue()</code> 함수가 한 줄 추가된다. 자동 반환 목록에 등록되고 리턴받은 객체에 대한 소유권을 갖게 된다.</p>
+<h4 id="NSDictionary의-dictionary-메소드-살펴보기"><a href="#NSDictionary의-dictionary-메소드-살펴보기" class="headerlink" title="NSDictionary의 +dictionary 메소드 살펴보기"></a>NSDictionary의 +dictionary 메소드 살펴보기</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">+ (instancetype)dictionary &#123;</span><br><span class="line">  instancetype tmp &#x3D; objc_msgSend(NSDictionary, @selector(alloc));</span><br><span class="line">  objc_msgSend(tmp, @selector(init));</span><br><span class="line">  return objc_autoreleaseReturnValue(tmp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위처럼 간편한 메소드는 <code>alloc</code>, <code>init</code>, <code>autorelease</code> 메소드를 차례대로 호출한 것과 같은 효과를 내도록 구현되어 있다.</p>
+<h4 id="objc-retainAutoreleasedReturnValue-함수에-대하여"><a href="#objc-retainAutoreleasedReturnValue-함수에-대하여" class="headerlink" title="objc_retainAutoreleasedReturnValue() 함수에 대하여"></a>objc_retainAutoreleasedReturnValue() 함수에 대하여</h4><p>내부적으로 이 함수는 무조건 소유권을 가져오지 않고, 해당 객체가 생성되었는지 확인하기 위해 스레드 TLS (스레드 내부 저장소) 영역에 정보를 저장하는 최적화 루틴을 포함한다.</p>
+<p>이를 빠른 자동 반환<em>Fast Autorelease for Return</em>이라고 부른다.</p>
+<p>iOS에서는 자동 반환 목록을 처리하는 비용이 커서 내부적으로 최적화한다.</p>
+<h3 id="약한-참조"><a href="#약한-참조" class="headerlink" title="약한 참조"></a>약한 참조</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">NSString __weak *aString &#x3D; [[NSString alloc] init];</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id tmp &#x3D; objc_msgSend(NSString, @selector(alloc));</span><br><span class="line">objc_msgSend(tmp, @selector(init));</span><br><span class="line">NSString* aString;</span><br><span class="line">objc_initWeak(&amp;aString, tmp);</span><br><span class="line">objc_release(tmp);</span><br><span class="line">objc_destroyWeak(&amp;aString);</span><br></pre></td></tr></table></figure>
+
+<h4 id="objc-initWeak-구현"><a href="#objc-initWeak-구현" class="headerlink" title="objc_initWeak 구현"></a>objc_initWeak 구현</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id objc_initWeak(id *addr, id val) &#123;</span><br><span class="line">  *addr &#x3D; 0;</span><br><span class="line">  if (!val) return nil;</span><br><span class="line">  return objc_storeWeak(addr, val);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>objc_storeWeak()</code> 함수는 내부적으로 약한 참조 목록을 저장하는 해시 테이블을 구현하고 있다.</p>
+<p>이전 객체가 있으면 기존의 약한 참조를 해지하고, 새로운 객체에 약한 참조를 등록한다.</p>
+<h4 id="objc-destroyWeak-구현"><a href="#objc-destroyWeak-구현" class="headerlink" title="objc_destroyWeak 구현"></a>objc_destroyWeak 구현</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void objc_destroyWeak(id *addr) &#123;</span><br><span class="line">  if (!*addr) return;</span><br><span class="line">  return objc_destoryWeak_slow(addr):</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>약한 참조 중인 객체가 사라질 때 <code>nil</code>로 바꿔주는 동작은 객체가 소멸될 때 한꺼번에 처리된다.</p>
+<h4 id="약한-참조-불가능-객체"><a href="#약한-참조-불가능-객체" class="headerlink" title="약한 참조 불가능 객체"></a>약한 참조 불가능 객체</h4><p><code>objc_storeWeak()</code> 함수의 수행 중 <code>-allowsWeakReference</code> 메소드를 호출하여 리턴 값이 NO이면 해당 객체는 이미 메모리가 해제된 상태에서 중복 해제되었다고 가정하며, 런타임 에러를 발생시킨다.</p>
+<p>iOS에서는 약한 참조 불가능한 클래스가 존재하지 않는다.</p>
+<h3 id="자동-반환-방식"><a href="#자동-반환-방식" class="headerlink" title="자동 반환 방식"></a>자동 반환 방식</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@autoreleasepool &#123;</span><br><span class="line">  NSDictioanry __autoreleasing *dictionary &#x3D; [[NSDictionary alloc] init];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id pool &#x3D; objc_autoreleasePoolPush();</span><br><span class="line">id tmp &#x3D; objc_msgSend(NSDictionary, @selector(alloc));</span><br><span class="line">objc_msgSend(tmp, @selector(init));</span><br><span class="line">NSDictionary *dictionary &#x3D; tmp;</span><br><span class="line">objc_autorelease(dictionary);</span><br><span class="line">objc_autoreleasePoolPop(pool);</span><br></pre></td></tr></table></figure>
+
+<p>자동 반환 목록을 준비하고 / 객체를 생성하고 / <code>objc_autorelease()</code> 함수를 통해 객체를 자동 반환 목록에 추가한다.</p>
+<h3 id="요약-1"><a href="#요약-1" class="headerlink" title="요약"></a>요약</h3><p>위의 내용은 ARC 환경에서 나타나는 메모리 문제를 해결하는 데 도움을 줄 것이다.</p>
+<p>ARC 환경에서도 객체 인스턴스에 대한 메모리 관리를 신경 써야 한다.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#자동-메모리-관리"><span class="toc-number">1.</span> <span class="toc-text">자동 메모리 관리</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ARC"><span class="toc-number">1.1.</span> <span class="toc-text">ARC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#수동-참조-계산-방식과-비교"><span class="toc-number">1.1.1.</span> <span class="toc-text">수동 참조 계산 방식과 비교</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ARC-규칙"><span class="toc-number">1.1.2.</span> <span class="toc-text">ARC 규칙</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#메모리-관리-메소드를-구현하지-않는다"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">메모리 관리 메소드를 구현하지 않는다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#객체-생성을-위한-메소드-이름-규칙을-따른다"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">객체 생성을 위한 메소드 이름 규칙을 따른다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#C-구조체-내부에-객체-포인터를-넣지-않는다"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">C 구조체 내부에 객체 포인터를 넣지 않는다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#id와-void-타입을-명시적으로-타입-변환한다"><span class="toc-number">1.1.2.4.</span> <span class="toc-text">id와 void* 타입을 명시적으로 타입 변환한다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NSAutoreleasePool-대신-autoreleasepool-블록을-사용한다"><span class="toc-number">1.1.2.5.</span> <span class="toc-text">NSAutoreleasePool 대신 @autoreleasepool 블록을 사용한다.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#메모리-지역zone을-사용하지-않는다"><span class="toc-number">1.1.2.6.</span> <span class="toc-text">메모리 지역zone을 사용하지 않는다.</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#소유권-수식어"><span class="toc-number">1.1.3.</span> <span class="toc-text">소유권 수식어</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#strong"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">__strong</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#weak"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">__weak</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#unsafe-unretained"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">__unsafe_unretained</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#autoreleasing"><span class="toc-number">1.1.3.4.</span> <span class="toc-text">__autoreleasing</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#타입-연결"><span class="toc-number">1.1.4.</span> <span class="toc-text">타입 연결</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#bridge"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">__bridge</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bridge-retained-또는-CFBridgingRetain"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">__bridge_retained 또는 CFBridgingRetain</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bridge-transfer-또는-CFBridgingRelease"><span class="toc-number">1.1.4.3.</span> <span class="toc-text">__bridge_transfer 또는 CFBridgingRelease</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#무비용-연결-타입"><span class="toc-number">1.1.4.4.</span> <span class="toc-text">무비용 연결 타입</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#프로퍼티와-인스턴스-변수"><span class="toc-number">1.1.5.</span> <span class="toc-text">프로퍼티와 인스턴스 변수</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약"><span class="toc-number">1.1.6.</span> <span class="toc-text">요약</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ARC-구현-방식"><span class="toc-number">1.2.</span> <span class="toc-text">ARC 구현 방식</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#강한-참조"><span class="toc-number">1.2.1.</span> <span class="toc-text">강한 참조</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-storeStrong-구현"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">objc_storeStrong 구현</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#자동-반환용-리턴-값"><span class="toc-number">1.2.2.</span> <span class="toc-text">자동 반환용 리턴 값</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NSDictionary의-dictionary-메소드-살펴보기"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">NSDictionary의 +dictionary 메소드 살펴보기</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-retainAutoreleasedReturnValue-함수에-대하여"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">objc_retainAutoreleasedReturnValue() 함수에 대하여</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#약한-참조"><span class="toc-number">1.2.3.</span> <span class="toc-text">약한 참조</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-initWeak-구현"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">objc_initWeak 구현</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objc-destroyWeak-구현"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">objc_destroyWeak 구현</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#약한-참조-불가능-객체"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">약한 참조 불가능 객체</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#자동-반환-방식"><span class="toc-number">1.2.4.</span> <span class="toc-text">자동 반환 방식</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#요약-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">요약</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&text=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&is_video=false&description=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Cocoa Internals - 자동 메모리 관리&body=Check out this article: http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&title=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&name=Cocoa Internals - 자동 메모리 관리&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/18/cocoa-internals-automatic-memory-management/&t=Cocoa Internals - 자동 메모리 관리" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>
