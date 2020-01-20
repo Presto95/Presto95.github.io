@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="원문 미리 요약 모든 윈도우는 단 하나의 루트 뷰 컨트롤러를 갖는다. 윈도우 자체로는 컨텐트를 가지고 있지 않으며, 뷰 컨트롤러의 뷰가 컨텐트를 제공한다.   컨테이너 뷰 컨트롤러의 자식 뷰 컨트롤러에서 다른 뷰 컨트롤러를 프레젠트할 때, 컨테이너 뷰 컨트롤러가 presentingViewController가 된다.   뷰 컨트롤러 간 관계는 각각의 뷰 컨트">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy">
+<meta property="og:url" content="http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="원문 미리 요약 모든 윈도우는 단 하나의 루트 뷰 컨트롤러를 갖는다. 윈도우 자체로는 컨텐트를 가지고 있지 않으며, 뷰 컨트롤러의 뷰가 컨텐트를 제공한다.   컨테이너 뷰 컨트롤러의 자식 뷰 컨트롤러에서 다른 뷰 컨트롤러를 프레젠트할 때, 컨테이너 뷰 컨트롤러가 presentingViewController가 된다.   뷰 컨트롤러 간 관계는 각각의 뷰 컨트">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-20T01:04:23.000Z">
+<meta property="article:modified_time" content="2020-01-20T01:04:23.123Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="view controller">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2020/01/19/translation-view-controller-programming-guide-for-ios-presentations-overview-the-role-of-view-controllers/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&text=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&is_video=false&description=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy&body=Check out this article: http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&name=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&t=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Root-View-Controller"><span class="toc-number">2.</span> <span class="toc-text">The Root View Controller</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-View-Controllers"><span class="toc-number">3.</span> <span class="toc-text">Container View Controllers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Presented-View-Controllers"><span class="toc-number">4.</span> <span class="toc-text">Presented View Controllers</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        [번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-20T01:04:23.000Z" itemprop="datePublished">2020-01-20</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ios/" rel="tag">ios</a>, <a class="tag-link" href="/tags/view-controller/" rel="tag">view controller</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/TheViewControllerHierarchy.html#//apple_ref/doc/uid/TP40007457-CH33-SW1" target="_blank" rel="noopener">원문</a></p>
+<h2 id="미리-요약"><a href="#미리-요약" class="headerlink" title="미리 요약"></a>미리 요약</h2><ul>
+<li>모든 윈도우는 단 하나의 루트 뷰 컨트롤러를 갖는다.<ul>
+<li>윈도우 자체로는 컨텐트를 가지고 있지 않으며, 뷰 컨트롤러의 뷰가 컨텐트를 제공한다.</li>
+</ul>
+</li>
+<li>컨테이너 뷰 컨트롤러의 자식 뷰 컨트롤러에서 다른 뷰 컨트롤러를 프레젠트할 때, 컨테이너 뷰 컨트롤러가 <code>presentingViewController</code>가 된다.</li>
+</ul>
+<hr>
+<p>뷰 컨트롤러 간 관계는 각각의 뷰 컨트롤러가 요구하는 동작을 정의한다. UIKit은 규정된 방법으로 뷰 컨트롤러를 사용하는 것을 기대한다. 적절한 뷰 컨트롤러 관계를 유지하여 필요할 때 자동 동작이 올바른 뷰 컨트롤러에 전달되는 것을 보장할 수 있다. 규정된 컨텐츠 포함 및 프레젠테이션 관계를 지키지 않는다면 앱의 일부분은 기대한 대로 동작하지 않게 될 것이다.</p>
+<h2 id="The-Root-View-Controller"><a href="#The-Root-View-Controller" class="headerlink" title="The Root View Controller"></a>The Root View Controller</h2><p>루트 뷰 컨트롤러는 뷰 컨트롤러 계층의 앵커다. 모든 윈도우는 정확히 하나의 루트 뷰 컨트롤러를 가지고 있으며 그 컨텐트는 윈도우를 채운다. 루트 뷰 컨트롤러는 유저에게 보이는 초기 컨텐트를 정의한다. 윈도우는 그 자체로는 보이는 컨텐트를 가지고 있지 않기 때문에 뷰 컨트롤러의 뷰가 모든 컨텐트를 제공한다.</p>
+<p>루트 뷰 컨트롤러는 <code>UIWindow</code> 객체의 <code>rootViewController</code> 프로퍼티로 접근 가능하다. 뷰 컨트롤러를 구성하기 위해 스토리보드를 사용한다면 UIKit은 실행 시간에 자동으로 해당 프로퍼티에 값을 설정한다. 코드로 윈도우를 만든다면 반드시 직접 루트 뷰 컨트롤러를 설정해야 한다.</p>
+<h2 id="Container-View-Controllers"><a href="#Container-View-Controllers" class="headerlink" title="Container View Controllers"></a>Container View Controllers</h2><p>컨테이너 뷰 컨트롤러는 더욱 관리 가능하고 재사용 가능한 조각들로부터 세련된 인터페이스를 조립할 수 있게 해준다. 컨테이너 뷰 컨트롤러는 최종 인터페이스를 만들기 위해 선택적인 커스텀 뷰에 더하여 하나 이상의 자식 뷰 컨트롤러의 컨텐트를 혼합한다. 예를 들어 <code>UINavigationController</code> 객체는 내비게이션 컨트롤러가 관리하는 내비게이션 바와 선택적인 툴바와 함께 자식 뷰 컨트롤러의 컨텐트를 표시한다. UIKit은 <code>UINavigationController</code>, <code>UISplitViewController</code>, <code>UIPageViewController</code>를 포함하여 여러 개의 컨테이너 뷰 컨트롤러를 포함한다.</p>
+<p>컨테이너 뷰 컨트롤러의 뷰는 주어진 공간을 항상 가득 채운다. 컨테이너 뷰 컨트롤러는 종종 윈도우의 루트 뷰 컨트롤러로 설정될 수 있으나 또한 모달로 프레젠트되거나 다른 컨테이너의 자식으로 설정될 수 있다. 컨테이너는 자식 뷰들을 적절하게 배치해야 할 책임이 있다. 컨테이너의 자식 뷰들은 컨테이너 인터페이스에 의존하지만, 자식 뷰 컨트롤러들은 컨테이너와 형제 뷰 컨트롤러 대한 최소한의 지식을 가지고 있다.</p>
+<p>컨테이너 뷰 컨트롤러는 자식들을 관리하기 때문에 UIKit은 커스텀 컨테이너에 그러한 자식들을 설정하는 규칙을 정의한다. Implementing a Container View Controller에서 커스텀 컨테이너 뷰 컨트롤러를 만드는 방법에 대한 세부 사항을 확인하라.</p>
+<h2 id="Presented-View-Controllers"><a href="#Presented-View-Controllers" class="headerlink" title="Presented View Controllers"></a>Presented View Controllers</h2><p>프레젠트하는 뷰 컨트롤러는 현재 뷰 컨트롤러의 컨텐츠를 다른 뷰 컨트롤러의 컨텐츠로 교체하는데, 보통 이전 뷰 컨트롤러의 컨텐츠를 숨겨서 한다. 프레젠테이션은 새로운 컨텐트를 모달로 표시하기 위해 가장 흔하게 사용된다. 예를 들어 유저로부터 입력을 모으기 위해 뷰 컨트롤러를 프레젠트할 수 있을 것이다. 또한 앱 인터페이스를 위한 일반적인 빌딩 블록으로도 사용할 수 있다.</p>
+<p>뷰 컨트롤러를 프레젠트할 때 UIKit은 <em>프레젠트하는 뷰 컨트롤러*와 *프레젠트되는 뷰 컨트롤러</em> 간 관계를 만든다. (반대 관계도 있다.) 이 관계들은 뷰 컨트롤러 계층의 일부분을 형성하고 런타임에서 다른 뷰 컨트롤러의 위치를 알아내는 방법이 된다.</p>
+<p>컨테이너 뷰 컨트롤러가 포함될 때 UIKit은 작성해야 하는 코드를 간단하게 하여 프레젠테이션 체인을 수정할 수 있다. 다른 프레젠테이션 스타일은 화면에 나타나는 방법에 대한 다른 규칙을 가지고 있다. 예를 들어 풀스크린 프레젠테이션은 항상 화면 전체를 커버한다. 뷰 컨트롤러를 프레젠트할 때 UIKit은 프레젠테이션에 대하여 최적화된 컨텍스트를 제공하는 뷰 컨트롤러를 찾는다. 많은 경우에 UIKit은 가장 가까운 컨테이너 뷰 컨트롤러를 선택하지만 윈도우의 루트 뷰 컨트롤러를 선택할 수도 있다. 몇몇 경우에 UIKit에게 어떤 뷰 컨트롤러가 프레젠테이션 컨텍스트를 정의하며 프레젠테이션을 처리해야 하는지 알릴 수 있다.</p>
+<p>풀스크린 프레젠테이션을 수행할 때 새로운 뷰 컨트롤러는 화면 전체를 커버해야 할 필요가 있다. 자식이 컨테이너의 바운즈를 알 필요가 있는 대신, 컨테이너가 프레젠테이션을 처리해야 하는지를 결정한다. 내비게이션 컨트롤러는 화면 전체를 커버하기 때문에 프레젠트하는 뷰 컨트롤러로 동작하며 프레젠테이션을 개시한다.</p>
+<p>The Presentation and Transition Process에서 프레젠테이션에 관한 정보를 확인하라.</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Root-View-Controller"><span class="toc-number">2.</span> <span class="toc-text">The Root View Controller</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-View-Controllers"><span class="toc-number">3.</span> <span class="toc-text">Container View Controllers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Presented-View-Controllers"><span class="toc-number">4.</span> <span class="toc-text">Presented View Controllers</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&text=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&is_video=false&description=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy&body=Check out this article: http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&title=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&name=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/20/translation-view-controller-programming-guide-for-ios-presentations-overview-the-view-controller-hierarchy/&t=[번역] View Controller Programming Guide for iOS - Overview - The View Controller Hierarchy" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>
