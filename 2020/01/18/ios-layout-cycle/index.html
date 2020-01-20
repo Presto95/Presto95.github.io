@@ -14,7 +14,7 @@
 <meta property="og:description" content="iOS의 레이아웃 사이클UIView와 UIViewController의 레이아웃 사이클UIViewController는 기본적으로 루트 뷰(UIView)를 가지고 있다. UIViewController를 instantiate했을 때, 시스템은 다음의 메소드들을 순차적으로 호출한다. 시작 requiresConstraintBasedLayout UIView의 타입 프">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-18T04:54:15.000Z">
-<meta property="article:modified_time" content="2020-01-18T04:54:26.971Z">
+<meta property="article:modified_time" content="2020-01-20T05:17:34.557Z">
 <meta property="article:author" content="Presto">
 <meta property="article:tag" content="ios">
 <meta name="twitter:card" content="summary">
@@ -221,8 +221,8 @@
 <li>Compression Resistance : 크기가 작아지기 어려운 정도  (압축 저항. 컨텐츠 밖으로 작용하는 힘)</li>
 <li>Intrinsic Content Size가 결정된 방향에 대한 제약을 추가하지 않는 경우 Intrinsic Content Size로 크기가 결정된다. (Intrinsic Content Size를 기본 제약으로 추가한다.)<ul>
 <li><code>UILabel</code>의 Intrinsic Content Size가 <code>CGSize(width: 100, height: 50)</code>일 때<ul>
-<li><code>label.width</code></li>
-<li>&lt;= 100@250 (Content Hugging)<ul>
+<li><code>label.width</code><ul>
+<li>&lt;= 100@250 (Content Hugging)</li>
 <li>&gt;= 100@750 (Compression Resistance)</li>
 </ul>
 </li>
