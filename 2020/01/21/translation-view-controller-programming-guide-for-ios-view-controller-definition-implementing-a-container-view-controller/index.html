@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="원문 미리 요약 컨테이너 뷰 컨트롤러를 직접 만들 때 구현해야 하는 과정을 잘 알아두자.  컨테이너 뷰 컨트롤러에 자식 뷰 컨트롤러를 추가하는 과정  addChild(_:) 컨테이너 뷰 컨트롤러의 루트 뷰에 자식 뷰 컨트롤러의 루트 뷰를 서브뷰로 추가 didMove(toParent:)에 컨테이너 뷰 컨트롤러(self) 넘겨서 호출   컨테이너 뷰 컨트롤러에">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller">
+<meta property="og:url" content="http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/index.html">
+<meta property="og:site_name" content="Presto">
+<meta property="og:description" content="원문 미리 요약 컨테이너 뷰 컨트롤러를 직접 만들 때 구현해야 하는 과정을 잘 알아두자.  컨테이너 뷰 컨트롤러에 자식 뷰 컨트롤러를 추가하는 과정  addChild(_:) 컨테이너 뷰 컨트롤러의 루트 뷰에 자식 뷰 컨트롤러의 루트 뷰를 서브뷰로 추가 didMove(toParent:)에 컨테이너 뷰 컨트롤러(self) 넘겨서 호출   컨테이너 뷰 컨트롤러에">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-01-21T06:28:21.000Z">
+<meta property="article:modified_time" content="2020-01-21T06:28:21.796Z">
+<meta property="article:author" content="Presto">
+<meta property="article:tag" content="ios">
+<meta property="article:tag" content="view controller">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2020/01/20/translation-view-controller-programming-guide-for-ios-view-controller-definition-defining-your-subclass/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&text=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&is_video=false&description=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller&body=Check out this article: http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&name=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&t=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Designing-a-Custom-Container-View-Controller"><span class="toc-number">2.</span> <span class="toc-text">Designing a Custom Container View Controller</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-Navigation-Controller"><span class="toc-number">2.1.</span> <span class="toc-text">Example: Navigation Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-Split-View-Controller"><span class="toc-number">2.2.</span> <span class="toc-text">Example: Split View Controller</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Configuring-a-Container-in-Interface-Builder"><span class="toc-number">3.</span> <span class="toc-text">Configuring a Container in Interface Builder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implementing-a-Custom-Container-View-Controller"><span class="toc-number">4.</span> <span class="toc-text">Implementing a Custom Container View Controller</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Adding-a-Child-View-Controller-to-Your-Content"><span class="toc-number">4.1.</span> <span class="toc-text">Adding a Child View Controller to Your Content</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Removing-a-Child-View-Controller"><span class="toc-number">4.2.</span> <span class="toc-text">Removing a Child View Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Transitioning-Between-Child-View-Controllers"><span class="toc-number">4.3.</span> <span class="toc-text">Transitioning Between Child View Controllers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Managing-Appearance-Updates-for-Children"><span class="toc-number">4.4.</span> <span class="toc-text">Managing Appearance Updates for Children</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Suggestions-for-Building-a-Container-View-Controller"><span class="toc-number">5.</span> <span class="toc-text">Suggestions for Building a Container View Controller</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Delegating-Control-to-a-Child-View-Controller"><span class="toc-number">6.</span> <span class="toc-text">Delegating Control to a Child View Controller</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        [번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Presto</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-21T06:28:21.000Z" itemprop="datePublished">2020-01-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/iOS/">iOS</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ios/" rel="tag">ios</a>, <a class="tag-link" href="/tags/view-controller/" rel="tag">view controller</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><a href="https://developer.apple.com/library/archive/featuredarticles/ViewControllerPGforiPhoneOS/ImplementingaContainerViewController.html#//apple_ref/doc/uid/TP40007457-CH11-SW1" target="_blank" rel="noopener">원문</a></p>
+<h2 id="미리-요약"><a href="#미리-요약" class="headerlink" title="미리 요약"></a>미리 요약</h2><ul>
+<li><p>컨테이너 뷰 컨트롤러를 직접 만들 때 구현해야 하는 과정을 잘 알아두자.</p>
+<ul>
+<li><p>컨테이너 뷰 컨트롤러에 자식 뷰 컨트롤러를 추가하는 과정</p>
+<ol>
+<li><code>addChild(_:)</code></li>
+<li>컨테이너 뷰 컨트롤러의 루트 뷰에 자식 뷰 컨트롤러의 루트 뷰를 서브뷰로 추가</li>
+<li><code>didMove(toParent:)</code>에 컨테이너 뷰 컨트롤러(<code>self</code>) 넘겨서 호출</li>
+</ol>
+</li>
+<li><p>컨테이너 뷰 컨트롤러에서 자식 뷰 컨트롤러를 제거하는 과정</p>
+<ol>
+<li><p><code>willMove(toParent:)</code>에 <code>nil</code>을 넘겨서 호출</p>
+</li>
+<li><p>자식 뷰 컨트롤러의 루트 뷰를 슈퍼뷰로부터 제거</p>
+</li>
+<li><p><code>removeFromParent()</code></p>
+</li>
+<li><p>oldVC.willMove(toParent: nil)<br> addChild(newVC)</p>
+<p> newVC.view.frame = newViewStartFrame<br> let endFrame = oldViewEndFrame</p>
+<p> transition(from: oldVC, to: newVC, duration: 0.25, options: [], animations: {<br>   newVC.view.frame = oldVC.view.frame<br>   oldVC.view.frame = endFrame<br> }, completion: { finished in<br>   oldVC.removeFromParent()<br>   newVC.didMove(toParent: self)<br> })</p>
+</li>
+</ol>
+</li>
+<li><p>컨테이너 뷰 컨트롤러에서 두 자식 뷰 컨트롤러 간에 트랜지션하는 과정</p>
+<ol>
+<li>이전 뷰 컨트롤러에서 <code>willMove(toParent:)</code> 메소드에 <code>nil</code>을 넘겨서 호출</li>
+<li>새로운 뷰 컨트롤러를 컨테이너 뷰 컨트롤러의 자식 뷰 컨트롤러로 추가 (<code>addChild(_:)</code>)</li>
+<li><code>transition(from:to:duration:options:animations:completion:)</code> 메소드 사용하여 트랜지션 애니메이션 주기<ul>
+<li>컴플리션 핸들러에서 이전 뷰 컨트롤러를 컨테이너 뷰 컨트롤러에서 제거 (<code>removeFromParent()</code>)</li>
+<li>컴플리션 핸들러에서 새로운 뷰 컨트롤러의 <code>didMove(toParent:)</code>에 컨테이너 뷰 컨트롤러(<code>self</code>) 넘겨서 호출</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>뷰 컨트롤러의 뷰가 화면에 나타남과 관련된 메소드들을 조작하기 위한 메소드를 사용할 수 있다.</p>
+<ul>
+<li><code>beginAppearanceTransition(_:animated:)</code></li>
+<li><code>endAppearanceTransition()</code></li>
+</ul>
+</li>
+<li><p>컨테이너 뷰 컨트롤러는 자식 뷰 컨트롤러의 루트 뷰만을 아는 것이 좋고, 자식 뷰 컨트롤러는 컨테이너 뷰 컨트롤러와 통신하기 위해 델리게이트 패턴을 사용하는 것이 좋다.</p>
+</li>
+</ul>
+<hr>
+<p>컨테이너 뷰 컨트롤러는 여러 개의 뷰 컨트롤러에서 하나의 유저 인터페이스로 컨텐트를 결합하는 방법이다. 컨테이너 뷰 컨트롤러는 내비게이션을 촉진시키고 기존 컨텐트에 기반한 새로운 유저 인터페이스 타입을 만들기 위해 가장 일반적으로 사용된다. UIKit에 있는 <code>UINavigationController</code>, <code>UITabBarController</code>, <code>UISplitViewController</code>가 컨테이너 뷰 컨트롤러의 예시이며, 모두는 유저 인터페이스의 다른 부분 간의 내비게이션을 촉진시킨다.</p>
+<h2 id="Designing-a-Custom-Container-View-Controller"><a href="#Designing-a-Custom-Container-View-Controller" class="headerlink" title="Designing a Custom Container View Controller"></a>Designing a Custom Container View Controller</h2><p>거의 모든 방식에서 컨테이너 뷰 컨트롤러는 루트 뷰와 컨텐트를 관리하는 부분에서 다른 컨텐트 뷰 컨트롤러와 같다. 차이점은 컨테이너 뷰 컨트롤러는 다른 뷰 컨트롤러에서 그 컨텐트의 일부를 얻는다는 것이다. 컨테이너 뷰 컨트롤러가 얻은 컨텐트는 다른 뷰 컨트롤러의 뷰로 한정되며, 이는 그 자신의 뷰 계층 내에 임베드된다. 컨테이너 뷰 컨트롤러는 임베드된 뷰의 크기와 위치를 설정하지만, 기존의 뷰 컨트롤러가 여전히 그러한 뷰 내에 있는 컨텐트를 관리한다.</p>
+<p>직접 컨테이너 뷰 컨트롤러를 설계할 때, 항상 컨테인하는 뷰 컨트롤러와 컨테인되는 뷰 컨트롤러 간의 관계를 이해하라. 뷰 컨트롤러 간 관계는 그 컨텐트들이 화면에 어떻게 나타나고 내부적으로 컨테이너가 컨텐트를 관리해야 하는지에 대해 알리는 것을 도울 수 있다. 설계 프로세스 동안 다음의 질문에 대해 스스로 질문해 보아라.</p>
+<ul>
+<li>컨테이너의 역할을 무엇이고 그 자식들의 역할은 무엇인가?</li>
+<li>동시에 표시되는 자식은 얼마나 많이 있는가?</li>
+<li>형제 뷰 컨트롤러 간 관계는 무엇인가?</li>
+<li>자식 뷰 컨트롤러는 컨테이너에서 어떻게 추가되거나 삭제되는가?</li>
+<li>자식의 크기나 위치는 변화할 수 있는가? 어떤 조건 하에서 그러한 변화가 발생하는가?</li>
+<li>컨테이너 자신이 장식을 위한 뷰 또는 내비게이션과 관련된 뷰를 제공하는가?</li>
+<li>컨테이너와 그 자식들 간에 요구되는 커뮤니케이션의 종류는 무엇인가? 컨테이너는 <code>UIViewController</code>가 정의한 표준 이벤트 이상으로 특정 이벤트를 자식에 보고할 필요가 있는가?</li>
+<li>컨테이너의 외관은 다른 방식으로 구성될 수 있는가? 그렇다면 어떻게 하는가?</li>
+</ul>
+<p>컨테이너 뷰 컨트롤러의 구현은 다양한 객체의 역할을 정의한 후라면 상대적으로 간단하다. UIKit으로부터의 유일한 요구사항은 컨테이너 뷰 컨트롤러와 자식 뷰 컨트롤러들 간에 형식적인 부모-자식 관계를 만드는 것이다. 부모-자식 관계는 자식이 관련된 시스템 메세지를 받을 수 있다는 것을 보장한다. 그것 외엥, 실제 작업의 대부분은 컨테인되는 뷰의 레이아웃 및 관리 동안 발생하며, 각 컨테이너마다 다르다. 컨테이너틔 컨텐트 영역의 어느 곳이든지 뷰를 놓을 수 있으며, 원한다면 그러한 뷰의 크기도 조절할 수 있다. 장식이나 내비게이션에 있어서 도움을 주기 위해 뷰 계층에 커스텀 뷰를 추가할 수도 있다.</p>
+<h3 id="Example-Navigation-Controller"><a href="#Example-Navigation-Controller" class="headerlink" title="Example: Navigation Controller"></a>Example: Navigation Controller</h3><p><code>UINavigationController</code> 객체는 계층 있는 데이터 셋을 통한 내비게이션을 지원한다. 내비게이션 인터페이스는 한 번에 하나의 자식 뷰 컨트롤러를 나타낸다. 인터페이스 상단에 있는 내비게이션 바는 데이터 계층에서 현재 위치를 표시하며 한 수준 뒤로 이동하기 위한 백 버튼을 표시한다. 데이터 계층에서 내비게이션하여 들어가는 것은 자식 뷰 컨트롤러에게 달려 있고, 테이블이나 버튼의 사용을 포함할 수 있다.</p>
+<p>뷰 컨트롤러 간 내비게이션은 내비게이션 컨트롤러와 그 자식들에 의해 함께 관리된다. 유저가 자식 뷰 컨트롤러의 버튼이나 테이블 로우와 상호작용할 때 자식은 내비게이션 컨트롤러에게 새로운 뷰 컨트롤러를 뷰에 푸시하라고 요청한다. 자식은 새로운 뷰 컨트롤러의 컨텐츠 구성을 처리하지만, 내비게이션 컨트롤러는 트랜지션 애니메이션을 관리한다. 내비게이션 컨트롤러는 또한 내비게이션 바를 관리한다. 이것은 최상단 뷰 컨트롤러를 디스미스하기 위한 백 버튼을 표시한다.</p>
+<p>대부분의 컨텐트 영역은 최상단 자식 뷰 컨트롤러에 의해 채워지며, 오직 작은 부분만을 내비게이션 바가 차지한다.</p>
+<p>컴팩트 및 레귤러 환경 모두에서 내비게이션 컨트롤러는 한 번에 오직 하나의 자식 뷰 컨트롤러만을 표시한다. 내비게이션 컨트롤러는 사용 가능한 공간을 맞추기 위해 자식의 크기를 다시 조정한다.</p>
+<h3 id="Example-Split-View-Controller"><a href="#Example-Split-View-Controller" class="headerlink" title="Example: Split View Controller"></a>Example: Split View Controller</h3><p><code>UISplitViewController</code> 객체는 마스터-디테일 정렬에서 두 개의 뷰 컨트롤러의 컨텐트를 표시한다. 이 정렬에서 마스터 역할의 뷰 컨트롤러의 컨텐트는 다른 뷰 컨트롤러에 의해 어떤 디테일이 표시되어야 하는지를 결정한다. 두 개의 뷰 컨트롤러가 화면에 보이는 것은 구성 가능하나 현재 환경도 이를 관리한다. 수평 레귤러 환경에서 스플릿 뷰 컨트롤러는 양옆으로 두 개의 자식 뷰 컨트롤러를 모두 보여줄 수 있거나, 필요하다면 마스터를 숨길 수 있다. 컴팩트 환경에서 스플릿 뷰 컨트롤러는 한 번에 오직 하나의 뷰 컨트롤러만 표시한다.</p>
+<p>스플릿 뷰 컨트롤러는 기본적으로 그 자체적으로 그 컨테이너 뷰만을 가지고 있는다. 마스터 뷰는 화면에 보일 수도 있고, 보이지 않을 수도 있기 때문에, 자식 뷰의 크기는 구성 가능하다.</p>
+<h2 id="Configuring-a-Container-in-Interface-Builder"><a href="#Configuring-a-Container-in-Interface-Builder" class="headerlink" title="Configuring a Container in Interface Builder"></a>Configuring a Container in Interface Builder</h2><p>디자인 시점에서 부모-자식 관계를 만들기 위해 스토리보드 씬에 컨테이너 뷰 객체를 추가하라. 컨테이너 뷰 객체는 자식 뷰 컨트롤러의 컨텐츠를 나타내는 플레이스홀더 객체다. 이 뷰를 사용하여 컨테이너에 있는 다른 뷰와 관계가 있는 자식들의 루트 뷰의 크기와 위치를 설정하라.</p>
+<p>하나 이상의 컨테이너 뷰를 가진 뷰 컨트롤러를 로드할 때 인터페이스 빌더는 또한 그러한 뷰와 연관된 자식 뷰 컨트롤러도 로드한다. 자식은 적절한 부모-자식 관계가 만들어질 수 있도록 부모와 같은 시점에 반드시 인스턴스 생성이 되어야 한다.</p>
+<p>부모-자식 컨테이너 관계를 설정하기 위해 인터페이스 빌더를 사용하지 않는다면, 반드시 각각의 자식을 컨테이너 뷰 컨트롤러에 추가하는 코드를 작성하여 관계를 만들어야 한다. Adding a Child View Controller to Your Content에 나와 있다.</p>
+<h2 id="Implementing-a-Custom-Container-View-Controller"><a href="#Implementing-a-Custom-Container-View-Controller" class="headerlink" title="Implementing a Custom Container View Controller"></a>Implementing a Custom Container View Controller</h2><p>컨테이너 뷰 컨트롤러를 구현하기 위해 뷰 컨트롤러와 자식 뷰 컨트롤러 간의 관계를 반드시 만들어야 한다. 이러한 부모-자식 관계를 만드는 것은 자식 뷰 컨트롤러들의 뷰를 관리하려고 하기 전에 요구되는 것이다. 이렇게 하여 UIKit은 뷰 컨트롤러가 자식의 크기와 위치를 관리하고 있음을 알게 할 수 있다. 인터페이스 빌더를 사용하거나 코드를 작성하여 이러한 관계를 만들 수 있다. 부모-자식 관계를 코드를 작성하여 만들 때, 뷰 컨트롤러 설정의 일부분으로 명시적으로 자식 뷰 컨트롤러를 추가하고 제거한다.</p>
+<h3 id="Adding-a-Child-View-Controller-to-Your-Content"><a href="#Adding-a-Child-View-Controller-to-Your-Content" class="headerlink" title="Adding a Child View Controller to Your Content"></a>Adding a Child View Controller to Your Content</h3><p>코드를 작성하여 컨텐트를 자식 뷰 컨트롤러에 통합하기 위해, 다음을 따라서 관련 있는 뷰 컨트롤러 간의 부모-자식 관계를 만들어라.</p>
+<ol>
+<li><p>컨테이너 뷰 컨트롤러의 <code>addChild(_:)</code> 메소드를 호출한다.</p>
+<p>이 메소드는 UIKit에게 컨테이너 뷰 컨트롤러가 이제 자식 뷰 컨트롤러의 뷰를 관리하고 있음을 알린다.</p>
+</li>
+<li><p>자식의 루트 뷰를 컨테이너의 뷰 계층에 추가한다.</p>
+<p>이 프로세스의 일부분으로 자식 프레임의 크기와 위치를 설정하는 것을 항상 기억하라.</p>
+</li>
+<li><p>자식의 루트 뷰의 크기와 위치를 관리하기 위해 제약을 추가한다.</p>
+</li>
+<li><p>자식 뷰 컨트롤러의 <code>didMove(toParent:)</code> 메소드를 호출한다.</p>
+</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">displayContentController</span><span class="params">(<span class="number">_</span> content: UIViewController)</span></span> &#123;</span><br><span class="line">  addChild(content)</span><br><span class="line">  content.view.frame = frameForContentController</span><br><span class="line">  view.addSubview(currentClientView)</span><br><span class="line">  content.didMove(toParent: <span class="keyword">self</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>자식의 <code>didMove(toParent:)</code> 메소드만을 호출한 것에 주목하라. 이는 <code>addChild(_:)</code> 메소드가 자식의 <code>willMove(toParent:)</code> 메소드를 호출해주기 때문이다. <code>didMove(toParent:)</code> 메소드를 반드시 직접 호출해야 하는 이유는 그 메소드는 자식의 뷰를 컨테이너의 뷰 계층에 임베드하고 나서까지 호출될 수 없기 때문이다.</p>
+<p>오토 레이아웃을 사용할 때, 자식을 컨테이너의 뷰 계층에 추가한 후 컨테이너와 자식 간 제약을 설정하라. 제약은 오직 자식의 루트 뷰의 크기와 위치에만 영향을 주어야 한다. 루트 뷰의 컨텐츠나 자식의 뷰 계층에 있는 다른 뷰들을 바꾸지 마라.</p>
+<h3 id="Removing-a-Child-View-Controller"><a href="#Removing-a-Child-View-Controller" class="headerlink" title="Removing a Child View Controller"></a>Removing a Child View Controller</h3><p>컨텐트에서 자식 뷰 컨트롤러를 제거하기 위해 다음을 따라서 뷰 컨트롤러 간 부모-자식 관계를 제거하라.</p>
+<ol>
+<li>자식의 <code>willMove(toParent:)</code> 메소드에 <code>nil</code>을 넘겨서 호출한다.</li>
+<li>자식의 루트 뷰와 함께 구성된 제약들을 제거한다.</li>
+<li>컨테이너의 뷰 계층으로부터 자식의 루트 뷰를 제거한다.</li>
+<li>부모-자식 관계의 끝을 마무리짓기 위해 자식의 <code>removeFromParent()</code> 메소드를 호출한다.</li>
+</ol>
+<p>자식 뷰 컨트롤러를 제거하여 영구적으로 부모와 자식 간 관계를 잘라낼 수 있다. 오직 자식 뷰 컨트롤러를 더 이상 참조할 필요가 없을 때만 제거하라. 예를 들어 내비게이션 컨트롤러는 새로운 자식 뷰 컨트롤러가 내비게이션 스택에 푸시될 때 현재 자식 뷰 컨트롤러를 제거하지 않는다. 오직 스택에서 팝될 때만 제거된다.</p>
+<p>다음은 컨테이너에서 자식 뷰 컨트롤러를 제거하는 방법을 보여준다. <code>willMove(toParent:)</code> 메소드에 <code>nil</code>을 넘겨서 호출하는 것은 자식 뷰 컨트롤러가 변화에 대한 준비를 할 기회를 제공한다. <code>removeFromParent()</code> 메소드는 또한 자식의 <code>didMove(toParent:)</code> 메소드에 <code>nil</code>을 넘겨서 호출해준다. 부모 뷰 컨트롤러를 <code>nil</code>로 설정하여 컨테이너로부터 자식의 뷰의 제거를 마친다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">hideContentController</span><span class="params">(<span class="number">_</span> content: UIViewController)</span></span> &#123;</span><br><span class="line">  content.willMove(toParent: <span class="literal">nil</span>)</span><br><span class="line">  content.view.removeFromSuperview()</span><br><span class="line">  content.removeFromParent()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Transitioning-Between-Child-View-Controllers"><a href="#Transitioning-Between-Child-View-Controllers" class="headerlink" title="Transitioning Between Child View Controllers"></a>Transitioning Between Child View Controllers</h3><p>한 자식 뷰 컨트롤러를 다른 것과 교체하는 것에 애니메이션을 주고 싶다면, 트랜지션 애니메이션 프로세스에 자식 뷰 컨트롤러의 추가 및 제거를 통합하라. 애니메이션 전에 두 개의 자식 뷰 컨트롤러 모두가 컨텐츠의 일부가 되는 것을 보장하지만 현재 자식이 날라가 버릴것이라는 것을 알게 하라. 애니메이션 동안 새로운 자식의 뷰를 위치로 이동시키고 오래된 자식의 뷰를 제거하라. 애니메이션의 완료 시점에서 자식 뷰 컨트롤러의 제거를 완료하라.</p>
+<p>다음은 트랜지션 애니메이션을 사용하여 한 자식 뷰 컨트롤러와 다른 자식 뷰 컨트롤러를 서로 바꾸는 방법에 관한 예제다. 이 예제에서 새로운 뷰 컨트롤러는 기존 자식 뷰 컨트롤러가 점유하고 있는 직사각형으로 애니메이팅되며, 기존 자식 뷰 컨트롤러는 화면 밖으로 이동한다. 애니메이션이 끝난 후 컴플리션 블록이 자식 뷰 컨트롤러를 컨테이너에서 제거한다. 이 예제에서 <code>transition(from:to:duration:options:animations:completion:)</code> 메소드는 컨테이너의 뷰 계층을 자동으로 갱신하므로, 직접 뷰를 추가하고 제거할 필요가 없다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">cycleFromViewController</span><span class="params">(<span class="number">_</span> oldVC: UIViewController, to newVC: UIViewController)</span></span> &#123;</span><br><span class="line">  oldVC.willMove(toParent: <span class="literal">nil</span>)</span><br><span class="line">  addChild(newVC)</span><br><span class="line">  </span><br><span class="line">  newVC.view.frame = newViewStartFrame</span><br><span class="line">  <span class="keyword">let</span> endFrame = oldViewEndFrame</span><br><span class="line">  </span><br><span class="line">  transition(from: oldVC, to: newVC, duration: <span class="number">0.25</span>, options: [], animations: &#123;</span><br><span class="line">    newVC.view.frame = oldVC.view.frame</span><br><span class="line">    oldVC.view.frame = endFrame</span><br><span class="line">  &#125;, completion: &#123; finished <span class="keyword">in</span></span><br><span class="line">    oldVC.removeFromParent()</span><br><span class="line">    newVC.didMove(toParent: <span class="keyword">self</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Managing-Appearance-Updates-for-Children"><a href="#Managing-Appearance-Updates-for-Children" class="headerlink" title="Managing Appearance Updates for Children"></a>Managing Appearance Updates for Children</h3><blockquote>
+<p>Appearance : <code>viewWillAppear</code> 등에서의 <code>appear</code>와 상응함</p>
+</blockquote>
+<p>컨테이너에 자식을 추가한 후 컨테이너는 자식에 나타남과 관련된 메세지를 자동으로 전달한다. 이는 일반적으로 기대하는 동작이다. 모든 이벤트가 적절하게 보내질 것을 보장하기 때문이다. 하지만 때때로 기본 동작이 컨테이너와 맞지 않는 순서대로 그러한 이벤트들을 전달할 수도 있다. 예를 들어 여러 개의 자식들이 그 뷰 상태를 동시에 변경한다면, 그 변화들을 합병하여 더 논리적인 순서에서 같은 시점에 모든 나타남 콜백이 일어나기를 원할 수 있을 것이다.</p>
+<p>나타남 콜백에 대한 책임을 넘겨받기 위해 컨테이너 뷰 컨트롤러의 <code>shouldAutomaticallyForwardAppearanceMethods</code> 프로퍼티를 재정의하고 <code>false</code>를 반환하도록 한다. <code>false</code>를 반환하여 UIKit에게 컨테이너 뷰 컨트롤러가 자식들의 나타남과 관련된 변화를 알림받는 것을 알 수 있게 한다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> shouldAutomaticallyForwardAppearanceMethods: <span class="type">Bool</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>나타남 트랜지션이 발생할 때 자식의 <code>beginAppearanceTransition(_:animated:)</code>나 <code>endAppearanceTransition()</code> 메소드를 적절하게 호출하라. 예를 들어 컨테이너가 <code>child</code> 프로퍼티로 참조되는 하나의 자식을 가지고 있다면, 컨테이너는 다음과 같이 작성하여 자식에게 이러한 메세지를 전달해야 할 것이다.</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewWillAppear</span><span class="params">(<span class="number">_</span> animated: Bool)</span></span> &#123;</span><br><span class="line">  child.beginAppearanceTransition(<span class="literal">true</span>, animated: animated)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewDidAppear</span><span class="params">(<span class="number">_</span> animated: Bool)</span></span> &#123;</span><br><span class="line">  child.endAppearanceTransition()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewWillDisappear</span><span class="params">(<span class="number">_</span> animated: Bool)</span></span> &#123;</span><br><span class="line">  child.beginAppearanceTransitioin(<span class="literal">false</span>, animated: animated)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewDidDisappear</span><span class="params">()</span></span> &#123;</span><br><span class="line">  child.endAppearanceTransition()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Suggestions-for-Building-a-Container-View-Controller"><a href="#Suggestions-for-Building-a-Container-View-Controller" class="headerlink" title="Suggestions for Building a Container View Controller"></a>Suggestions for Building a Container View Controller</h2><p>새로운 컨테이너 뷰 컨트롤러를 설계, 개발, 테스트하는 것은 시간이 많이 걸리는 작업이다. 개별 동작들은 간단할지라도, 전체로서 컨트롤러는 상당히 복잡해질 수 있다. 직접 컨테이너 클래스를 구현할 때 다음의 팁을 따르는 것을 고려하라.</p>
+<ul>
+<li><strong>오직 자식 뷰의 루트 뷰에만 접근하라.</strong> 컨테이너는 오직 각 자식의 루트 뷰, 즉 자식의 <code>view</code> 프로퍼티가 반환하는 뷰에만 접근할 수 있어야 한다. 자식의 다른 뷰들에는 절대 접근해서는 안된다.</li>
+<li><strong>자식 뷰 컨트롤러는 컨테이너에 대한 최소한의 정보만을 알야아 한다.</strong> 자식 뷰 컨트롤러는 자신의 컨텐트에 중점을 둔다. 자식에 의하여 컨테이너의 동작이 영향을 받을 수 있게 하려면 델리게이션 디자인 패턴을 사용하여 그러한 인터랙선을 관리해야 한다.</li>
+<li><strong>먼저 일반적인 뷰를 사용하여 컨테이너를 설계하라.</strong> 자식 뷰 컨트롤러의 뷰 대신 규정된 뷰를 사용하여 단순화된 환경에서 레이아웃 제약과 애니메이팅되는 트랜지션을 테스트할 기회를 제공하라. 규정된 뷰가 기대한 대로 동작할 때 그것을 자식 뷰 컨트롤러의 뷰와 서로 맞바꾸어라.</li>
+</ul>
+<h2 id="Delegating-Control-to-a-Child-View-Controller"><a href="#Delegating-Control-to-a-Child-View-Controller" class="headerlink" title="Delegating Control to a Child View Controller"></a>Delegating Control to a Child View Controller</h2><p>컨테이너 뷰 컨트롤러는 자식들 하나 이상에 그 자신의 외관과 관련된 몇 가지 양상을 위임할 수 있다. 다음의 방식을 따라 제어를 위임할 수 있다.</p>
+<ul>
+<li><strong>뷰 컨트롤러가 상태 바 스타일을 결정할 수 있게 하라.</strong> 자식에게 상태 바 모습을 위임하기 위해 컨테이너 뷰 컨트롤러의 <code>childViewControllerForStatusBarStyle</code>과 <code>childViewControllerForStatusBarHidden</code> 프로퍼티를 재정의하라.</li>
+<li><strong>자식이 자신의 선호하는 크기를 지정할 수 있게 하라.</strong> 유연한 레이아웃을 가진 컨테이너는 자식의 <code>preferredContentSize</code> 프로퍼티를 사용하여 자식의 크기를 결정하는 것을 도울 수 있다.</li>
+</ul>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#미리-요약"><span class="toc-number">1.</span> <span class="toc-text">미리 요약</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Designing-a-Custom-Container-View-Controller"><span class="toc-number">2.</span> <span class="toc-text">Designing a Custom Container View Controller</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-Navigation-Controller"><span class="toc-number">2.1.</span> <span class="toc-text">Example: Navigation Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-Split-View-Controller"><span class="toc-number">2.2.</span> <span class="toc-text">Example: Split View Controller</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Configuring-a-Container-in-Interface-Builder"><span class="toc-number">3.</span> <span class="toc-text">Configuring a Container in Interface Builder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Implementing-a-Custom-Container-View-Controller"><span class="toc-number">4.</span> <span class="toc-text">Implementing a Custom Container View Controller</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Adding-a-Child-View-Controller-to-Your-Content"><span class="toc-number">4.1.</span> <span class="toc-text">Adding a Child View Controller to Your Content</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Removing-a-Child-View-Controller"><span class="toc-number">4.2.</span> <span class="toc-text">Removing a Child View Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Transitioning-Between-Child-View-Controllers"><span class="toc-number">4.3.</span> <span class="toc-text">Transitioning Between Child View Controllers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Managing-Appearance-Updates-for-Children"><span class="toc-number">4.4.</span> <span class="toc-text">Managing Appearance Updates for Children</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Suggestions-for-Building-a-Container-View-Controller"><span class="toc-number">5.</span> <span class="toc-text">Suggestions for Building a Container View Controller</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Delegating-Control-to-a-Child-View-Controller"><span class="toc-number">6.</span> <span class="toc-text">Delegating Control to a Child View Controller</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&text=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&is_video=false&description=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller&body=Check out this article: http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&title=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&name=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://presto95.github.io/2020/01/21/translation-view-controller-programming-guide-for-ios-view-controller-definition-implementing-a-container-view-controller/&t=[번역] View Controller Programming Guide for iOS - View Controller Definition - Implementing a Container View Controller" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Presto
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'presto95';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>
